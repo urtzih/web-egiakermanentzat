@@ -1,0 +1,4 @@
+interface:
+  display_name: "Impeccable"
+  short_description: "Diseña, audita y perfecciona interfaces web"
+  default_prompt: "Usa $impeccable para revisar y mejorar esta interfaz."

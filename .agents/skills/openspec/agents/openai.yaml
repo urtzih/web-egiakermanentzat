@@ -1,0 +1,4 @@
+interface:
+  display_name: "OpenSpec"
+  short_description: "Planifica y ejecuta cambios con especificaciones"
+  default_prompt: "Usa $openspec para revisar el proyecto y recomendar el siguiente paso."
