@@ -42,6 +42,20 @@ El MVP MUST priorizar contenido principal rápido, estable y usable en dispositi
 - **WHEN** falla el recurso externo de pago
 - **THEN** la información del sitio sigue accesible y ofrece contacto o método alternativo aprobado sin romper la página
 
+### Requirement: Preproducción segura de la versión final
+La versión final antes del despliegue MUST ejecutarse localmente o bajo acceso restringido y MUST solicitar `noindex` mediante la configuración del entorno. No MUST enviar formularios ni analítica, pero MAY publicar instrucciones de transferencia verificadas. La interfaz pública no MUST mostrar rótulos de prototipo ni estados editoriales internos.
+
+#### Scenario: Acceso a la versión local final
+- **WHEN** una persona autorizada abre la versión local
+- **THEN** encuentra el contenido y las acciones definitivas del MVP, mientras la configuración técnica impide indexación y envío de formularios o analítica
+
+### Requirement: Movimiento expresivo y reducible
+La interfaz MAY usar movimiento tipográfico y revelados narrativos, pero el contenido MUST ser visible y operable sin la animación y MUST ofrecer una composición equivalente con `prefers-reduced-motion`.
+
+#### Scenario: Preferencia de movimiento reducido
+- **WHEN** el sistema de la persona indica reducción de movimiento
+- **THEN** la franja y los revelados se muestran estáticos sin perder texto, orden, foco ni acciones
+
 ### Requirement: Recursos verificables para prensa
 El sitio MUST ofrecer contacto de prensa, comunicados permanentes, resumen fechado, fuentes y recursos autorizados con créditos y condiciones.
 

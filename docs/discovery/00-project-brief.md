@@ -1,6 +1,8 @@
 # 00 — Brief de proyecto
 
-Fecha de revisión: 2026-07-20 · Estado: Discovery pendiente de aprobación humana.
+Fecha de revisión: 2026-07-21 · Estado: Discovery pendiente de aprobación humana.
+
+Leyenda: `CONFIRMADO` · `HIPÓTESIS` · `PENDIENTE DE VERIFICACIÓN` · `DECISIÓN NECESARIA` · `RIESGO` · `FUENTE NECESARIA`.
 
 ## Mandato
 
@@ -8,7 +10,17 @@ Fecha de revisión: 2026-07-20 · Estado: Discovery pendiente de aprobación hum
 
 `CONFIRMADO` La web deberá estar íntegramente en euskera y castellano desde el MVP. Este Discovery se redacta en español.
 
-`PENDIENTE DE VERIFICACIÓN` Nombre legal completo, inscripción registral, NIF, domicilio, representación y relación formal entre **Justizia Kermanentzat** —iniciativa/cuenta social— y **Egia Kermanentzat Elkartea** —asociación—.
+`CONFIRMADO` Los padres de Kerman son fundadores directos de Egia Kermanentzat Elkartea, promueven la creación de la web y tienen la validación final sobre el relato, el tono y la representación de Kerman. El material que facilitan a través del responsable del proyecto se considera previamente autorizado por la familia, sin perjuicio de derechos de terceros.
+
+`CONFIRMADO` Todo material que el responsable del proyecto entregue indicando que procede de la familia o de la asociación se tratará como referencia autorizada para comprender su voz, intención, enfoque y preparar borradores. Esa procedencia acredita lo que la familia o la asociación desean comunicar, pero no convierte automáticamente las afirmaciones factuales, médicas o jurídicas del material en hechos independientemente demostrados.
+
+`PENDIENTE DE VERIFICACIÓN` Nombre legal completo, inscripción registral, NIF, domicilio, representación formal y relación jurídica entre **Justizia Kermanentzat** —iniciativa/cuenta social— y **Egia Kermanentzat Elkartea** —asociación—.
+
+`CONFIRMADO` Datos facilitados el 2026-07-21: nombre legal **Egia Kermanentzat Elkartea**; NIF `G93797744`; número registral comunicado `CEK1L0ZU0A`; domicilio estatutario en Bitoriano, Zuia (Araba); fecha de constitución comunicada 2026-07-14; presidenta Ainhoa Villate, secretario Roberto Villate y tesorero Joseba Garcia. Los estatutos y el certificado bancario respaldan parcialmente estos datos.
+
+`DECISIÓN NECESARIA` Confirmar si el domicilio completo puede publicarse y qué persona/cargo tiene facultad formal para contratar dominio, alojamiento, CMS y proveedores. La relación editorial y de marca entre **Justizia Kermanentzat** y **Egia Kermanentzat Elkartea** sigue pendiente.
+
+`CONFIRMADO` Canal público provisional de contacto: `justiziakermanentzat@gmail.com`. Podrá sustituirse posteriormente por una dirección del dominio oficial sin romper las URLs públicas de contacto.
 
 ## Misión propuesta
 
@@ -34,7 +46,8 @@ La web deberá separar sin ambigüedad:
 4. Ningún material sensible o de videovigilancia se usa como reclamo.
 5. Euskera y castellano tienen paridad funcional y editorial.
 6. Accesibilidad, privacidad, seguridad y rendimiento móvil son criterios de aceptación.
-7. La asociación aprueba la narración definitiva antes de publicar.
+7. Los padres/fundadores revisan y validan la narración definitiva antes de publicar. No se exige un expediente formal de firmas, pero sí una confirmación final directa.
+8. La autorización familiar no sustituye la licencia del fotógrafo, medio u otro titular tercero ni la verificación de afirmaciones sensibles.
 
 ## Alcance del Discovery
 
@@ -46,7 +59,7 @@ No incluye implementación, contratación, elección definitiva de proveedor, as
 
 `CONFIRMADO` Al iniciar esta fase no había repositorio Git, proyecto web, README, documentación de producto, prototipos, configuraciones de aplicación ni recursos propios. Solo existían skills locales de trabajo, entre ellas OpenSpec. OpenSpec 1.6.0 estaba instalado globalmente pero el directorio no estaba inicializado.
 
-`DECISIÓN NECESARIA` Tras aprobar este Discovery se deberá confirmar autoridad editorial, material fuente y responsables antes de planificar implementación.
+`DECISIÓN NECESARIA` El corpus documental y los responsables operativos condicionan la redacción y planificación detallada. Los datos legales de la asociación no bloquean Discovery ni el diseño del MVP, pero deberán completarse antes de publicar avisos legales, operar formularios o activar donaciones. La autoridad familiar queda resuelta.
 
 ## Fuentes iniciales
 

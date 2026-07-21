@@ -1,0 +1,41 @@
+# KERMAN NO MURIÓ, LO MATARON
+
+En la madrugada del 23 de febrero mataron a Kerman, junto al punto de control de la discoteca Mitika de Vitoria-Gasteiz. **Kerman no murió: lo mataron.** No bastó con robarle la vida; desde entonces algunos también han intentado robar la verdad. Este texto tiene el propósito de evitar que le arrebaten esa verdad.
+
+Aquella noche, cuando Kerman y sus amigos pasaron por el punto de control de la discoteca, los porteros le dijeron a Kerman que esperara fuera, mientras indicaban a sus amigos que siguieran adelante, que él entraría más tarde. El punto de control estaba situado a unos metros de la entrada, en un lugar al que **las cámaras de Mitika no llegaban; no era, por tanto, un sitio elegido por casualidad.** Aun así, esas cámaras grabaron algunas imágenes esclarecedoras. Pocos minutos antes de que mataran a Kerman, los porteros mantuvieron una conversación significativa. En esas imágenes **se les ve haciéndose señas; el asesino de Kerman lleva el puño cerrado a su mandíbula**, al mismo lugar donde golpearía a Kerman segundos más tarde. El gesto se repite más de una vez en la grabación.
+
+Otra cámara situada unos metros más allá, aunque de mala calidad, aportó aún más luz. En estas imágenes puede verse a Kerman hablando tranquilamente con conocidos más allá del punto de control, después de que los porteros le dijeran que esperara. En un momento dado, uno de los porteros le indica que **espere cerca del punto de control, fuera del campo de visión de las cámaras** de la discoteca. Kerman se queda mirando al frente y un portero se coloca a su lado, también mirando al frente; no estaban cara a cara. Así colocados, el portero —que **pesaba alrededor de 145 kg y era experto en artes marciales**, plenamente consciente de las consecuencias que podía causar un golpe suyo— **le asestó a Kerman un puñetazo que lo mató en el acto.** En las imágenes se ve a Kerman desplomarse inmediatamente, mientras **el portero entra tranquilamente en la discoteca.** Conviene subrayar que en las grabaciones no aparece en ningún momento ningún altercado, algo evidente también en el ambiente tranquilo que se percibe alrededor.
+
+Días después, **el juez instructor decidió enviar al asesino a prisión: había pruebas suficientes para prever que se trataba de un homicidio.** A comienzos de octubre se ratificó esta decisión, indicando que el asesino de Kerman sería juzgado por un delito de homicidio con alevosía. Entonces, la defensa del acusado y la fiscalía —esta última, la figura jurídica encargada de proteger los derechos de la ciudadanía— presentaron recurso contra la decisión del juez. Hace dos semanas, la **Audiencia Provincial de Álava** aceptó estos recursos y **dejó en libertad al asesino de Kerman imponiéndole una fianza irrisoria de 6.000 euros.**
+
+Esta decisión resta gravedad a lo sucedido y contradice las imágenes de las cámaras de seguridad, la autopsia y al propio juez instructor. Además, alimenta el relato interesado que se difundió desde el primer día en medios de comunicación, el que sugería que la muerte de Kerman había sido un accidente consecuencia de los altercados habituales en el ambiente nocturno. Pero **Kerman no murió: a Kerman lo mataron.**
+
+Este caso ha dejado al descubierto la impunidad de algunos y la falta de justicia. El portero tenía antecedentes, igual que muchos otros porteros; eso es bien sabido. Abusaron de su poder dejando a Kerman apartado para poder matarlo. **El Gobierno municipal conocía las situaciones abusivas que se daban en este local y no hizo nada.** Le Basque, la empresa encargada de la seguridad de la discoteca, y la propia Mitika han actuado y siguen actuando con total impunidad. Aunque las pruebas para juzgarlo como asesinato sean claras, pretenden encubrir lo ocurrido y restarle gravedad para que nadie salga salpicado.
+
+**Los antecedentes, las imágenes, la autopsia, los testimonios de los testigos... todo indica que Kerman no murió: a Kerman lo mataron.** Continuaremos difundiendo este relato, y animamos a toda persona que lea estas líneas a hacer lo mismo.
+
+**Te robaron la vida, no te robarán la verdad.**
+
+# ¡JUSTICIA PARA KERMAN!
+
+---
+
+# KERMAN EZ ZEN HIL, HIL EGIN ZUTEN
+
+Otsailaren 23ko goizaldean Kerman hil zuten, Gasteizko Mitika diskotekaren kontrol gunearen ondoan. **Kerman ez zen hil, hil zuten.** Bizitza lapurtzearekin aski izan ez, eta baten batzuk egia ere lapurtzen saiatzen ibili dira ordutik. Kermani egia lapurtu ez diezaioten beste ekarpen bat egiteko helburua dauka testu honek.
+
+Gau hartan Kerman eta bere lagunak diskotekako kontrol gunetik pasatzean kanpoan itxaroteko esan zioten Kermani atezainek, lagunei aurrera egiteko esan zieten bitartean, Kerman beranduago sartuko zela. Kontrol gunea diskotekaren sarreratik metro batzuetara jarrita zegoen, Mitikako **kamerak grabatzera iristen ez ziren leku batean, ez zen kasualitatez aukeratutako leku bat** beraz. Hala ere, irudi argigarri batzuk grabatu zituzten kamera hauek. Kerman erail baino minutu batzuk lehenago atezainek izan zuten elkarrizketa esanguratsua da. Irudiotan elkarri keinuak agertzen dira, **Kermanen hiltzaileak ukabila itxita masailezurrera eramaten du**, Kerman segundu batzuk geroago kolpatu zuen leku berera, keinua behin baino gehiagotan errepikatzen da grabazioan.
+
+Diskotekako kamerek ez, baina handik metro batzuetara zegoen irudi eskasak eskaini dituen beste kamera batek, gertatutakoa are gehiago argitu du. Irudi hauetan atezainek itxaroteko esan eta gero, Kerman ezagunekin lasai hitz egiten ikus daiteke, kontrol gunetik haratago. Une batean atezain batek kontrol gunetik gertu **itxaroteko esaten dio, diskotekaren kameren begiradatik kanpo.** Kerman aurrera begira jarri zen eta atezain bat bere alboan jarri zen gero, aurrera begira bera ere, ez zeuden parez-pare. Horrela zeudela, **145 kg inguru pisatzen zuen eta arte martzialetan aditua zen** atezainak, berak emandako kolpe batek eragin zitzakeen ondorioak jakitun, **momentuan hil zuen ukabilkada eman zion Kermani.** Irudiotan Kerman unean bertan lurrera erortzen ikus daiteke, **atezaina lasai diskoteka barrura sartzen den** bitartean. Azpimarratzekoa da grabazioetan ez dela inolako liskarrik ageri une batean ere ez, hau nabaria da ere inguruko giro lasaian.
+
+Handik egun batzuetara **epaile instruktoreak hiltzailea espetxeratzea erabaki zuen, hilketa bat izan zela aurreikusteko froga nahikoa zegoen.** Urriaren hasieran erabaki honetan berretsi zen, Kermanen hiltzailea azpikeriaz egindako hilketa delituagatik epaitua izango zela adieraziz. Akusatuaren defentsak eta fiskalak —herritarron eskubideak babesteaz enkargatzen den figura juridikoa—, epailearen erabakiaren aurrean errekurtsoa aurkeztu zuten orduan. Duela bi aste, **Arabako Probintzia Auzitegiak** errekurtso hauek aintzat hartu eta **Kermanen hiltzailea aske utzi zuen 6000 euroko fidantza irrigarria jarrita.**
+
+Erabaki honek gertaerari larritasuna kentzen dio, eta segurtasun-kameretako irudiei, autopsiari eta epaile instruktoreari berari kontra egiten die. Erabaki honek gainera, lehen egunetik komunikabideetan zabaldu zen errelato interesatua hauspotzen du, Kermanen heriotza gaueko giroan eman ohi diren liskarren ondoriozko istripua izan zela aditzera ematen zuena. Baina **Kerman ez zen hil, Kerman hil egin zuten.**
+
+Batzuen inpunitatea eta justizia falta agerian geratu dira kasu honekin. Atezainak aurrekariak zituen, beste atezain askok bezala, jakina da hori. Haien boterea abusuz erabili zuten Kerman bazter batean utzi eta gero, hil ahal izateko. **Udal Gobernuak lokal honetan ematen ziren abusuzko egoerak ezagutzen zituen** eta ez zuen ezer egin. Le Basquek, diskotekako segurtasunaz arduratzen zen enpresa, eta Mitikak berak ere inpunitate osoarekin jokatu dute eta jokatzen jarraitzen dute. Nahiz eta hilketa bezala epaitzeko frogak argiak izan, gertatutakoa estali eta larritasuna kendu nahi diote inor zipriztindua atera ez dadin.
+
+**Aurrekariak, kameretako irudiek, autopsiak, lekukoek kontatutakoak, adierazten duten bezala, Kerman ez zen hil, Kerman hil egin zuten.** Errelato hau zabaltzen jarraituko dugu, eta berdina egitera animatu nahi dugu lerro hauek irakurri dituen pertsona oro.
+
+**Bizitza lapurtu zizuten, ez dizute egia lapurtuko.**
+
+# JUSTIZIA KERMANENTZAT!

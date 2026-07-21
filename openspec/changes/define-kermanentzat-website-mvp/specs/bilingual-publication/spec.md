@@ -15,11 +15,15 @@ Las versiones ES/EU MUST pertenecer a la misma entidad editorial y compartir rel
 - **THEN** la versión vinculada queda pendiente de revisión y no se considera nuevamente en paridad hasta aprobarse
 
 ### Requirement: URLs y selector de idioma
-El sitio MUST usar rutas `/es/...` y `/eu/...`, `hreflang` recíproco, canonicals coherentes y un selector persistente que abra la página equivalente.
+El sitio MUST usar euskera como idioma predeterminado en `/` y rutas de primer nivel, y castellano bajo `/es/...`, con `hreflang` recíproco, canonicals coherentes y un selector persistente que abra la página equivalente.
 
 #### Scenario: Cambio de idioma en una noticia
 - **WHEN** una persona cambia de castellano a euskera desde una noticia
 - **THEN** llega a la traducción enlazada de esa noticia y no a la portada
+
+#### Scenario: Entrada al dominio sin prefijo
+- **WHEN** una persona abre `egiakermanentzat.eus/`
+- **THEN** recibe la portada en euskera y puede cambiar a su equivalente castellano en `/es/`
 
 ### Requirement: Revisión humana
 Contenido del caso, comunicados, donaciones, formularios, textos legales y textos alternativos no MUST publicarse mediante traducción automática sin revisión humana registrada.

@@ -1,0 +1,39 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/theme.json",
+  "version": 3,
+  "settings": {
+    "appearanceTools": true,
+    "color": {
+      "custom": false,
+      "customGradient": false,
+      "defaultGradients": false,
+      "palette": [
+        { "slug": "campaign", "color": "#ff3131", "name": "Rojo campaña" },
+        { "slug": "action", "color": "#d71920", "name": "Rojo acción" },
+        { "slug": "ink", "color": "#090909", "name": "Negro" },
+        { "slug": "canvas", "color": "#ffffff", "name": "Blanco" },
+        { "slug": "soft", "color": "#f1f1f1", "name": "Gris claro" }
+      ]
+    },
+    "layout": {
+      "contentSize": "760px",
+      "wideSize": "1440px"
+    },
+    "spacing": {
+      "units": ["px", "rem", "vw", "%"]
+    },
+    "typography": {
+      "customFontSize": false,
+      "dropCap": false,
+      "fluid": true,
+      "fontFamilies": [
+        { "slug": "display", "name": "Anton", "fontFamily": "Anton, Impact, 'Arial Narrow', sans-serif" },
+        { "slug": "body", "name": "Public Sans", "fontFamily": "'Public Sans', Arial, sans-serif" }
+      ]
+    }
+  },
+  "styles": {
+    "color": { "background": "#ffffff", "text": "#090909" },
+    "typography": { "fontFamily": "var(--wp--preset--font-family--body)", "lineHeight": "1.6" }
+  }
+}

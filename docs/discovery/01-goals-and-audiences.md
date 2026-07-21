@@ -2,11 +2,13 @@
 
 Fecha de revisión: 2026-07-20.
 
+Leyenda: `CONFIRMADO` · `HIPÓTESIS` · `PENDIENTE DE VERIFICACIÓN` · `DECISIÓN NECESARIA` · `RIESGO` · `FUENTE NECESARIA`.
+
 ## Resultados esperados
 
 | Dimensión | Objetivo provisional | Indicadores útiles |
 |---|---|---|
-| Memoria | Presentar a Kerman con dignidad y contexto humano. | Comprensión cualitativa en entrevistas; uso de la página Kerman; ausencia de reclamaciones de la familia. |
+| Memoria | Presentar a Kerman con dignidad y contexto humano. | Comprensión cualitativa en entrevistas; comprensión del bloque humano de Inicio y, cuando exista, uso de la futura página Kerman; ausencia de reclamaciones de la familia. |
 | Información | Explicar qué está documentado, qué sostiene la asociación y qué sigue pendiente. | Porcentaje de afirmaciones sensibles trazadas; fecha de revisión visible; consultas aclaratorias; correcciones. |
 | Credibilidad | Ser la referencia oficial y verificable de la asociación. | Enlaces desde medios/entidades; menciones como fuente oficial; documentos con procedencia; tiempos de corrección. |
 | Difusión | Dar alcance a comunicados y convocatorias en Vitoria-Gasteiz, Euskadi y el Estado. | Descargas, enlaces entrantes, compartidos, alcance orgánico, suscripciones futuras si se aprueban. |
@@ -43,6 +45,12 @@ Fecha de revisión: 2026-07-20.
 2. Visitante recurrente: localizar estado y novedades rápidamente.
 3. Periodista: encontrar fuente, fecha, contacto y permisos sin reconstruir el caso desde redes.
 4. Persona que apoya: saber quién recibe los fondos, destino y condiciones antes de pagar.
+
+## Autoridad de contenido validada
+
+`CONFIRMADO` Los padres de Kerman, fundadores de la asociación, son la autoridad final para revisar la memoria, el tono y los textos antes de la publicación. Han autorizado adaptar el mensaje bilingüe principal a la estructura que mejor funcione en la web y revisarán la versión final.
+
+`HIPÓTESIS` La portada usará una cabecera breve, un bloque atribuido de mensaje familiar y un resumen documental separado. Esta estructura preserva la fuerza del mensaje sin confundirlo con la exposición factual.
 
 `FUENTE NECESARIA` Entrevistas con familia, junta, editores, potenciales donantes, periodistas locales y personas euskaldunes.
 

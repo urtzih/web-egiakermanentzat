@@ -34,3 +34,17 @@ La biblioteca MUST conservar hash del archivo de referencia y MUST crear derivad
 #### Scenario: Sustitución de archivo
 - **WHEN** un binario cambia respecto a su SHA-256 registrado
 - **THEN** el sistema lo identifica como nueva versión y exige revisión antes de uso
+
+### Requirement: Convocatorias históricas no vigentes
+Un activo que contenga fecha, hora o convocatoria pasada MUST registrar su naturaleza histórica y no MUST reutilizarse como llamada vigente sin una nueva pieza aprobada.
+
+#### Scenario: Segunda pancarta del PDF familiar
+- **WHEN** un editor selecciona la convocatoria del 13 de diciembre incluida en `AST-017`
+- **THEN** el sistema la limita a contexto histórico y evita usarla como evento actual o llamada principal
+
+### Requirement: Alternativa accesible para gráficas textuales
+Toda gráfica cuyo contenido principal sea texto MUST disponer de transcripción HTML equivalente en el idioma correspondiente y no MUST ser la única forma de acceder al contenido.
+
+#### Scenario: Publicación del manifiesto gráfico bilingüe
+- **WHEN** se ofrece una de las imágenes del manifiesto como documento histórico
+- **THEN** la misma página ofrece una transcripción navegable derivada de la fuente bilingüe aprobada, naturaleza y procedencia, fecha original o indicación de que no está confirmada, idioma equivalente y enlace al resumen actualizado

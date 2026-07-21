@@ -15,14 +15,21 @@ El sistema MUST ofrecer cuentas individuales, mínimo privilegio y roles de admi
 - **THEN** solo puede enviarlo a revisión y no puede aprobarlo ni publicarlo
 
 ### Requirement: Edición no técnica
-Personas no técnicas MUST poder crear, revisar, traducir, programar, publicar, corregir y archivar noticias y comunicados sin editar código ni usar Git.
+El MVP MUST utilizar WordPress gestionado con Gutenberg. Personas no técnicas MUST poder revisar, traducir, publicar y corregir las páginas del MVP sin editar código, usar Git, instalar plugins ni modificar el tema. El modelo SHOULD permitir añadir noticias y comunicados posteriormente sin rehacer la arquitectura.
 
-#### Scenario: Publicación de noticia bilingüe
-- **WHEN** un editor autorizado recibe ambas traducciones aprobadas
-- **THEN** puede previsualizar y publicar la noticia enlazada en ambos idiomas desde la interfaz editorial
+#### Scenario: Actualización bilingüe del resumen del caso
+- **WHEN** un editor autorizado recibe ambas versiones aprobadas del resumen
+- **THEN** puede previsualizar y publicar la actualización enlazada en ambos idiomas desde la interfaz editorial
+
+### Requirement: Patrones editoriales protegidos
+Las cuatro páginas MUST usar patrones de bloques aprobados y MUST restringir los cambios de estructura o estilo que puedan romper el diseño, la accesibilidad o la separación de voces. El MVP no MUST depender de un constructor visual pesado.
+
+#### Scenario: Socio modifica un literal
+- **WHEN** un editor cambia texto o una imagen dentro de un patrón permitido
+- **THEN** puede previsualizar el resultado sin alterar navegación, jerarquía, estilos globales ni bloques de atribución
 
 ### Requirement: Revisión y recuperación
-El CMS MUST conservar revisiones, auditoría de cambios y exportación; la operación MUST incluir backups separados y restauración ensayada.
+WordPress MUST conservar revisiones y exportación; la operación MUST añadir el registro necesario de aprobaciones, backups separados y restauración ensayada. Las revisiones nativas no MUST considerarse sustituto de la trazabilidad `SRC/CLM` ni de la aprobación sensible.
 
 #### Scenario: Error de publicación
 - **WHEN** una actualización introduce contenido incorrecto o el CMS falla

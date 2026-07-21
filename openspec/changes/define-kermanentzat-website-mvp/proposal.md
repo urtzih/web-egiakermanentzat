@@ -4,15 +4,22 @@ Egia Kermanentzat Elkartea necesita una fuente pública oficial, bilingüe y man
 
 ## What Changes
 
-- Definir el alcance y los criterios verificables del MVP público en euskera y castellano.
+- Definir un primer lanzamiento público reducido a Inicio, Resumen del caso, Ayuda y donaciones y Contacto, con avisos legales en el pie y paridad en euskera y castellano.
 - Definir una narrativa que separe hechos documentados, fuentes oficiales, prensa, declaraciones, testimonios, opiniones, reivindicaciones y datos pendientes.
+- Permitir visibilizar los obstáculos legales, procesales e institucionales denunciados por la familia y la asociación con atribución, fecha y fuentes diferenciadas.
+- Transformar el manifiesto bilingüe facilitado por la familia en una experiencia accesible que diferencie la pieza histórica, el resumen factual actualizado, la evolución judicial y la posición de la asociación.
 - Exigir trazabilidad entre afirmaciones sensibles, fuentes, revisiones, traducciones, aprobaciones y correcciones.
 - Exigir que ningún recurso multimedia sea publicable sin derechos, consentimiento cuando corresponda, sensibilidad y textos alternativos aprobados en ambos idiomas.
-- Definir publicación editorial administrable durante años por personas no técnicas.
+- Definir una base editorial administrable para actualizar las cuatro páginas sin código y ampliar después con memoria, noticias, caso completo y documentación.
+- Seleccionar WordPress gestionado con Gutenberg y patrones controlados como base editorial para socios no técnicos, dejando abiertos hosting, tema y solución bilingüe hasta superar una prueba operativa.
 - Definir apoyo, donaciones, contacto y participación con transparencia, privacidad y accesibilidad.
 - Definir confianza, WCAG 2.2 AA, seguridad, rendimiento móvil, SEO multilingüe y recursos para medios.
-- Mantener abiertas las decisiones de CMS, pasarela, stack, hosting y proveedores hasta resolver los bloqueantes del Discovery.
-- Bloquear cualquier implementación hasta aprobación humana documentada del Discovery.
+- Consolidar la versión final del MVP local con las cuatro páginas, contenido bilingüe revisable y prioridad móvil, sin rótulos visibles de prototipo o borrador.
+- Adoptar la dirección «Cartel vivo, documento claro»: estructura clásica por bandas, tipografía de campaña contundente, rojo/negro/blanco, retrato autorizado y movimiento tipográfico accesible.
+- Consolidar «Memoria primero» como única portada tras la primera revisión, usando el recorte limpio autorizado de Kerman y trasladando la fuerza tipográfica de «Cartel frontal» a la siguiente sección.
+- Usar euskera en la raíz de `egiakermanentzat.eus` y castellano bajo `/es/`, con selector contextual entre equivalentes.
+- Limitar el lanzamiento a transferencia verificada, contacto por correo e Instagram; mantener abiertos hosting, analítica y métodos de pago adicionales hasta resolver sus bloqueantes.
+- Registrar la autorización expresa recibida el 2026-07-21 para convertir la dirección aprobada en la versión final del MVP local. La contratación de hosting y la publicación en el dominio oficial siguen siendo pasos operativos separados.
 
 ## Capabilities
 
@@ -33,4 +40,4 @@ No existen especificaciones previas que modificar.
 
 ## Impact
 
-Este cambio crea únicamente artefactos de definición. Afectará posteriormente al modelo de contenido, CMS, frontend bilingüe, biblioteca multimedia, formularios, integraciones de donación, alojamiento, seguridad, analítica y operación editorial. No selecciona proveedor ni autoriza código de producción; las dependencias críticas son identidad legal, corpus documental, derechos, responsables, presupuesto, banco/fiscalidad y aprobación humana.
+Este cambio implementa la versión final del MVP en el WordPress local y afecta posteriormente al despliegue, biblioteca multimedia, alojamiento, seguridad, analítica y operación editorial. Selecciona WordPress gestionado como CMS, pero no proveedor, plugin bilingüe ni método de pago adicional. Ya se dispone de nombre legal, NIF, número registral comunicado, estatutos, cargos y cuenta de transferencia titulada por la asociación; siguen pendientes la contratación de hosting, la operación editorial completa, los textos legales definitivos y la configuración de producción. La autoridad familiar y el margen para adaptar textos están confirmados.

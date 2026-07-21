@@ -1,0 +1,34 @@
+<?php
+/**
+ * Plugin Name: Egia Kermanentzat Local Guard
+ * Description: Keeps local and staging environments non-public and prevents external actions.
+ */
+
+defined('ABSPATH') || exit;
+
+if (wp_get_environment_type() === 'production') {
+    return;
+}
+
+add_filter('wp_robots', static function (array $robots): array {
+    $robots['noindex'] = true;
+    $robots['nofollow'] = true;
+    $robots['noarchive'] = true;
+    $robots['nosnippet'] = true;
+    return $robots;
+});
+
+add_action('send_headers', static function (): void {
+    header('X-Robots-Tag: noindex, nofollow, noarchive, nosnippet', true);
+    header('X-Content-Type-Options: nosniff', true);
+    header('Referrer-Policy: no-referrer', true);
+    header("Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()", true);
+});
+
+add_filter('pre_wp_mail', static fn () => false, PHP_INT_MAX);
+add_filter('xmlrpc_enabled', '__return_false');
+add_filter('wp_is_application_passwords_available', '__return_false');
+
+add_action('admin_notices', static function (): void {
+    echo '<div class="notice notice-warning"><p><strong>Entorno local:</strong> la indexación, el correo y las integraciones externas están desactivados.</p></div>';
+});

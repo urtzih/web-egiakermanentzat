@@ -1,0 +1,8 @@
+@import url("main.css");
+
+.editor-styles-wrapper {
+  padding: 2rem !important;
+  background: #fff;
+  color: #090909;
+  font-family: "Public Sans", Arial, sans-serif;
+}

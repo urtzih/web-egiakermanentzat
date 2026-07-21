@@ -21,6 +21,13 @@ Todo contenido factual o valorativo MUST registrar una de las naturalezas editor
 - **WHEN** una noticia incorpora un dato que solo consta en una publicación periodística
 - **THEN** lo atribuye al medio, enlaza la fuente y no lo eleva a hecho acreditado sin contraste adicional
 
+### Requirement: Jerarquía de contraste
+El proceso editorial MUST priorizar documentos oficiales originales para actuaciones y resoluciones, declaraciones directas para la posición de sus emisores y Berria u otros medios en euskera para el contexto territorial, sin alterar la naturaleza de cada fuente.
+
+#### Scenario: Medios interpretan de forma distinta una resolución
+- **WHEN** dos coberturas periodísticas difieren sobre el alcance de una decisión judicial o institucional y no está disponible el documento original
+- **THEN** el contenido se mantiene pendiente o presenta únicamente formulaciones atribuidas y fechadas, sin elegir una interpretación como hecho acreditado
+
 ### Requirement: Propagación de revisión
 El sistema MUST permitir localizar todos los contenidos que usan una fuente o afirmación para revisarlos cuando cambie su validez o estado.
 

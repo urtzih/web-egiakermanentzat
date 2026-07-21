@@ -1,0 +1,11 @@
+.env
+.DS_Store
+Thumbs.db
+wp-content/uploads/
+wp-content/cache/
+wp-content/upgrade/
+*.log
+
+# Restricted source documents are never versioned or mounted publicly.
+docs/discovery/restricted/**
+!docs/discovery/restricted/**/README.md

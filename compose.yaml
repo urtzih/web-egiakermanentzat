@@ -1,0 +1,74 @@
+name: kermanentzat-prototype
+
+services:
+  db:
+    image: mariadb:11.8
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${WP_DB_NAME}
+      MARIADB_USER: ${WP_DB_USER}
+      MARIADB_PASSWORD: ${WP_DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${WP_DB_ROOT_PASSWORD}
+    command:
+      - --transaction-isolation=READ-COMMITTED
+      - --binlog-format=ROW
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  wordpress:
+    image: wordpress:7.0.2-php8.4-apache
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${WP_PORT}:80"
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: ${WP_DB_NAME}
+      WORDPRESS_DB_USER: ${WP_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WP_DB_PASSWORD}
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_ENVIRONMENT_TYPE', 'local');
+        define('DISALLOW_FILE_EDIT', true);
+        define('WP_HTTP_BLOCK_EXTERNAL', true);
+        define('WP_ACCESSIBLE_HOSTS', 'api.wordpress.org,downloads.wordpress.org');
+        define('AUTOMATIC_UPDATER_DISABLED', true);
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./wp-content/themes/kermanentzat-prototype:/var/www/html/wp-content/themes/kermanentzat-prototype
+      - ./wp-content/mu-plugins:/var/www/html/wp-content/mu-plugins
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost/wp-login.php >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  wpcli:
+    image: wordpress:cli-php8.4
+    user: "33:33"
+    depends_on:
+      db:
+        condition: service_healthy
+      wordpress:
+        condition: service_healthy
+    environment:
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: ${WP_DB_NAME}
+      WORDPRESS_DB_USER: ${WP_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WP_DB_PASSWORD}
+    volumes:
+      - wordpress_data:/var/www/html
+      - ./wp-content/themes/kermanentzat-prototype:/var/www/html/wp-content/themes/kermanentzat-prototype
+      - ./wp-content/mu-plugins:/var/www/html/wp-content/mu-plugins
+    profiles: ["tools"]
+    entrypoint: ["wp"]
+
+volumes:
+  db_data:
+  wordpress_data:
