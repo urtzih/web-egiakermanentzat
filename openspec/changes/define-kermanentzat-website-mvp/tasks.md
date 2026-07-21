@@ -15,6 +15,8 @@
 - [x] 1.13 Dar a Ayuda y donaciones una cabecera gráfica propia, responsive y respetuosa con reducción de movimiento
 - [x] 1.14 Revisar la voz narrativa ES/EU para que memoria, reivindicación, misión y apoyo hablen en primera persona plural, manteniendo neutral la cronología institucional
 - [x] 1.15 Sustituir la señal concéntrica de Ayuda por una cabecera tipográfica coherente y priorizar la transferencia como primer bloque de contenido
+- [x] 1.16 Corregir el lema bilingüe del pie para expresar memoria y compromiso mediante dos frases completas
+- [x] 1.17 Añadir un crédito técnico bilingüe y discreto a saretu.es en el pie
 
 ## 2. Decisiones bloqueantes antes de producción
 

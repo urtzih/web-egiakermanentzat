@@ -648,6 +648,15 @@ body.admin-bar .mobile-nav[open] nav { top: calc(4.5rem + 32px); }
 .site-footer__meta { display: flex; flex-wrap: wrap; gap: .7rem 1.5rem; font-size: .8rem; font-weight: 700; text-transform: uppercase; }
 .site-footer__meta a { text-underline-offset: .2em; }
 .site-footer p { margin: 0; color: #ccc; font-size: .82rem; }
+.site-footer__closing { max-width: var(--reading-max); }
+.site-footer p .site-footer__credit {
+  display: inline;
+  margin-left: .45rem;
+  color: #777;
+  line-height: 1.4;
+}
+.site-footer__credit a { text-underline-offset: .2em; }
+.site-footer__credit a:hover { color: #fff; }
 
 .js [data-reveal] { opacity: 1; transform: none; }
 .js [data-reveal].reveal-ready { opacity: .001; transform: translateY(1.25rem); }

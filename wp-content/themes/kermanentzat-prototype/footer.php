@@ -10,7 +10,12 @@ $language = kermanentzat_language();
         <a href="mailto:justiziakermanentzat@gmail.com">justiziakermanentzat@gmail.com</a>
         <a href="https://www.instagram.com/justizia.kermanentzat/" target="_blank" rel="noopener noreferrer">Instagram · @justizia.kermanentzat</a>
     </div>
-    <p><?php echo $language === 'eu' ? 'Kermanen memoria, egia, justizia eta erreparazioa.' : 'Memoria de Kerman, verdad, justicia y reparación.'; ?></p>
+    <div class="site-footer__closing">
+        <p>
+            <?php echo $language === 'eu' ? 'Kermanen oroimenez. Egiaren, justiziaren eta erreparazioaren alde.' : 'En memoria de Kerman. Por la verdad, la justicia y la reparación.'; ?>
+            <span class="site-footer__credit"><?php if ($language === 'eu') : ?><a href="https://saretu.es" target="_blank" rel="noopener noreferrer">Saretu.es</a>-ek sortua.<?php else : ?>Creada por <a href="https://saretu.es" target="_blank" rel="noopener noreferrer">Saretu.es</a>.<?php endif; ?></span>
+        </p>
+    </div>
 </footer>
 <?php wp_footer(); ?>
 </body>
