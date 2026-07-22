@@ -87,6 +87,14 @@ Las gráficas familiares ES/EU se conservarán como referencia con hash y contex
 
 Alternativa: publicar el cartel completo como imagen o transcripción única. Mantendría la forma original, pero sería difícil de leer en móvil, inaccesible, poco actualizable y confundiría un estado procesal de 2025 con la situación vigente.
 
+### 9.1. El discurso del Palacio Europa dirige el resumen público
+
+La presentación familiar del Palacio de Congresos Europa (`SRC-055`) será la fuente editorial principal del relato público. Se conservarán su contundencia y su secuencia —agresión, instrucción, cambio del recorrido judicial, respuesta institucional y reivindicación—, transformándolas en HTML accesible y bilingüe. Las presentaciones `SRC-056`, el informe `SRC-057` y la intervención `SRC-058` sirven de ampliación y contraste.
+
+La web no reproducirá los PDF ni sus fotogramas. Cuando el texto interprete las grabaciones hablará en primera persona plural —«observamos», «consideramos relevante»— y limitará la conclusión a lo visible. Las resoluciones, la información forense y las actuaciones institucionales se narrarán con voz neutral. Hipótesis sobre apuestas, trama, preparación colectiva, encubrimiento o intenciones no resueltas permanecerán en el registro interno como no publicables.
+
+El resumen tendrá siete movimientos: mensaje principal; qué ocurrió aquella noche; lo que recogió la instrucción; cambio en el recorrido judicial; advertencias y respuesta institucional; cronología esencial; y por qué seguimos. La cronología será textual y sobria, no interactiva, y no mostrará una bibliografía pública en el MVP.
+
 ### 10. Versión final del MVP local antes del despliegue
 
 El resultado implementado será la versión final del MVP en el WordPress local, marcada `noindex` por la configuración del entorno hasta su despliegue. Incluirá las cuatro páginas, rutas ES/EU, navegación, selector de idioma, transferencia bancaria real, contacto, estados responsive y movimiento reducido. No tendrá rótulos visibles de prototipo, borrador o contenido desactivado.

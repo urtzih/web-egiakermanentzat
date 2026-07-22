@@ -39,6 +39,17 @@ El caso MUST ofrecer un resumen y una evolución esencial comprensibles. La memo
 - **WHEN** un bloque describe una fecha, resolución o actuación de un órgano oficial
 - **THEN** la redacción permanece neutral, identifica el órgano correspondiente y no adopta la primera persona de la familia o la asociación
 
+### Requirement: Discurso del Palacio Europa como guía editorial
+El resumen del caso MUST trasladar el discurso de `SRC-055` mediante una estructura accesible de siete capas: mensaje principal, noche de los hechos, instrucción, cambio judicial, respuesta institucional, cronología esencial y continuidad de la reivindicación. `SRC-056`–`SRC-058` MAY ampliar y contrastar ese relato, pero no MUST introducir como hechos hipótesis sin respaldo suficiente.
+
+#### Scenario: Adaptación de la lectura de las grabaciones
+- **WHEN** el resumen explica la retención, la espera, los gestos previos o la conducta posterior observados por la familia
+- **THEN** usa primera persona plural o una atribución inequívoca, no muestra fotogramas y no afirma una trama, preparación colectiva o intención individual como hecho resuelto
+
+#### Scenario: Adaptación de la fase judicial
+- **WHEN** el resumen explica la instrucción, la Audiencia Provincial, el recurso o el Tribunal Supremo
+- **THEN** identifica el órgano, el alcance y el estado de cada actuación con voz neutral, y separa después la valoración y reivindicación en primera persona plural
+
 ### Requirement: Obstáculos denunciados con trazabilidad
 El caso MUST poder explicar los obstáculos legales, procesales o institucionales que la familia y la asociación denuncian, separando la existencia documentada de cada actuación de la valoración que realizan sobre ella.
 

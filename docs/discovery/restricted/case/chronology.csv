@@ -1,0 +1,12 @@
+event_id,date_or_period,title_es,title_eu,nature,sources,status,public_copy
+EVT-001,2024-05,"Advertencias previas","Aurretiko ohartarazpenak",antecedente institucional,"SRC-057 pp. 4-7; SRC-058 pp. 2-3; Ararteko 2026R-1367-25",parcialmente verificado,"Publicar solo que existían actuaciones y advertencias previas; sin atribuir causalidad directa."
+EVT-002,2025-02-23,"Muerte de Kerman","Kermanen heriotza",hecho documentado,"SRC-055 pp. 3-15; SRC-029; SRC-026",verificado,"Publicable."
+EVT-003,2025-02-25,"Prisión provisional","Behin-behineko espetxeratzea",actuación judicial,"SRC-029; SRC-026",verificado,"Publicable."
+EVT-004,2025-09-30,"Resolución del juzgado instructor","Instrukzio-epaitegiaren ebazpena",actuación judicial,"SRC-055 pp. 17-22; SRC-029 publicado 2025-10-03",verificado por cobertura; auto original pendiente,"Publicar con órgano, alcance y carácter no firme."
+EVT-005,2025-11-26,"Decisión de la Audiencia Provincial","Probintzia Auzitegiaren erabakia",actuación judicial,"SRC-055 pp. 28-32; SRC-026; SRC-036",verificado por varias coberturas; auto original pendiente,"Publicar de forma neutral."
+EVT-006,2026-01,"Recurso de la familia ante el Supremo","Familiaren helegitea Auzitegi Gorenean",actuación procesal,"SRC-026; SRC-036",verificado,"Publicable sin día exacto mientras no conste el escrito original."
+EVT-007,2026-02-18,"Comparecencia en el Parlamento Vasco","Eusko Legebiltzarreko agerraldia",actuación institucional,"SRC-027; SRC-033; SRC-034",verificado,"Publicable."
+EVT-008,2026-04-30,"Inadmisión del recurso","Helegitea ez onartzea",actuación judicial,"SRC-026; SRC-036; SRC-055 pp. 33-35",verificado,"Publicar que no se entró en el fondo."
+EVT-009,2026-05-25,"Recomendación del Ararteko","Arartekoaren gomendioa",actuación oficial,"Resolución Ararteko 2026R-1367-25; SRC-058",verificado,"Publicable."
+EVT-010,2026-06,"Presentación de Egia Kermanentzat","Egia Kermanentzaten aurkezpena",hito asociativo,"SRC-025; SRC-032; SRC-055; SRC-056",verificado; diferenciar actos de junio,"Publicar como un único hito mensual para evitar confundir fechas de presentaciones."
+EVT-011,2026-07-08,"Comisión municipal de Seguridad","Udaleko Segurtasun Batzordea",actuación institucional,"SRC-037; SRC-058",verificado,"Publicable como intervención de la familia y la asociación."

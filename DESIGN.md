@@ -38,6 +38,7 @@ No se usan crema, beige, degradados ni colores adicionales. La naturaleza editor
 - Hero memoria primero: retrato original autorizado y nombre/mensaje en dos campos complementarios.
 - Segunda escena: bloque documental con un titular display contundente y cuerpo sobrio; la naturaleza editorial se explica solo cuando evita una confusión real, no mediante una etiqueta repetida sobre cada mensaje propio.
 - Tercera escena: apoyo y contacto sobre negro/blanco, con rojo reservado a la acción principal.
+- El resumen del caso se organiza como un relato editorial largo en siete escenas: mensaje principal, noche de los hechos, instrucción, cambio judicial, respuesta institucional, cronología esencial y continuidad de la reivindicación. Alterna bandas claras, suaves y oscuras para orientar la lectura sin convertir cada afirmación en una tarjeta.
 - En móvil todo fluye en una columna. En escritorio, hero y bloques documentales pueden usar dos columnas asimétricas.
 - Objetivos táctiles mínimos de 44 × 44 px.
 

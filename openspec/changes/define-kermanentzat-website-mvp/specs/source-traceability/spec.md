@@ -14,6 +14,17 @@ Cada afirmación sensible MUST tener `CLM-###`, texto exacto, naturaleza, sensib
 - **WHEN** una afirmación no dispone de respaldo y aprobación requeridos
 - **THEN** permanece no publicable y aparece internamente como pendiente de verificación
 
+#### Scenario: Afirmación extraída de una presentación familiar
+- **WHEN** un editor adapta una afirmación procedente de `SRC-055`–`SRC-058`
+- **THEN** registra el documento y la página exacta, diferencia declaración o interpretación de hecho acreditado y conserva no publicables las hipótesis sin respaldo suficiente
+
+### Requirement: Corpus familiar restringido
+Los originales `SRC-055`–`SRC-058` MUST permanecer fuera de rutas públicas y del CMS público. El sistema editorial MUST conservar sus hashes, metadatos, sensibilidad y relación con cada afirmación derivada.
+
+#### Scenario: Presentación con fotogramas de videovigilancia
+- **WHEN** una presentación familiar contiene CCTV, personas identificables o extractos procesales
+- **THEN** el original permanece restringido y la web solo utiliza texto derivado, minimizado, trazado y aprobado
+
 ### Requirement: Atribución de naturaleza
 Todo contenido factual o valorativo MUST registrar una de las naturalezas editoriales definidas y la interfaz pública MUST comunicarla cuando sea necesaria para evitar confusión.
 

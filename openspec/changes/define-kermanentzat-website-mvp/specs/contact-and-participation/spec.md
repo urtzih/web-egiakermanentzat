@@ -7,6 +7,10 @@ El sitio MUST explicar que el correo confirmado atiende contacto general, prensa
 - **WHEN** una periodista busca contacto de prensa
 - **THEN** encuentra el correo confirmado y una indicación para identificar la consulta de prensa sin depender de redes sociales
 
+#### Scenario: Persona quiere aportar información o documentación
+- **WHEN** una persona desea colaborar con información relacionada con el caso
+- **THEN** encuentra el correo y una advertencia para no enviar inicialmente datos personales o documentación sensible hasta acordar un canal adecuado
+
 ### Requirement: Correo público operable sin formulario
 El MVP MUST mostrar `justiziakermanentzat@gmail.com` como correo público confirmado mientras no exista una dirección del dominio oficial y no MUST incluir formulario. La operación MUST definir acceso individual o controlado, MFA, recuperación y responsables antes del lanzamiento.
 

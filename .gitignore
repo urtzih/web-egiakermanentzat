@@ -11,5 +11,11 @@ wp-content/upgrade/
 .codex/skills/
 
 # Restricted source documents are never versioned or mounted publicly.
+# Only inventories and editorial control files are versioned; original binaries stay local.
 docs/discovery/restricted/**
+!docs/discovery/restricted/
+!docs/discovery/restricted/**/
 !docs/discovery/restricted/**/README.md
+!docs/discovery/restricted/**/manifest.csv
+!docs/discovery/restricted/**/claims.csv
+!docs/discovery/restricted/**/chronology.csv

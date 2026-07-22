@@ -28,6 +28,10 @@ Vídeo de vigilancia, fotogramas de hechos violentos y piezas narrativas sensibl
 - **WHEN** un usuario intenta registrar un fotograma de vigilancia para portada o noticia
 - **THEN** el flujo lo rechaza como no publicable y registra la razón
 
+#### Scenario: PDF familiar con CCTV incrustado
+- **WHEN** un original restringido como `SRC-055`, `SRC-056` o `SRC-057` contiene fotogramas y personas identificables
+- **THEN** el PDF completo permanece fuera del CMS público y ningún fotograma se exporta como derivado web
+
 ### Requirement: Integridad y derivados
 La biblioteca MUST conservar hash del archivo de referencia y MUST crear derivados de trabajo separados solo después de aprobar derechos, tratamiento y finalidad.
 

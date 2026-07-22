@@ -19,6 +19,7 @@
 - [x] 1.17 Añadir un crédito técnico bilingüe y discreto a saretu.es en el pie
 - [x] 1.18 Adaptar la portada móvil y tablet al viewport útil, limitando la altura del retrato y manteniendo visibles ambas acciones
 - [x] 1.19 Versionar CSS y JavaScript con su modificación real para evitar que la caché oculte iteraciones del frontend
+- [x] 1.20 Archivar `SRC-055`–`SRC-058`, crear el mapa `CLM` y trasladar el discurso del Palacio Europa al resumen ES/EU sin publicar CCTV ni hipótesis no acreditadas
 
 ## 2. Decisiones bloqueantes antes de producción
 
@@ -54,7 +55,7 @@
 - [ ] 5.3 Implementar presentación diferenciada para hecho, fuente oficial, prensa, declaración, testimonio, opinión, reivindicación y pendiente
 - [ ] 5.4 Cargar y aprobar contenidos ES/EU con fuentes, fechas, revisiones y correcciones
 - [ ] 5.5 Auditar paridad completa y bloqueo de traducciones no revisadas
-- [ ] 5.6 Construir el resumen con relato verificable, evolución judicial y obstáculos denunciados; conservar fuentes, revisión y correcciones internamente y diferir su página pública a fase 2
+- [x] 5.6 Construir el resumen con relato verificable, evolución judicial y obstáculos denunciados; conservar fuentes, revisión y correcciones internamente y diferir su página pública a fase 2
 
 ## 6. Contacto y apoyo
 

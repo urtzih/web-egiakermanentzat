@@ -1,6 +1,6 @@
 # 03 — Contenido, relato y modelo editorial del caso
 
-Fecha de revisión: 2026-07-20.
+Fecha de revisión: 2026-07-22.
 
 Leyenda: `CONFIRMADO` · `HIPÓTESIS` · `PENDIENTE DE VERIFICACIÓN` · `DECISIÓN NECESARIA` · `RIESGO` · `FUENTE NECESARIA`.
 
@@ -32,6 +32,14 @@ Leyenda: `CONFIRMADO` · `HIPÓTESIS` · `PENDIENTE DE VERIFICACIÓN` · `DECISI
 
 Las gráficas no se usarán como cuerpo principal porque su texto no es adaptable, accesible ni actualizable. Podrán ofrecerse como manifiesto histórico descargable junto a una transcripción ES/EU derivada de `AST-016`. El documento editable acredita el contenido entregado por la familia, pero no demuestra por sí solo las afirmaciones factuales o jurídicas que contiene.
 
+`CONFIRMADO` La familia ha indicado el 2026-07-22 que `SRC-055`, la presentación del Palacio de Congresos Europa, es el discurso principal que desea trasladar a la web. Su estructura —agresión, recorrido judicial, respuesta institucional y reivindicación— dirige desde ahora el resumen público. `SRC-056`, `SRC-057` y `SRC-058` amplían y contrastan ese discurso.
+
+La adaptación de `SRC-055` se organiza en siete capas: mensaje principal; qué ocurrió aquella noche; lo que recogió la instrucción; cambio en el recorrido judicial; advertencias y respuesta institucional; cronología esencial; y por qué seguimos. Las lecturas de las grabaciones se expresan mediante primera persona plural y no se acompañan de fotogramas. Las actuaciones oficiales conservan voz neutral.
+
+`CONFIRMADO` El mapa inicial de afirmaciones y la cronología se conservan en [`claims.csv`](./restricted/case/claims.csv) y [`chronology.csv`](./restricted/case/chronology.csv). Los originales y su [`manifest.csv`](./restricted/case/manifest.csv) permanecen en el archivo restringido.
+
+`RIESGO` `SRC-055` y `SRC-057` incluyen hipótesis sobre una trama, apuestas, preparación colectiva y encubrimiento. Esos extremos están registrados como no publicables mientras no exista investigación o resolución suficiente que los respalde.
+
 `CONFIRMADO` No se dispone de la fecha original del manifiesto y obtenerla no es un requisito para usarlo como referencia creativa y editorial. Si se publica la pieza original, se indicará de forma transparente «fecha original no confirmada» o se omitirá su datación sin inferirla; el resumen actual tendrá siempre su propia fecha de revisión.
 
 ### Grupos iniciales de afirmaciones de `SRC-039`
@@ -46,9 +54,9 @@ Las gráficas no se usarán como cuerpo principal porque su texto no es adaptabl
 | Responsabilidad institucional/empresarial | Conocimiento previo, inacción, impunidad o encubrimiento denunciados. | Declaración de la asociación separada de hechos documentados. |
 | Lema y valoración | «Kerman no murió, lo mataron» y valoración de la fianza/justicia. | Mensaje destacado y atribuido a familia/asociación, no titular factual neutral. |
 
-`RIESGO` El manifiesto usa referencias relativas y refleja el estado procesal de finales de 2025. Cualquier adaptación debe incorporar las actuaciones de 2026 y una fecha visible de última revisión.
+`RIESGO` El manifiesto usa referencias relativas y refleja el estado procesal de finales de 2025. Cualquier adaptación debe incorporar las actuaciones de 2026 y conservar internamente la fecha de revisión.
 
-`PENDIENTE DE VERIFICACIÓN` No existe todavía una narración aprobada ni una cronología documental entregada. No se redactan aquí hechos definitivos sobre la muerte o responsabilidades.
+`CONFIRMADO` Existe una narración familiar prioritaria y una cronología inicial entregada. La aprobación de la familia permite elaborar el borrador público, pero los autos, la autopsia, los atestados y el análisis policial originales siguen pendientes para elevar su soporte documental.
 
 ## Taxonomía de naturaleza
 
@@ -57,7 +65,7 @@ Las gráficas no se usarán como cuerpo principal porque su texto no es adaptabl
 | Hecho acreditado | Dato respaldado por documento suficiente y revisado. | Texto directo, fuente y fecha. |
 | Fuente oficial | Resolución o actuación de autoridad/institución competente. | Organismo, tipo, fecha, estado/firmeza cuando aplique. |
 | Información periodística | Dato atribuido a un medio identificado. | “Según…” y enlace; no convertir en hecho propio sin contraste. |
-| Declaración de la asociación | Posición aprobada por la asociación. | Caja/etiqueta de “Posición de la asociación”. |
+| Declaración de la asociación | Posición aprobada por la asociación. | Primera persona plural y atribución natural cuando sea necesaria; sin rótulo repetitivo. |
 | Testimonio | Relato de una persona identificada o anonimizada con consentimiento. | Atribución, contexto, límites y fecha. |
 | Opinión | Valoración explícita. | Autoría visible; nunca mezclada con el resumen factual. |
 | Reivindicación | Petición o demanda social. | Verbo de acción y emisor; no conclusión jurídica. |
@@ -73,17 +81,13 @@ Las gráficas no se usarán como cuerpo principal porque su texto no es adaptabl
 - Contrastar el estado procesal entre al menos una fuente periodística prioritaria y el documento oficial disponible.
 - Si falta el documento oficial o existen interpretaciones distintas, publicar únicamente una formulación atribuida y fechada o mantener el dato pendiente.
 
-`PENDIENTE DE VERIFICACIÓN` Auto del Tribunal Supremo, autos del Juzgado de Instrucción y de la Audiencia Provincial, expediente parlamentario y resolución del Ararteko.
+`PENDIENTE DE VERIFICACIÓN` Autos del Tribunal Supremo, Juzgado de Instrucción y Audiencia Provincial, autopsia, atestados, análisis policial de imágenes, expediente parlamentario y acta/vídeo municipal. La resolución 2026R-1367-25 del Ararteko ya está localizada como fuente oficial.
 
 ## Registro `CLM-###`
 
 Campos mínimos: ID; afirmación exacta; sensibilidad; categoría; fuente(s) `SRC-###`; extracto o ubicación en fuente; estado (`borrador`, `verificada`, `disputada`, `retirada`); redactor; revisor factual; revisión jurídica; fecha de última revisión; versión ES/EU; aprobador; páginas donde aparece; correcciones.
 
-Ejemplo no factual:
-
-| ID | Texto | Naturaleza | Fuente | Estado |
-|---|---|---|---|---|
-| CLM-001 | `[Afirmación sensible pendiente]` | PENDIENTE DE VERIFICACIÓN | FUENTE NECESARIA | No publicable |
+El registro inicial `CLM-001`–`CLM-016` se encuentra en [`restricted/case/claims.csv`](./restricted/case/claims.csv). Incluye tanto las afirmaciones que sostienen el resumen como las hipótesis que deben permanecer expresamente fuera del contenido público.
 
 ## Plantilla de pieza editorial
 
