@@ -4,6 +4,7 @@ description: Update an OpenSpec change by revising its existing planning artifac
 allowed-tools: Bash(openspec:*)
 license: MIT
 metadata:
+  compatibility: Requires openspec CLI.
   author: openspec
   version: "1.0"
   generatedBy: "1.6.0"

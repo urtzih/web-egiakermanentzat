@@ -4,6 +4,7 @@ description: Enter explore mode - a thinking partner for exploring ideas, invest
 allowed-tools: Bash(openspec:*)
 license: MIT
 metadata:
+  compatibility: Requires openspec CLI.
   author: openspec
   version: "1.0"
   generatedBy: "1.6.0"
@@ -11,7 +12,7 @@ metadata:
 
 Enter explore mode. Think deeply. Visualize freely. Follow the conversation wherever it goes.
 
-**IMPORTANT: Explore mode is for thinking, not implementing.** You may read files, search code, and investigate the codebase, but you must NEVER write code or implement features. If the user asks you to implement something, remind them to exit explore mode first and create a change proposal. You MAY create OpenSpec artifacts (proposals, designs, specs) if the user asks-that's capturing thinking, not implementing.
+**IMPORTANT: Explore mode is for thinking, not implementing.** You may read files, search code, and investigate the codebase, but you must NEVER write code or implement features. If the user asks you to implement something, remind them to exit explore mode first and create a change proposal. You MAY create OpenSpec artifacts (proposals, designs, specs) if the user asks—that's capturing thinking, not implementing.
 
 **This is a stance, not a workflow.** There are no fixed steps, no required sequence, no mandatory outputs. You're a thinking partner helping the user explore.
 
@@ -54,20 +55,20 @@ Depending on what the user brings, you might:
 
 **Visualize**
 ```
-+-----------------------------------------+
-|     Use ASCII diagrams liberally        |
-+-----------------------------------------+
-|                                         |
-|      +--------+         +--------+      |
-|      | State  |--------| State  |      |
-|      |   A    |         |   B    |      |
-|      +--------+         +--------+      |
-|                                         |
-|   System diagrams, state machines,      |
-|   data flows, architecture sketches,    |
-|   dependency graphs, comparison tables  |
-|                                         |
-+-----------------------------------------+
+┌─────────────────────────────────────────┐
+│     Use ASCII diagrams liberally        │
+├─────────────────────────────────────────┤
+│                                         │
+│      ┌────────┐         ┌────────┐      │
+│      │ State  │────────▶│ State  │      │
+│      │   A    │         │   B    │      │
+│      └────────┘         └────────┘      │
+│                                         │
+│   System diagrams, state machines,      │
+│   data flows, architecture sketches,    │
+│   dependency graphs, comparison tables  │
+│                                         │
+└─────────────────────────────────────────┘
 ```
 
 **Surface risks and unknowns**
@@ -153,17 +154,17 @@ User: I'm thinking about adding real-time collaboration
 You: Real-time collab is a big space. Let me think about this...
 
       COLLABORATION SPECTRUM
-      ============================================
+      ════════════════════════════════════════════
 
       Awareness          Coordination         Sync
-          |                   |                 |
-                                              
-      +--------+         +--------+        +--------+
-      |Presence|         |Cursors |        |  CRDT  |
-      |  "3    |         | Multi  |        |Conflict|
-      |online" |         | select |        |  free  |
-      +--------+         +--------+        +--------+
-          |                   |                 |
+          │                   │                 │
+          ▼                   ▼                 ▼
+      ┌────────┐         ┌────────┐        ┌────────┐
+      │Presence│         │Cursors │        │  CRDT  │
+      │  "3    │         │ Multi  │        │Conflict│
+      │online" │         │ select │        │  free  │
+      └────────┘         └────────┘        └────────┘
+          │                   │                 │
        trivial            moderate           complex
 
       Where's your head at?
@@ -175,27 +176,27 @@ User: The auth system is a mess
 
 You: [reads codebase]
 
-     +---------------------------------------------+
-     |              CURRENT AUTH FLOW              |
-     +---------------------------------------------+
-                        |
-          +-------------+-------------+
-                                    
-     +---------+  +---------+  +---------+
-     | Google  |  |  GitHub |  |  Email  |
-     |  OAuth  |  |  OAuth  |  |  Magic  |
-     +----+----+  +----+----+  +----+----+
-          |             |             |
-          +-------------+-------------+
-                        
-                  +-----------+
-                  |  Session  |
-                  +-----+-----+
-                        |
-                        
-                  +-----------+
-                  |   Perms   |
-                  +-----------+
+     ┌─────────────────────────────────────────────┐
+     │              CURRENT AUTH FLOW              │
+     └─────────────────────────────────────────────┘
+                        │
+          ┌─────────────┼─────────────┐
+          ▼             ▼             ▼
+     ┌─────────┐  ┌─────────┐  ┌─────────┐
+     │ Google  │  │  GitHub │  │  Email  │
+     │  OAuth  │  │  OAuth  │  │  Magic  │
+     └────┬────┘  └────┬────┘  └────┬────┘
+          │             │             │
+          └─────────────┼─────────────┘
+                        ▼
+                  ┌───────────┐
+                  │  Session  │
+                  └─────┬─────┘
+                        │
+                        ▼
+                  ┌───────────┐
+                  │   Perms   │
+                  └───────────┘
 
      I see three tangles. Which one's burning?
 ```
@@ -227,19 +228,19 @@ User: A CLI tool that tracks local dev environments
 
 You: That changes everything.
 
-     +-------------------------------------------------+
-     |          CLI TOOL DATA STORAGE                  |
-     +-------------------------------------------------+
+     ┌─────────────────────────────────────────────────┐
+     │          CLI TOOL DATA STORAGE                  │
+     └─────────────────────────────────────────────────┘
 
      Key constraints:
-      No daemon running
-      Must work offline
-      Single user
+     • No daemon running
+     • Must work offline
+     • Single user
 
                   SQLite          Postgres
-     Deployment   embedded       needs server 
-     Offline      yes            no 
-     Single file  yes            no 
+     Deployment   embedded ✓      needs server ✗
+     Offline      yes ✓           no ✗
+     Single file  yes ✓           no ✗
 
      SQLite. Not even close.
 

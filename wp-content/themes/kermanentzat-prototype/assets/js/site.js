@@ -1,6 +1,11 @@
 (() => {
   const body = document.body;
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const tickerTracks = document.querySelectorAll('.campaign-ticker__track');
+  const copyButtons = document.querySelectorAll('[data-copy-value]');
+  const revealItems = !reduceMotion.matches && 'IntersectionObserver' in window
+    ? [...document.querySelectorAll('[data-reveal]')]
+    : [];
 
   if (!reduceMotion.matches) {
     window.requestAnimationFrame(() => body.classList.add('motion-ready'));
@@ -39,7 +44,7 @@
     syncMobileNav();
   }
 
-  document.querySelectorAll('[data-copy-value]').forEach((button) => {
+  copyButtons.forEach((button) => {
     button.addEventListener('click', async () => {
       const value = button.dataset.copyValue;
       const feedback = document.querySelector(button.dataset.feedbackTarget || '');
@@ -52,8 +57,7 @@
     });
   });
 
-  if (!reduceMotion.matches && 'IntersectionObserver' in window) {
-    const items = [...document.querySelectorAll('[data-reveal]')];
+  if (revealItems.length) {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
@@ -62,15 +66,17 @@
       });
     }, { rootMargin: '0px 0px -8% 0px', threshold: .08 });
 
-    items.forEach((item) => {
+    revealItems.forEach((item) => {
       item.classList.add('reveal-ready');
       observer.observe(item);
     });
   }
 
-  document.addEventListener('visibilitychange', () => {
-    document.querySelectorAll('.campaign-ticker__track').forEach((track) => {
-      track.style.animationPlayState = document.hidden ? 'paused' : 'running';
+  if (tickerTracks.length) {
+    document.addEventListener('visibilitychange', () => {
+      tickerTracks.forEach((track) => {
+        track.style.animationPlayState = document.hidden ? 'paused' : 'running';
+      });
     });
-  });
+  }
 })();

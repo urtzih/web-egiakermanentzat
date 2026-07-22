@@ -79,6 +79,7 @@ Bloque de datos bancarios verificados con titular, IBAN, BIC, concepto recomenda
 ## Responsive behavior
 
 - Comprobaciones objetivo: 320, 390, 768, 1024 y 1440 px.
+- En móvil y tablet, el primer viewport útil contiene retrato, mensaje y las dos acciones principales; el retrato adapta su altura al `svh` disponible sin recortarse ni empujar botones fuera de la vista.
 - Menú móvil mediante `<details>` o botón/dialog semántico, sin interacción exclusiva de hover.
 - El retrato cambia de recorte con `object-position`, no de archivo ni de identidad.
 - Los encabezados nunca desbordan; `overflow-wrap` y escala específica protegen palabras largas.

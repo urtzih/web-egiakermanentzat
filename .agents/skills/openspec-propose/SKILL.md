@@ -4,6 +4,7 @@ description: Propose a new change with all artifacts generated in one step. Use 
 allowed-tools: Bash(openspec:*)
 license: MIT
 metadata:
+  compatibility: Requires openspec CLI.
   author: openspec
   version: "1.0"
   generatedBy: "1.6.0"
@@ -31,7 +32,7 @@ When ready to implement, run /opsx:apply
    Use the **AskUserQuestion tool** (open-ended, no preset options) to ask:
    > "What change do you want to work on? Describe what you want to build or fix."
 
-   From their description, derive a kebab-case name (e.g., "add user authentication" -> `add-user-auth`).
+   From their description, derive a kebab-case name (e.g., "add user authentication" → `add-user-auth`).
 
    **IMPORTANT**: Do NOT proceed without understanding what the user wants to build.
 

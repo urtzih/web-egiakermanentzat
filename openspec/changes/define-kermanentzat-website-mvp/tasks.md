@@ -17,10 +17,12 @@
 - [x] 1.15 Sustituir la señal concéntrica de Ayuda por una cabecera tipográfica coherente y priorizar la transferencia como primer bloque de contenido
 - [x] 1.16 Corregir el lema bilingüe del pie para expresar memoria y compromiso mediante dos frases completas
 - [x] 1.17 Añadir un crédito técnico bilingüe y discreto a saretu.es en el pie
+- [x] 1.18 Adaptar la portada móvil y tablet al viewport útil, limitando la altura del retrato y manteniendo visibles ambas acciones
+- [x] 1.19 Versionar CSS y JavaScript con su modificación real para evitar que la caché oculte iteraciones del frontend
 
 ## 2. Decisiones bloqueantes antes de producción
 
-- [ ] 2.1 Verificar `CEK1L0ZU0A` en el registro público cuando esté indexado; confirmar facultad de contratación, visibilidad del domicilio, relación de nombres, dominio y custodios
+- [ ] 2.1 Verificar el número registral mediante resolución o certificado oficial; confirmar facultad de contratación, visibilidad del domicilio, dominio y custodios sin publicar datos personales de representantes
 - [ ] 2.2 Entregar cronología, auto del Supremo, resoluciones previas, expediente parlamentario, resolución del Ararteko, `TXOSTENA`, comunicados y mapa inicial `SRC/CLM`
 - [ ] 2.3 Nombrar titulares y suplentes de revisión factual, jurídica, lingüística, editorial, técnica y tesorería
 - [ ] 2.4 Resolver derechos, consentimientos, marca y criterios de sensibilidad de los medios; priorizar `AST-017`/`AST-018`
@@ -65,7 +67,7 @@
 ## 7. Confianza, calidad y lanzamiento
 
 - [ ] 7.1 Implementar identidad pública mínima y contacto general/prensa; diferir dossier y biblioteca pública de prensa
-- [ ] 7.2 Implementar SEO bilingüe, sitemap, datos estructurados, redirecciones y tarjetas sociales aprobadas
+- [ ] 7.2 Implementar SEO bilingüe: títulos y descripciones únicos, `theme-color`, Open Graph/Twitter, `hreflang` completo, canonicals, sitemap de producción, redirecciones y JSON-LD basado en contenido visible; comenzar con `Organization` y tipos de página verificables, sin `BreadcrumbList`, `CreativeWork` ni tipos especulativos hasta que la interfaz los justifique
 - [ ] 7.3 Configurar analítica agregada y privacidad por defecto con retención y accesos documentados
 - [ ] 7.4 Completar auditoría WCAG 2.2 AA automática y manual, teclado y lector de pantalla
 - [ ] 7.5 Verificar rendimiento móvil, resiliencia, seguridad, logs, actualizaciones, backup, recuperación y plan de incidente

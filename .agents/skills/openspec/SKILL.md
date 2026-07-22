@@ -37,4 +37,4 @@ Run `openspec list --json` and, when a relevant active change exists, run `opens
 - Verify that `openspec` is available before the first CLI operation. If unavailable, report the missing CLI and stop the OpenSpec workflow.
 - Preserve any `--store <id>` argument required by the canonical workflow.
 - Use the current app's available user-input mechanism when a generated workflow mentions a tool name that is unavailable.
-- If `openspec update` regenerates workflows under `.codex/skills`, promote the updated workflow folders back into `.agents/skills` before relying on this router.
+- Treat `.agents/skills` as the only persistent source of truth for project skills. To refresh the generated OpenSpec workflows, run `powershell -ExecutionPolicy Bypass -File scripts/update-openspec-skills.ps1` from the project root. The script lets OpenSpec generate temporary Codex copies, validates and promotes the six core workflows into `.agents/skills`, and removes `.codex/skills` before it exits successfully. Do not run or commit a raw `openspec update` as the final update step.

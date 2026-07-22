@@ -23,7 +23,7 @@ Leyenda: `CONFIRMADO` · `HIPÓTESIS` · `PENDIENTE DE VERIFICACIÓN` · `DECISI
 - Los materiales que el responsable del proyecto identifique como procedentes de familia/asociación son referencias autorizadas para la voz y los borradores. La ausencia de fecha original no bloquea su uso editorial, aunque debe declararse si la pieza se publica como documento de época.
 - El primer lanzamiento se reduce a Inicio, Resumen del caso, Ayuda y donaciones y Contacto, más avisos legales en el pie y requisitos transversales ES/EU, trazabilidad, accesibilidad, seguridad y SEO.
 - Kerman tendrá una presencia humana breve en Inicio; su página biográfica, noticias, caso completo, cronología, documentación, asociación ampliada y prensa quedan para iteraciones posteriores.
-- El registro público vasco no devolvió resultados por nombre, NIF ni número comunicado el 2026-07-21, aunque la asociación ha facilitado `CEK1L0ZU0A`, estatutos, NIF y fecha de constitución. Se usará la documentación directa y se repetirá la consulta antes del lanzamiento.
+- El identificador registral incorporado durante el descubrimiento no cuenta con evidencia suficiente. Se ha retirado y la inscripción seguirá sin publicarse hasta comprobar una resolución o certificado oficial.
 - Las pancartas propias `AST-017` y `AST-018` refuerzan rojo `#FF3131` aproximado, negro, blanco, tipografía de campaña y retrato tramado como dirección visual.
 - La transferencia a la cuenta acreditada es el método de aportación confirmado y `justiziakermanentzat@gmail.com` es el contacto público provisional.
 - El MVP económico se limita a transferencia; tarjeta, Bizum y recurrencias quedan para una decisión posterior. Contacto será por correo sin formulario en el lanzamiento.

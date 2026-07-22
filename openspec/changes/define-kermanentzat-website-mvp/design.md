@@ -97,6 +97,8 @@ La primera comparación permitió elegir una única portada: B «Memoria primero
 
 La composición se construye mobile first. Hasta 1024 px mantiene una sola columna, palabras completas, botones táctiles y el retrato sin letras integradas. Solo cuando el contenido dispone de anchura real se activa la composición a dos columnas. La adaptación se valida como mínimo a 320, 390, 768, 1024 y 1440 px.
 
+En móvil y tablet, la portada ajusta el retrato mediante altura relativa al viewport pequeño (`svh`) para que el primer viewport útil, descontadas cabecera y franja, muestre el retrato, el mensaje y las dos acciones. El retrato conserva `object-fit: contain`; si el texto aumenta por preferencias de accesibilidad, la página puede crecer verticalmente antes que recortar u ocultar contenido.
+
 El movimiento se limita a una franja tipográfica, una entrada inicial orquestada, 2–4 revelados narrativos y respuestas pequeñas de interacción. El contenido será visible sin JavaScript y `prefers-reduced-motion` ofrecerá una composición estática equivalente. La revisión se hará en móvil, tablet y escritorio antes de elegir variante.
 
 La revisión posterior del 2026-07-21 selecciona B «Memoria primero» y autoriza consolidarla como versión final del MVP local. Se eliminan avisos de validación, se publica la transferencia verificada, se incorpora el resumen contrastado y se mantiene la atribución únicamente mediante redacción natural cuando sea necesaria para distinguir una valoración de una actuación documentada.

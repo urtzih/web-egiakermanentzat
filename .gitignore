@@ -6,6 +6,10 @@ wp-content/cache/
 wp-content/upgrade/
 *.log
 
+# OpenSpec generates Codex-specific copies here temporarily. Project skills
+# live canonically in .agents/skills and are synchronized by the update script.
+.codex/skills/
+
 # Restricted source documents are never versioned or mounted publicly.
 docs/discovery/restricted/**
 !docs/discovery/restricted/**/README.md

@@ -16,7 +16,7 @@ Leyenda: `CONFIRMADO` · `HIPÓTESIS` · `PENDIENTE DE VERIFICACIÓN` · `DECISI
 
 `PENDIENTE DE VERIFICACIÓN` Nombre legal completo, inscripción registral, NIF, domicilio, representación formal y relación jurídica entre **Justizia Kermanentzat** —iniciativa/cuenta social— y **Egia Kermanentzat Elkartea** —asociación—.
 
-`CONFIRMADO` Datos facilitados el 2026-07-21: nombre legal **Egia Kermanentzat Elkartea**; NIF `G93797744`; número registral comunicado `CEK1L0ZU0A`; domicilio estatutario en Bitoriano, Zuia (Araba); fecha de constitución comunicada 2026-07-14; presidenta Ainhoa Villate, secretario Roberto Villate y tesorero Joseba Garcia. Los estatutos y el certificado bancario respaldan parcialmente estos datos.
+`CONFIRMADO` Datos publicables facilitados: nombre legal **Egia Kermanentzat Elkartea**, NIF `G93797744` y domicilio estatutario en Bitoriano, Zuia (Araba). El número registral y los responsables operativos quedan pendientes de evidencia oficial y no deben publicarse mientras tanto.
 
 `DECISIÓN NECESARIA` Confirmar si el domicilio completo puede publicarse y qué persona/cargo tiene facultad formal para contratar dominio, alojamiento, CMS y proveedores. La relación editorial y de marca entre **Justizia Kermanentzat** y **Egia Kermanentzat Elkartea** sigue pendiente.
 

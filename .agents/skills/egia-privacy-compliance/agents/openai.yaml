@@ -1,0 +1,4 @@
+interface:
+  display_name: "Egia Privacy Compliance"
+  short_description: "Audita privacidad, cookies y textos legales bilingües de Egia."
+  default_prompt: "Revisa el inventario de servicios, decide si procede consentimiento y mantén sincronizados textos legales, versión y pruebas."

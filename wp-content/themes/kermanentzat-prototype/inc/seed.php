@@ -2,6 +2,8 @@
 
 defined('ABSPATH') || exit;
 
+require_once get_theme_file_path('inc/legal-content.php');
+
 /**
  * Idempotent bilingual MVP content seed.
  * Run with: wp eval-file wp-content/themes/kermanentzat-prototype/inc/seed.php
@@ -37,8 +39,13 @@ function kermanentzat_seed_page(string $title, string $slug, string $content, in
     return (int) $id;
 }
 
-$image = esc_url(get_theme_file_uri('assets/images/kerman-portrait-clean.png'));
-$email = 'justiziakermanentzat@gmail.com';
+$imagePng = esc_url(get_theme_file_uri('assets/images/kerman-portrait-clean.png'));
+$imageWebp = esc_url(get_theme_file_uri('assets/images/kerman-portrait-clean.webp'));
+$heroPictureEs = '<picture><source srcset="' . $imageWebp . '" type="image/webp"><img src="' . $imagePng . '" width="719" height="762" fetchpriority="high" loading="eager" decoding="async" alt="Retrato gráfico en blanco y negro de Kerman"></picture>';
+$heroPictureEu = '<picture><source srcset="' . $imageWebp . '" type="image/webp"><img src="' . $imagePng . '" width="719" height="762" fetchpriority="high" loading="eager" decoding="async" alt="Kermanen zuri-beltzeko erretratu grafikoa"></picture>';
+$caseArt = '<div class="page-hero__art" aria-hidden="true"><picture><source srcset="' . $imageWebp . '" type="image/webp"><img src="' . $imagePng . '" width="719" height="762" fetchpriority="high" loading="eager" decoding="async" alt=""></picture></div>';
+$legalConfig = kermanentzat_legal_config();
+$email = $legalConfig['email'];
 $instagram = 'https://www.instagram.com/justizia.kermanentzat/';
 $iban = 'ES0830350079270790062136';
 $ibanDisplay = 'ES08 3035 0079 2707 9006 2136';
@@ -50,7 +57,7 @@ $copyBankEu = esc_attr("Titularra: Egia Kermanentzat Elkartea\nIBAN: {$ibanDispl
 
 $homeEs = <<<HTML
 <section class="hero-shell hero-panel" aria-labelledby="memory-title-es">
-  <div class="hero-media"><img src="{$image}" width="719" height="762" fetchpriority="high" alt="Retrato gráfico en blanco y negro de Kerman"></div>
+  <div class="hero-media">{$heroPictureEs}</div>
   <div class="hero-copy">
     <p class="hero-kicker">Memoria · verdad · justicia</p>
     <h1 class="hero-title" id="memory-title-es">Kerman</h1>
@@ -74,7 +81,7 @@ HTML;
 
 $homeEu = <<<HTML
 <section class="hero-shell hero-panel" aria-labelledby="memory-title-eu">
-  <div class="hero-media"><img src="{$image}" width="719" height="762" fetchpriority="high" alt="Kermanen zuri-beltzeko erretratu grafikoa"></div>
+  <div class="hero-media">{$heroPictureEu}</div>
   <div class="hero-copy">
     <p class="hero-kicker">Memoria · egia · justizia</p>
     <h1 class="hero-title" id="memory-title-eu">Kerman</h1>
@@ -97,7 +104,7 @@ $homeEu = <<<HTML
 HTML;
 
 $caseEs = <<<HTML
-<header class="page-hero page-hero--case content-band--light"><div class="content-wrap"><h1>Resumen del caso</h1><p>Lo sucedido el 23 de febrero de 2025 y su recorrido judicial.</p></div></header>
+<header class="page-hero page-hero--case content-band--light">{$caseArt}<div class="content-wrap"><h1>Resumen del caso</h1><p>Lo sucedido el 23 de febrero de 2025 y su recorrido judicial.</p></div></header>
 <section class="content-band content-band--dark"><div class="content-wrap split-grid"><div><h2 class="campaign-heading"><span>Kerman no murió,</span><strong>lo mataron</strong></h2></div><div class="reading-copy"><p class="lead">Kerman Villate Beitia tenía 31 años. En la madrugada del 23 de febrero de 2025, un portero de la discoteca Mitika de Vitoria-Gasteiz le propinó un puñetazo. Kerman murió como consecuencia del golpe.</p><p>Quienes queríamos a Kerman reclamamos que su muerte se investigue y se juzgue con todas las garantías, y que se depuren las responsabilidades que correspondan.</p></div></div></section>
 <section class="content-band content-band--light"><div class="content-wrap split-grid"><div><h2 class="section-heading">El recorrido judicial</h2></div><div class="reading-copy"><div class="evidence-list">
   <div class="evidence-row"><strong>Febrero de 2025</strong><p>El Juzgado de Instrucción número 3 de Vitoria-Gasteiz acordó la prisión provisional del portero investigado.</p></div>
@@ -109,7 +116,7 @@ $caseEs = <<<HTML
 HTML;
 
 $caseEu = <<<HTML
-<header class="page-hero page-hero--case content-band--light"><div class="content-wrap"><h1>Kasuaren laburpena</h1><p>2025eko otsailaren 23an gertatutakoa eta haren ibilbide judiziala.</p></div></header>
+<header class="page-hero page-hero--case content-band--light">{$caseArt}<div class="content-wrap"><h1>Kasuaren laburpena</h1><p>2025eko otsailaren 23an gertatutakoa eta haren ibilbide judiziala.</p></div></header>
 <section class="content-band content-band--dark"><div class="content-wrap split-grid"><div><h2 class="campaign-heading"><span>Kerman ez zen hil,</span><strong>hil egin zuten</strong></h2></div><div class="reading-copy"><p class="lead">Kerman Villate Beitiak 31 urte zituen. 2025eko otsailaren 23ko goizaldean, Gasteizko Mitika dantzalekuko atezain batek ukabilkada bat eman zion. Kerman kolpearen ondorioz hil zen.</p><p>Kerman maite genuenok haren heriotza berme guztiekin ikertu eta epaitzea eskatzen dugu, eta dagozkion erantzukizunak argitzea.</p></div></div></section>
 <section class="content-band content-band--light"><div class="content-wrap split-grid"><div><h2 class="section-heading">Ibilbide judiziala</h2></div><div class="reading-copy"><div class="evidence-list">
   <div class="evidence-row"><strong>2025eko otsaila</strong><p>Gasteizko 3. Instrukzio Epaitegiak ikertutako atezaina behin-behinean espetxeratzea erabaki zuen.</p></div>
@@ -124,12 +131,14 @@ $supportEs = <<<HTML
 <header class="page-hero page-hero--support content-band--light"><div class="support-wordmark" aria-hidden="true">APOYA</div><div class="content-wrap"><span class="content-label content-label--campaign">Apoyo colectivo</span><h1>Ayuda y donaciones</h1><p>Ayúdanos a preservar la memoria de Kerman y a sostener nuestro trabajo colectivo.</p></div></header>
 <section class="content-band content-band--soft"><div class="content-wrap split-grid"><div><span class="content-label">Transferencia bancaria</span><h2 class="section-heading">Haz tu aportación directamente.</h2></div><div class="reading-copy"><div class="bank-preview"><dl><div><dt>Titular</dt><dd>Egia Kermanentzat Elkartea</dd></div><div><dt>IBAN</dt><dd><code>{$ibanDisplay}</code></dd></div><div><dt>BIC / SWIFT</dt><dd><code>{$bic}</code></dd></div><div><dt>Concepto recomendado</dt><dd><code>{$conceptEs}</code></dd></div></dl><div class="bank-actions"><button class="button button--primary" type="button" data-copy-value="{$iban}" data-feedback-target="#copy-bank-es" data-success-message="IBAN copiado.">Copiar IBAN</button><button class="button" type="button" data-copy-value="{$copyBankEs}" data-feedback-target="#copy-bank-es" data-success-message="Datos de transferencia copiados.">Copiar todos los datos</button></div><p class="copy-feedback" id="copy-bank-es" role="status" aria-live="polite"></p></div><p class="bank-note">Si necesitas un justificante o gestionar una incidencia o devolución, escribe a <a href="mailto:{$email}">{$email}</a>. Consulta antes de asumir que la aportación genera una deducción fiscal.</p></div></div></section>
 <section class="content-band content-band--light"><div class="content-wrap support-grid"><div class="support-callout">Tu apoyo <span>sostiene</span></div><div class="reading-copy"><h2 class="section-heading">Para qué se utilizan las aportaciones</h2><p>Las aportaciones nos permiten preservar y difundir la memoria de Kerman; dar a conocer el caso y sus actualizaciones; impulsar acciones informativas, sociales y de sensibilización; atender gastos jurídicos, técnicos, administrativos y de comunicación vinculados a nuestra actividad; y mantener nuestros canales de participación y apoyo.</p><p>Este es el destino general de los fondos; no establecemos una asignación porcentual cerrada.</p></div></div></section>
+<section class="content-band content-band--dark"><div class="content-wrap split-grid"><div><span class="content-label">Privacidad y transparencia</span><h2 class="section-heading">Información sobre tu aportación</h2></div><div class="reading-copy"><p>El receptor es Egia Kermanentzat Elkartea. La transferencia se destina a las finalidades generales descritas en esta página. La entidad bancaria nos comunicará los datos asociados a la operación; los utilizaremos para la gestión contable, fiscal y documental, y para atender justificantes, incidencias o devoluciones.</p><p>No prometemos que la aportación permita aplicar una deducción fiscal. Esa posibilidad queda pendiente de asesoría y de confirmar los requisitos legales de la asociación.</p><p>Consulta la <a href="/es/politica-de-privacidad/">política de privacidad</a> o escribe a <a href="mailto:{$email}">{$email}</a>.</p></div></div></section>
 HTML;
 
 $supportEu = <<<HTML
 <header class="page-hero page-hero--support content-band--light"><div class="support-wordmark" aria-hidden="true">BABESTU</div><div class="content-wrap"><span class="content-label content-label--campaign">Babes kolektiboa</span><h1>Lagundu eta ekarpenak</h1><p>Lagundu Kermanen memoria gordetzen eta gure lan kolektiboa sostengatzen.</p></div></header>
 <section class="content-band content-band--soft"><div class="content-wrap split-grid"><div><span class="content-label">Banku-transferentzia</span><h2 class="section-heading">Egin zure ekarpena zuzenean.</h2></div><div class="reading-copy"><div class="bank-preview"><dl><div><dt>Titularra</dt><dd>Egia Kermanentzat Elkartea</dd></div><div><dt>IBAN</dt><dd><code>{$ibanDisplay}</code></dd></div><div><dt>BIC / SWIFT</dt><dd><code>{$bic}</code></dd></div><div><dt>Gomendatutako kontzeptua</dt><dd><code>{$conceptEu}</code></dd></div></dl><div class="bank-actions"><button class="button button--primary" type="button" data-copy-value="{$iban}" data-feedback-target="#copy-bank-eu" data-success-message="IBANa kopiatu da.">Kopiatu IBANa</button><button class="button" type="button" data-copy-value="{$copyBankEu}" data-feedback-target="#copy-bank-eu" data-success-message="Transferentziaren datuak kopiatu dira.">Kopiatu datu guztiak</button></div><p class="copy-feedback" id="copy-bank-eu" role="status" aria-live="polite"></p></div><p class="bank-note">Egiaztagiria behar baduzu edo gorabehera nahiz itzulketa bat kudeatzeko, idatzi <a href="mailto:{$email}">{$email}</a> helbidera. Kontsultatu ekarpenak zerga-kenkaria sortzen duela ondorioztatu aurretik.</p></div></div></section>
 <section class="content-band content-band--light"><div class="content-wrap support-grid"><div class="support-callout">Zure babesak <span>eusten dio</span></div><div class="reading-copy"><h2 class="section-heading">Zertarako erabiltzen dira ekarpenak</h2><p>Ekarpenek aukera ematen digute Kermanen memoria gorde eta zabaltzeko; kasua eta haren eguneraketak ezagutarazteko; informazio-, gizarte- eta sentsibilizazio-ekintzak bultzatzeko; gure jarduerarekin lotutako gastu juridiko, tekniko, administratibo eta komunikaziokoak artatzeko; eta gure parte-hartze eta laguntza kanalak mantentzeko.</p><p>Hori da funtsen xede orokorra; ez dugu ehunekoen araberako esleipen itxirik ezartzen.</p></div></div></section>
+<section class="content-band content-band--dark"><div class="content-wrap split-grid"><div><span class="content-label">Pribatutasuna eta gardentasuna</span><h2 class="section-heading">Zure ekarpenari buruzko informazioa</h2></div><div class="reading-copy"><p>Hartzailea Egia Kermanentzat Elkartea da. Transferentzia orri honetan deskribatutako helburu orokorretara bideratzen da. Bankuak eragiketari lotutako datuak jakinaraziko dizkigu; kontabilitate-, zerga- eta dokumentazio-kudeaketarako eta egiaztagiriak, gorabeherak edo itzulketak artatzeko erabiliko ditugu.</p><p>Ez dugu agintzen ekarpenak zerga-kenkaria aplikatzeko aukera emango duenik. Aukera hori aholkularitzaren eta elkarteak lege-baldintzak betetzen dituela egiaztatzearen zain dago.</p><p>Ikusi <a href="/pribatutasun-politika/">pribatutasun-politika</a> edo idatzi <a href="mailto:{$email}">{$email}</a> helbidera.</p></div></div></section>
 HTML;
 
 $contactEs = <<<HTML
@@ -149,12 +158,19 @@ if ($legacyEuHome) {
 
 $es = kermanentzat_seed_page('Inicio', 'es', $homeEs);
 $eu = kermanentzat_seed_page('Hasiera', 'hasiera', $homeEu);
+$legalPages = kermanentzat_legal_pages();
 kermanentzat_seed_page('Resumen del caso', 'resumen-del-caso', $caseEs, $es);
 kermanentzat_seed_page('Ayuda y donaciones', 'ayuda-y-donaciones', $supportEs, $es);
 kermanentzat_seed_page('Contacto', 'contacto', $contactEs, $es);
+kermanentzat_seed_page('Aviso legal', 'aviso-legal', $legalPages['es']['legal'], $es);
+kermanentzat_seed_page('Política de privacidad', 'politica-de-privacidad', $legalPages['es']['privacy'], $es);
+kermanentzat_seed_page('Política de cookies', 'politica-de-cookies', $legalPages['es']['cookies'], $es);
 kermanentzat_seed_page('Kasuaren laburpena', 'kasuaren-laburpena', $caseEu);
 kermanentzat_seed_page('Lagundu eta ekarpenak', 'lagundu-eta-ekarpenak', $supportEu);
 kermanentzat_seed_page('Kontaktua', 'kontaktua', $contactEu);
+kermanentzat_seed_page('Lege-oharra', 'lege-oharra', $legalPages['eu']['legal']);
+$privacyEu = kermanentzat_seed_page('Pribatutasun-politika', 'pribatutasun-politika', $legalPages['eu']['privacy']);
+kermanentzat_seed_page('Cookie-politika', 'cookie-politika', $legalPages['eu']['cookies']);
 
 update_option('blogname', 'Egia Kermanentzat');
 update_option('blogdescription', 'Memoria, egia eta justizia');
@@ -162,6 +178,7 @@ update_option('blog_public', '0');
 update_option('show_on_front', 'page');
 update_option('page_on_front', $eu);
 update_option('page_for_posts', 0);
+update_option('wp_page_for_privacy_policy', $privacyEu);
 update_option('timezone_string', 'Europe/Madrid');
 update_option('date_format', 'd/m/Y');
 update_option('time_format', 'H:i');

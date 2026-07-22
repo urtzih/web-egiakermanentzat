@@ -4,6 +4,7 @@ description: Implement tasks from an OpenSpec change. Use when the user wants to
 allowed-tools: Bash(openspec:*)
 license: MIT
 metadata:
+  compatibility: Requires openspec CLI.
   author: openspec
   version: "1.0"
   generatedBy: "1.6.0"
@@ -73,13 +74,13 @@ Implement tasks from an OpenSpec change.
    - Show which task is being worked on
    - Make the code changes required
    - Keep changes minimal and focused
-   - Mark task complete in the tasks file: `- [ ]` -> `- [x]`
+   - Mark task complete in the tasks file: `- [ ]` → `- [x]`
    - Continue to next task
 
    **Pause if:**
-   - Task is unclear -> ask for clarification
-   - Implementation reveals a design issue -> suggest updating artifacts
-   - Error or blocker encountered -> report and wait for guidance
+   - Task is unclear → ask for clarification
+   - Implementation reveals a design issue → suggest updating artifacts
+   - Error or blocker encountered → report and wait for guidance
    - User interrupts
 
 7. **On completion or pause, show status**
@@ -97,11 +98,11 @@ Implement tasks from an OpenSpec change.
 
 Working on task 3/7: <task description>
 [...implementation happening...]
- Task complete
+✓ Task complete
 
 Working on task 4/7: <task description>
 [...implementation happening...]
- Task complete
+✓ Task complete
 ```
 
 **Output On Completion**
@@ -111,7 +112,7 @@ Working on task 4/7: <task description>
 
 **Change:** <change-name>
 **Schema:** <schema-name>
-**Progress:** 7/7 tasks complete 
+**Progress:** 7/7 tasks complete ✓
 
 ### Completed This Session
 - [x] Task 1
