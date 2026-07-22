@@ -170,6 +170,12 @@ function kermanentzat_meta_for_current_page(): array
     return $meta[$language][$key] ?? $meta[$language]['home'];
 }
 
+function kermanentzat_should_block_indexing(): bool
+{
+    $allow_local_indexing = defined('KERMANENTZAT_LOCAL_INDEXING') && KERMANENTZAT_LOCAL_INDEXING;
+    return wp_get_environment_type() !== 'production' && !$allow_local_indexing;
+}
+
 function kermanentzat_social_image_url(): string
 {
     return get_theme_file_uri('assets/images/kerman-portrait-clean.png');
@@ -246,6 +252,11 @@ add_action('wp_head', static function (): void {
     $title = $meta['title'];
     $description = $meta['description'];
     printf('<meta name="description" content="%s">', esc_attr($description));
+    if (kermanentzat_should_block_indexing()) {
+        echo '<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">';
+    } else {
+        echo '<meta name="robots" content="index, follow, max-snippet:150, max-image-preview:large">';
+    }
     echo '<meta name="theme-color" content="#090909">';
     printf('<link rel="canonical" href="%s">', esc_url($current_url));
     printf('<meta property="og:locale" content="%s">', esc_attr($language === 'es' ? 'es_ES' : 'eu_ES'));

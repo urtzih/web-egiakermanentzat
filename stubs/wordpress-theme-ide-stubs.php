@@ -98,6 +98,13 @@ if (!function_exists('get_theme_file_uri')) {
     }
 }
 
+if (!function_exists('get_theme_file_path')) {
+    function get_theme_file_path(string $file = ''): string
+    {
+        return $file;
+    }
+}
+
 if (!function_exists('home_url')) {
     function home_url(string $path = '', $scheme = null): string
     {
@@ -137,6 +144,13 @@ if (!function_exists('remove_query_arg')) {
     function remove_query_arg($key, $query = false): string
     {
         return '';
+    }
+}
+
+if (!function_exists('str_starts_with')) {
+    function str_starts_with(string $haystack, string $needle): bool
+    {
+        return $needle === '' || strpos($haystack, $needle) === 0;
     }
 }
 
