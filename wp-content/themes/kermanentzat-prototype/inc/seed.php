@@ -39,11 +39,11 @@ function kermanentzat_seed_page(string $title, string $slug, string $content, in
     return (int) $id;
 }
 
-$imagePng = esc_url(get_theme_file_uri('assets/images/kerman-portrait-clean.png'));
-$imageWebp = esc_url(get_theme_file_uri('assets/images/kerman-portrait-clean.webp'));
-$heroPictureEs = '<picture><source srcset="' . $imageWebp . '" type="image/webp"><img src="' . $imagePng . '" width="719" height="762" fetchpriority="high" loading="eager" decoding="async" alt="Retrato gráfico en blanco y negro de Kerman"></picture>';
-$heroPictureEu = '<picture><source srcset="' . $imageWebp . '" type="image/webp"><img src="' . $imagePng . '" width="719" height="762" fetchpriority="high" loading="eager" decoding="async" alt="Kermanen zuri-beltzeko erretratu grafikoa"></picture>';
-$caseArt = '<div class="page-hero__art" aria-hidden="true"><picture><source srcset="' . $imageWebp . '" type="image/webp"><img src="' . $imagePng . '" width="719" height="762" fetchpriority="high" loading="eager" decoding="async" alt=""></picture></div>';
+$imagePng = esc_url(wp_make_link_relative(get_theme_file_uri('assets/images/kerman-portrait-clean.png')));
+$imageWebp = esc_url(wp_make_link_relative(get_theme_file_uri('assets/images/kerman-portrait-clean.webp')));
+$heroPictureEs = '<picture><source srcset="' . $imageWebp . '" type="image/webp"><img src="' . $imagePng . '" width="717" height="762" fetchpriority="high" loading="eager" decoding="async" alt="Retrato gráfico en blanco y negro de Kerman"></picture>';
+$heroPictureEu = '<picture><source srcset="' . $imageWebp . '" type="image/webp"><img src="' . $imagePng . '" width="717" height="762" fetchpriority="high" loading="eager" decoding="async" alt="Kermanen zuri-beltzeko erretratu grafikoa"></picture>';
+$caseArt = '<div class="page-hero__art" aria-hidden="true"><picture><source srcset="' . $imageWebp . '" type="image/webp"><img src="' . $imagePng . '" width="717" height="762" fetchpriority="high" loading="eager" decoding="async" alt=""></picture></div>';
 $legalConfig = kermanentzat_legal_config();
 $email = $legalConfig['email'];
 $instagram = 'https://www.instagram.com/justizia.kermanentzat/';
