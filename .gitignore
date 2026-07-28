@@ -1,4 +1,6 @@
 .env
+.env.local
+.env.staging.local
 .DS_Store
 Thumbs.db
 wp-content/uploads/
