@@ -226,15 +226,15 @@ git -C "$repo" merge --ff-only "origin/$branch"
 compose_command up -d db wordpress
 wait_for_wordpress
 
-if ! compose_command --profile tools run --rm -T wpcli core is-installed; then
+if ! compose_command --profile tools run --rm --interactive=false -T wpcli core is-installed; then
   echo 'WordPress no está instalado. Ejecuta la inicialización documentada antes de desplegar.' >&2
   exit 27
 fi
 
-compose_command --profile tools run --rm -T wpcli theme activate kermanentzat-prototype
-compose_command --profile tools run --rm -T wpcli rewrite structure '/%postname%/' --hard
-compose_command --profile tools run --rm -T wpcli eval-file wp-content/themes/kermanentzat-prototype/inc/seed.php
-compose_command --profile tools run --rm -T wpcli rewrite flush --hard
+compose_command --profile tools run --rm --interactive=false -T wpcli theme activate kermanentzat-prototype
+compose_command --profile tools run --rm --interactive=false -T wpcli rewrite structure '/%postname%/' --hard
+compose_command --profile tools run --rm --interactive=false -T wpcli eval-file wp-content/themes/kermanentzat-prototype/inc/seed.php
+compose_command --profile tools run --rm --interactive=false -T wpcli rewrite flush --hard
 
 wait_for_wordpress
 verify_staging_frontend
