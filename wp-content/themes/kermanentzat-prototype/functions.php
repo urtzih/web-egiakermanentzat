@@ -183,9 +183,55 @@ function kermanentzat_should_block_indexing(): bool
     return wp_get_environment_type() !== 'production' && !$allow_local_indexing;
 }
 
-function kermanentzat_social_image_url(): string
+add_filter('wp_robots', static function (array $robots): array {
+    if (kermanentzat_should_block_indexing()) {
+        $robots['noindex'] = true;
+        $robots['nofollow'] = true;
+        $robots['noarchive'] = true;
+        $robots['nosnippet'] = true;
+        return $robots;
+    }
+
+    $robots['max-snippet'] = '150';
+    $robots['max-image-preview'] = 'large';
+    return $robots;
+}, 20);
+
+function kermanentzat_portrait_image_url(): string
 {
     return get_theme_file_uri('assets/images/kerman-portrait-clean.png');
+}
+
+function kermanentzat_social_image(): array
+{
+    $language = kermanentzat_language();
+
+    if (kermanentzat_is_home()) {
+        return [
+            'url' => get_theme_file_uri('assets/images/social-card-' . $language . '-v1.png'),
+            'type' => 'image/png',
+            'width' => 1200,
+            'height' => 630,
+            'alt' => $language === 'es'
+                ? 'Tarjeta de Egia Kermanentzat con el retrato de Kerman y el lema Memoria, verdad y justicia para Kerman'
+                : 'Egia Kermanentzaten txartela, Kermanen erretratuarekin eta Kermanentzat memoria, egia eta justizia leloarekin',
+        ];
+    }
+
+    return [
+        'url' => kermanentzat_portrait_image_url(),
+        'type' => 'image/png',
+        'width' => 717,
+        'height' => 762,
+        'alt' => $language === 'es'
+            ? 'Retrato de Kerman en blanco y negro'
+            : 'Kermanen zuri-beltzeko erretratua',
+    ];
+}
+
+function kermanentzat_social_image_url(): string
+{
+    return kermanentzat_social_image()['url'];
 }
 
 function kermanentzat_preload_image_url(): string
@@ -364,15 +410,11 @@ add_action('wp_head', static function (): void {
     $meta = kermanentzat_meta_for_current_page();
     $current_url = kermanentzat_current_url();
     $site_name = 'Egia Kermanentzat';
-    $image_url = kermanentzat_social_image_url();
+    $social_image = kermanentzat_social_image();
+    $image_url = $social_image['url'];
     $title = $meta['title'];
     $description = $meta['description'];
     printf('<meta name="description" content="%s">', esc_attr($description));
-    if (kermanentzat_should_block_indexing()) {
-        echo '<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">';
-    } else {
-        echo '<meta name="robots" content="index, follow, max-snippet:150, max-image-preview:large">';
-    }
     echo '<meta name="theme-color" content="#090909">';
     printf('<link rel="canonical" href="%s">', esc_url($current_url));
     printf('<meta property="og:locale" content="%s">', esc_attr($language === 'es' ? 'es_ES' : 'eu_ES'));
@@ -382,11 +424,16 @@ add_action('wp_head', static function (): void {
     printf('<meta property="og:description" content="%s">', esc_attr($description));
     printf('<meta property="og:url" content="%s">', esc_url($current_url));
     printf('<meta property="og:image" content="%s">', esc_url($image_url));
-    printf('<meta property="og:image:alt" content="%s">', esc_attr($language === 'es' ? 'Retrato de Kerman en blanco y negro' : 'Kermanen zuri-beltzeko erretratua'));
+    printf('<meta property="og:image:secure_url" content="%s">', esc_url($image_url));
+    printf('<meta property="og:image:type" content="%s">', esc_attr($social_image['type']));
+    printf('<meta property="og:image:width" content="%d">', $social_image['width']);
+    printf('<meta property="og:image:height" content="%d">', $social_image['height']);
+    printf('<meta property="og:image:alt" content="%s">', esc_attr($social_image['alt']));
     echo '<meta name="twitter:card" content="summary_large_image">';
     printf('<meta name="twitter:title" content="%s">', esc_attr($title));
     printf('<meta name="twitter:description" content="%s">', esc_attr($description));
     printf('<meta name="twitter:image" content="%s">', esc_url($image_url));
+    printf('<meta name="twitter:image:alt" content="%s">', esc_attr($social_image['alt']));
 
     $schema = [
         '@context' => 'https://schema.org',
@@ -399,7 +446,7 @@ add_action('wp_head', static function (): void {
                 'email' => 'mailto:justiziakermanentzat@gmail.com',
                 'logo' => [
                     '@type' => 'ImageObject',
-                    'url' => $image_url,
+                    'url' => kermanentzat_portrait_image_url(),
                 ],
                 'sameAs' => [
                     'https://www.instagram.com/justizia.kermanentzat/',
@@ -431,6 +478,8 @@ add_action('wp_head', static function (): void {
                 'primaryImageOfPage' => [
                     '@type' => 'ImageObject',
                     'url' => $image_url,
+                    'width' => $social_image['width'],
+                    'height' => $social_image['height'],
                 ],
             ],
         ],

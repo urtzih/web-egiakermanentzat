@@ -20,6 +20,9 @@ add_action('send_headers', static function (): void {
     header('Referrer-Policy: no-referrer', true);
     header('Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()', true);
     header('X-Frame-Options: DENY', true);
+    if (wp_get_environment_type() === 'production' && is_ssl()) {
+        header('Strict-Transport-Security: max-age=31536000', true);
+    }
 
     $analytics_enabled = function_exists('kermanentzat_has_optional_service')
         && kermanentzat_has_optional_service('google_analytics_4');

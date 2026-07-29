@@ -16,6 +16,8 @@ El rechazo conserva únicamente una preferencia versionada durante seis meses. L
 - Consent Mode v2 parte de analítica y publicidad denegadas. Google Signals y personalización publicitaria permanecen desactivados.
 - La CSP solo amplía `script-src`, `img-src` y `connect-src` cuando el servicio está activo.
 - `inc/legal-content.php` sigue siendo la fuente bilingüe que consume el seed.
+- La primera capa resume la finalidad general de la analítica sin enumerar eventos bancarios; el detalle permanece en la política y en el panel de preferencias. Aceptar y rechazar conservan igual visibilidad y facilidad de uso.
+- El registro permanece en `2.0.0`: el ajuste de texto y composición no cambia finalidades, proveedor, almacenamiento ni condiciones de activación, por lo que no obliga a solicitar de nuevo una elección ya válida.
 
 ## Tratamientos
 

@@ -28,7 +28,7 @@ Versión del registro: `2.0.0`. Revisión técnica: 2026-07-29.
 | Conservación configurada | Datos de usuario/eventos: 2 meses; preferencia y cookies: hasta 6 meses |
 | Retirada | Control permanente en el pie; bloqueo, borrado de cookies y recarga |
 | Publicidad | Google Signals, personalización, User-ID y Google Ads desactivados |
-| Transferencias | Condiciones y garantías de Google pendientes de validación documental antes de marcar la aprobación de producción |
+| Transferencias | Activación operativa autorizada el 29-07-2026; conservar la evidencia de las condiciones y garantías de Google y completar su validación jurídica |
 
 Dominios permitidos por CSP cuando el adaptador está activo:
 
@@ -52,4 +52,9 @@ Instagram, saretu.es y el correo siguen siendo enlaces iniciados por la persona 
 
 ## Regla de cambio
 
-No se puede activar Analytics únicamente configurando el ID. La persona responsable debe validar antes las condiciones de tratamiento, garantías de transferencia, propiedad institucional, retención de dos meses, accesos y configuración sin publicidad; solo entonces establecerá `KERMANENTZAT_GA_APPROVED=true`.
+No se puede activar Analytics únicamente configurando el ID. La activación
+operativa fue autorizada el 29-07-2026 y se estableció
+`KERMANENTZAT_GA_APPROVED=true`. La asociación debe conservar evidencia de las
+condiciones de tratamiento, garantías de transferencia, propiedad
+institucional, retención de dos meses, accesos y configuración sin publicidad,
+además de completar la revisión jurídica.

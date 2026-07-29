@@ -47,7 +47,14 @@ $labels = $language === 'eu'
     <div class="campaign-ticker__track">
         <?php for ($group = 0; $group < 2; $group++) : ?>
             <div class="campaign-ticker__group">
-                <span>JUSTIZIA KERMANENTZAT</span><span>JUSTICIA PARA KERMAN</span><span>JUSTIZIA KERMANENTZAT</span><span>JUSTICIA PARA KERMAN</span>
+                <span class="campaign-ticker__phrase">JUSTIZIA KERMANENTZAT</span>
+                <span class="campaign-ticker__separator">·</span>
+                <span class="campaign-ticker__phrase">JUSTICIA PARA KERMAN</span>
+                <span class="campaign-ticker__separator">·</span>
+                <span class="campaign-ticker__phrase">JUSTIZIA KERMANENTZAT</span>
+                <span class="campaign-ticker__separator">·</span>
+                <span class="campaign-ticker__phrase">JUSTICIA PARA KERMAN</span>
+                <span class="campaign-ticker__separator">·</span>
             </div>
         <?php endfor; ?>
     </div>

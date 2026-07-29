@@ -1,6 +1,9 @@
 # Alta y activación de Google Analytics y Search Console
 
-El código está preparado, pero Analytics permanece desactivado hasta completar esta lista.
+Analytics quedó activado en producción el 29 de julio de 2026 con el flujo
+`G-46TRV43CBQ`. La lista siguiente sirve como registro de configuración y de
+las tareas administrativas que la asociación todavía debe confirmar en GA4 y
+Search Console.
 
 ## 1. Propiedad institucional de GA4
 
@@ -25,14 +28,16 @@ Archivar evidencia de:
 - retención de dos meses y publicidad desactivada;
 - revisión jurídica y lingüística de los textos.
 
-Después configurar en el hosting:
+La configuración aplicada en el hosting es:
 
 ```text
-KERMANENTZAT_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+KERMANENTZAT_GA_MEASUREMENT_ID=G-46TRV43CBQ
 KERMANENTZAT_GA_APPROVED=true
 ```
 
-El ID no es una credencial, pero se mantiene fuera de Git para desacoplar entornos. Sin la segunda variable el servicio no se registra.
+El ID no es una credencial, pero se mantiene fuera de Git para desacoplar
+entornos. Sin la segunda variable el servicio no se registra. El servidor
+conserva la copia de recuperación `wp-config.php.pre-ga-20260729`.
 
 ## 3. Verificación tras desplegar
 

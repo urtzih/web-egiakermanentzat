@@ -138,8 +138,8 @@ function kermanentzat_consent_text(): array
         return [
             'preferences' => 'Preferencias de cookies',
             'title' => 'Analítica opcional',
-            'summary' => 'Nos gustaría usar Google Analytics para conocer de forma agregada qué páginas se visitan y si se copian los datos bancarios. No se carga nada de Google hasta que aceptes.',
-            'accept' => 'Aceptar analítica',
+            'summary' => 'Si la aceptas, Google Analytics nos ayuda a entender cómo se usa la web y a mejorarla. Rechazarla no limita ninguna función.',
+            'accept' => 'Aceptar',
             'reject' => 'Rechazar',
             'configure' => 'Configurar',
             'dialog_title' => 'Preferencias de privacidad',
@@ -150,15 +150,15 @@ function kermanentzat_consent_text(): array
             'analytics_description' => 'Mide visitas, procedencia aproximada, páginas e interacción. También registra si se copia el IBAN o el bloque bancario, nunca su contenido.',
             'save' => 'Guardar preferencias',
             'cancel' => 'Cancelar',
-            'policy' => 'Leer la política de cookies',
+            'policy' => 'Política de cookies',
         ];
     }
 
     return [
         'preferences' => 'Cookie-lehentasunak',
         'title' => 'Aukerako analitika',
-        'summary' => 'Google Analytics erabili nahi genuke, modu agregatuan zer orri bisitatzen diren eta banku-datuak kopiatzen diren jakiteko. Ez da Googleren ezer kargatzen onartu arte.',
-        'accept' => 'Onartu analitika',
+        'summary' => 'Onartzen baduzu, Google Analytics-ek webgunea nola erabiltzen den ulertzen eta hobetzen lagunduko digu. Baztertzeak ez du funtziorik mugatzen.',
+        'accept' => 'Onartu',
         'reject' => 'Baztertu',
         'configure' => 'Konfiguratu',
         'dialog_title' => 'Pribatutasun-lehentasunak',
@@ -169,7 +169,7 @@ function kermanentzat_consent_text(): array
         'analytics_description' => 'Bisitak, gutxi gorabeherako jatorria, orriak eta interakzioa neurtzen ditu. IBANa edo banku-datuen blokea kopiatzen den ere jasotzen du, baina inoiz ez edukia.',
         'save' => 'Gorde lehentasunak',
         'cancel' => 'Utzi',
-        'policy' => 'Irakurri cookie-politika',
+        'policy' => 'Cookie-politika',
     ];
 }
 
@@ -209,7 +209,7 @@ function kermanentzat_render_consent_controls(string $context = 'banner'): void
             <div class="consent-banner__actions">
                 <button class="button button--primary" type="button" data-consent-accept><?php echo esc_html($text['accept']); ?></button>
                 <button class="button button--primary" type="button" data-consent-reject><?php echo esc_html($text['reject']); ?></button>
-                <button class="button" type="button" data-consent-configure><?php echo esc_html($text['configure']); ?></button>
+                <button class="button consent-banner__configure" type="button" data-consent-configure><?php echo esc_html($text['configure']); ?></button>
             </div>
         </div>
     </section>

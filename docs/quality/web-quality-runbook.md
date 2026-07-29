@@ -63,6 +63,19 @@ $routes | ForEach-Object {
 }
 ```
 
+Validar las tarjetas y los metadatos sociales:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/test-social-metadata.ps1
+```
+
+Después de desplegar un cambio de tarjeta, comprobar `/` y `/es/` en
+[Meta Sharing Debugger](https://developers.facebook.com/tools/debug/) y solicitar
+un nuevo rastreo. WhatsApp puede conservar temporalmente una previsualización
+anterior aunque el HTML público ya sea correcto; los nombres versionados de las
+imágenes ayudan a invalidar la caché cuando el crawler vuelve a consultar la URL.
+La comprobación final debe hacerse pegando el enlace en una conversación nueva.
+
 Ejecutar Lighthouse 13.4.1 con perfil móvil y guardar los JSON fuera del
 repositorio:
 

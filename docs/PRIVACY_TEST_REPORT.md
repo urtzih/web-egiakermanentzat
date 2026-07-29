@@ -39,13 +39,26 @@ El marcado y `assets/js/consent.js` se probaron en Chrome con un ID ficticio, in
 
 La página de aportaciones se revisó a 390 × 844 px: sin desbordamiento horizontal, sin errores de consola, con los dos atributos de evento y sin recursos externos.
 
+La primera capa móvil se compactó sin alterar el consentimiento: el texto visible ya no enumera acciones bancarias, aceptar y rechazar comparten fila, tamaño y jerarquía, sus etiquetas permanecen en una línea y «Configurar» conserva un objetivo táctil de 44 px como acción secundaria. El detector de layout no encontró incidencias.
+
 ## Validación de activación
 
 Una ejecución aislada de PHP con entorno `production`, ID ficticio válido y `KERMANENTZAT_GA_APPROVED=true` registró únicamente `google_analytics_4` en la categoría `analytics`. En el entorno local real permaneció ausente.
 
-## Pendiente antes de producción
+## Validación en producción
 
-- Probar con el ID real en una ventana limpia y revisar la red antes de aceptar, al rechazar, aceptar y retirar.
+El 29 de julio de 2026 se comprobó `https://egiakermanentzat.eus` con el ID
+real:
+
+- antes de decidir y después de rechazar: cero solicitudes a Google y cero
+  cookies de Analytics;
+- después de aceptar: una carga de `gtag.js`, creación de `_ga`/`_ga_*` y
+  envío de `page_view`;
+- al copiar el IBAN: envío de `copy_iban` sin IBAN ni otros valores bancarios;
+- sitemap, robots y CSP de producción activos.
+
+## Pendiente tras la activación
+
 - Confirmar Tiempo real y DebugView en la propiedad institucional.
 - Revisar con NVDA/VoiceOver, zoom 200 %, movimiento reducido, móvil y escritorio reales.
 - Validar jurídicamente las condiciones/garantías de Google y los textos ES/EU.
