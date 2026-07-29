@@ -1,29 +1,65 @@
-# Configuración futura de Google Analytics
+# Alta y activación de Google Analytics y Search Console
 
-Estado actual: **no instalado y no autorizado**. El repositorio no contiene identificadores de medición, etiquetas, solicitudes, dependencias ni código de Google.
+El código está preparado, pero Analytics permanece desactivado hasta completar esta lista.
 
-## Condiciones previas
+## 1. Propiedad institucional de GA4
 
-Analytics solo podrá evaluarse si existe una finalidad aprobada, análisis jurídico, proveedor/transferencias/retención documentados y una alternativa proporcional. Antes de implementarlo se actualizarán el inventario, las políticas bilingües, la versión del registro y las pruebas.
+1. Entrar en https://analytics.google.com/ con la cuenta institucional.
+2. Crear la cuenta `Egia Kermanentzat`, desactivando la compartición opcional no necesaria.
+3. Crear la propiedad `Egia Kermanentzat — Web`, zona horaria España y moneda EUR.
+4. Aceptar las condiciones y la adenda de tratamiento.
+5. Crear el flujo web `Web principal` para `https://egiakermanentzat.eus`.
+6. Desactivar medición mejorada, Google Signals, personalización publicitaria y recogida granular de ubicación/dispositivo.
+7. No configurar User-ID, Google Ads ni Google Tag Manager.
+8. Fijar la conservación de datos de usuario y eventos en 2 meses.
+9. Añadir una segunda persona administradora, 2FA y recuperación institucional.
+10. Copiar el ID `G-…`, sin pegar el snippet en WordPress.
 
-## Diseño desacoplado futuro
+## 2. Revisión previa y variables de producción
 
-1. Mantener el servicio desactivado por defecto.
-2. Leer el identificador exclusivamente desde una variable de entorno futura llamada `KERMANENTZAT_GA_MEASUREMENT_ID`; nunca incluir valores reales en Git.
-3. Registrar un adaptador `analytics` mediante `kermanentzat_optional_services` con `enabled` controlado por configuración de producción.
-4. Renderizar controles accesibles de aceptar, rechazar y cambiar preferencias solo cuando exista ese servicio.
-5. No descargar ni ejecutar ninguna biblioteca de Google hasta obtener consentimiento analítico afirmativo.
-6. Activar Consent Mode v2 únicamente junto con Analytics, con estado denegado antes de la elección y actualización tras una acción inequívoca. La configuración no sustituye el consentimiento requerido.
-7. Ofrecer retirada tan sencilla como la aceptación y detener solicitudes futuras al retirar.
+Archivar evidencia de:
 
-Referencia técnica oficial: https://developers.google.com/tag-platform/security/guides/consent
+- titularidad y accesos de la cuenta;
+- adenda de tratamiento y condiciones aceptadas;
+- garantías aplicables a transferencias;
+- retención de dos meses y publicidad desactivada;
+- revisión jurídica y lingüística de los textos.
 
-## Pruebas obligatorias antes de activar
+Después configurar en el hosting:
 
-- Cero solicitudes, cookies o identificadores antes de aceptar y tras rechazar.
-- Solicitudes limitadas al servicio inventariado después de aceptar analítica.
-- Categorías independientes; marketing no se activa por aceptar analítica.
-- Persistencia y retirada con versión, fecha y elección mínima, sin identificadores innecesarios.
-- Funcionamiento con JavaScript desactivado, teclado, lector de pantalla, zoom y ambos idiomas.
-- CSP, política, inventario y registro sincronizados; auditoría de red en móvil y escritorio.
+```text
+KERMANENTZAT_GA_MEASUREMENT_ID=G-XXXXXXXXXX
+KERMANENTZAT_GA_APPROVED=true
+```
 
+El ID no es una credencial, pero se mantiene fuera de Git para desacoplar entornos. Sin la segunda variable el servicio no se registra.
+
+## 3. Verificación tras desplegar
+
+1. Abrir una ventana limpia y comprobar que no hay solicitudes a Google antes de elegir.
+2. Rechazar y confirmar que no aparecen `_ga` ni solicitudes externas.
+3. Aceptar y verificar en GA4 Tiempo real la página actual.
+4. Copiar el IBAN y todos los datos; comprobar `copy_iban` y `copy_bank_details` en DebugView y que no contienen valores.
+5. Retirar desde el pie y confirmar limpieza de cookies y ausencia de solicitudes tras la recarga.
+
+## 4. Search Console
+
+1. Crear una propiedad de dominio `egiakermanentzat.eus`.
+2. Añadir en DNS el TXT facilitado por Google y conservarlo.
+3. Verificar y añadir una segunda persona propietaria.
+4. Enviar `https://egiakermanentzat.eus/sitemap.xml`.
+5. Confirmar los dos hijos y 14 URLs.
+6. Inspeccionar `/`, `/es/`, `/lagundu-eta-ekarpenak/` y `/es/ayuda-y-donaciones/`.
+7. Revisar indexación, HTTPS, resultados enriquecidos y Core Web Vitals.
+
+## 5. Vinculación
+
+En GA4: Administración → Enlaces de productos → Search Console. Seleccionar la propiedad de dominio y el flujo `Web principal`; después publicar la colección de informes desde la Biblioteca.
+
+Referencias oficiales:
+
+- https://support.google.com/analytics/answer/9304153
+- https://developers.google.com/tag-platform/security/guides/consent
+- https://support.google.com/webmasters/answer/34592
+- https://developers.google.com/search/docs/crawling-indexing/sitemaps/build-sitemap
+- https://support.google.com/analytics/answer/10737381

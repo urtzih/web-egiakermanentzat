@@ -20,7 +20,35 @@ add_action('send_headers', static function (): void {
     header('Referrer-Policy: no-referrer', true);
     header('Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=()', true);
     header('X-Frame-Options: DENY', true);
-    header("Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self'; media-src 'self'; frame-src 'none'; manifest-src 'self'", true);
+
+    $analytics_enabled = function_exists('kermanentzat_has_optional_service')
+        && kermanentzat_has_optional_service('google_analytics_4');
+    $script_src = ["'self'", "'unsafe-inline'"];
+    $img_src = ["'self'", 'data:'];
+    $connect_src = ["'self'"];
+    if ($analytics_enabled) {
+        $script_src[] = 'https://www.googletagmanager.com';
+        $img_src[] = 'https://www.google-analytics.com';
+        $connect_src[] = 'https://www.google-analytics.com';
+        $connect_src[] = 'https://region1.google-analytics.com';
+    }
+
+    $policy = [
+        "default-src 'self'",
+        "base-uri 'self'",
+        "object-src 'none'",
+        "frame-ancestors 'none'",
+        "form-action 'self'",
+        'script-src ' . implode(' ', $script_src),
+        "style-src 'self' 'unsafe-inline'",
+        'img-src ' . implode(' ', $img_src),
+        "font-src 'self' data:",
+        'connect-src ' . implode(' ', $connect_src),
+        "media-src 'self'",
+        "frame-src 'none'",
+        "manifest-src 'self'",
+    ];
+    header('Content-Security-Policy: ' . implode('; ', $policy), true);
 });
 
 if ($kermanentzat_block_indexing) {

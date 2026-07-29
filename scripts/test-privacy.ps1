@@ -76,7 +76,7 @@ foreach ($route in $routes) {
         Add-Failure "$route publica el identificador registral no acreditado"
     }
     if ($html -match '(?i)<iframe\b|googletagmanager|google-analytics|doubleclick|facebook\.com/tr|<img[^>]+(?:pixel|tracking)') {
-        Add-Failure "$route contiene un iframe o marcador de seguimiento"
+        Add-Failure "$route contiene un iframe o marcador de seguimiento sin consentimiento"
     }
     $inlineScripts = [regex]::Matches($html, '(?is)<script\b[^>]*>(.*?)</script>')
     foreach ($scriptMatch in $inlineScripts) {
@@ -86,7 +86,7 @@ foreach ($route in $routes) {
         }
     }
     if ($html -match '(?i)(class|id)=["''][^"'']*(cookie-banner|consent-banner|consent-panel)|data-consent-storage') {
-        Add-Failure "$route renderiza controles o almacenamiento de consentimiento sin servicios opcionales"
+        Add-Failure "$route renderiza consentimiento sin un servicio opcional activo"
     }
 
     $resourceMatches = [regex]::Matches($html, '(?is)<(?:script|img|iframe|source|link)\b[^>]*?\s(?:src|href)=["'']([^"'']+)["'']')
@@ -121,14 +121,100 @@ foreach ($route in $routes) {
     }
 }
 
+$sitemapIndex = Invoke-WebRequest -UseBasicParsing -Uri "$BaseUrl/sitemap.xml"
+if ($sitemapIndex.StatusCode -ne 200 -or [string]$sitemapIndex.Headers['Content-Type'] -notmatch 'application/xml') {
+    Add-Failure '/sitemap.xml no devuelve XML con estado 200'
+} elseif (
+    [string]$sitemapIndex.Content -notmatch 'https://egiakermanentzat\.eus/sitemap-eu\.xml' -or
+    [string]$sitemapIndex.Content -notmatch 'https://egiakermanentzat\.eus/sitemap-es\.xml'
+) {
+    Add-Failure '/sitemap.xml no referencia los dos sitemaps bilingües de producción'
+} else {
+    Add-Pass 'El índice de sitemap referencia ES/EU'
+}
+
+foreach ($sitemapRoute in @('/sitemap-eu.xml', '/sitemap-es.xml')) {
+    $sitemapResponse = Invoke-WebRequest -UseBasicParsing -Uri "$BaseUrl$sitemapRoute"
+    $sitemapXml = [string]$sitemapResponse.Content
+    $urlCount = ([regex]::Matches($sitemapXml, '<url>')).Count
+    if ($sitemapResponse.StatusCode -ne 200 -or $urlCount -ne 7) {
+        Add-Failure "$sitemapRoute debe contener exactamente siete URLs"
+    }
+    if ($sitemapXml -match '(?i)localhost|/wp-admin/|/author/|/attachment/|<loc>http://') {
+        Add-Failure "$sitemapRoute contiene una URL no pública o no HTTPS"
+    } else {
+        Add-Pass "$sitemapRoute contiene siete URLs HTTPS públicas"
+    }
+}
+
+$robotsResponse = Invoke-WebRequest -UseBasicParsing -Uri "$BaseUrl/robots.txt"
+$robotsText = [string]$robotsResponse.Content
+if (
+    $robotsText -notmatch 'Disallow: /wp-admin/' -or
+    $robotsText -notmatch 'Allow: /wp-admin/admin-ajax\.php' -or
+    $robotsText -notmatch 'Sitemap: https://egiakermanentzat\.eus/sitemap\.xml'
+) {
+    Add-Failure 'robots.txt no declara las reglas y el sitemap de producción'
+} else {
+    Add-Pass 'robots.txt declara administración y sitemap'
+}
+
 $codeFiles = Get-ChildItem -LiteralPath (Join-Path $workspacePath 'wp-content') -Recurse -File |
     Where-Object { $_.Extension -in @('.php', '.js') -and $_.Name -ne 'legal-content.php' }
 $forbiddenCode = @('document\.cookie', '\blocalStorage\b', '\bsessionStorage\b', '\bindexedDB\b', '\bsendBeacon\b', 'googletagmanager', 'google-analytics', '\bgtag\s*\(', '\bGTM-[A-Z0-9]')
+$consentAdapterFiles = @(
+    (Join-Path $workspacePath 'wp-content\themes\kermanentzat-prototype\assets\js\consent.js'),
+    (Join-Path $workspacePath 'wp-content\themes\kermanentzat-prototype\inc\privacy.php'),
+    (Join-Path $workspacePath 'wp-content\mu-plugins\kermanentzat-prototype-guard.php')
+)
 foreach ($file in $codeFiles) {
+    if ($consentAdapterFiles -contains $file.FullName) { continue }
     $source = Get-Content -Raw -LiteralPath $file.FullName
     foreach ($pattern in $forbiddenCode) {
         if ($source -match $pattern) { Add-Failure "$($file.FullName) contiene el patrón no autorizado $pattern" }
     }
+}
+
+$consentSource = Get-Content -Raw -LiteralPath $consentAdapterFiles[0]
+if (
+    $consentSource -notmatch "analytics_storage:\s*'denied'" -or
+    $consentSource -notmatch "ad_storage:\s*'denied'" -or
+    $consentSource -notmatch "ad_user_data:\s*'denied'" -or
+    $consentSource -notmatch "ad_personalization:\s*'denied'" -or
+    $consentSource -notmatch "allow_google_signals:\s*false" -or
+    $consentSource -notmatch "allow_ad_personalization_signals:\s*false" -or
+    $consentSource -notmatch "cookie_update:\s*false"
+) {
+    Add-Failure 'El adaptador de Analytics no conserva los valores de privacidad requeridos'
+} else {
+    Add-Pass 'El adaptador mantiene analítica y publicidad denegadas por defecto'
+}
+if (
+    $consentSource -notmatch "\['copy_iban', 'copy_bank_details'\]" -or
+    $consentSource -match "(?is)gtag\('event'.*(copyValue|dataset\.copyValue|data-copy-value)"
+) {
+    Add-Failure 'Los eventos de copia no están limitados o podrían enviar el contenido copiado'
+} else {
+    Add-Pass 'Los eventos de copia están limitados y no incluyen valores bancarios'
+}
+$externalHosts = [regex]::Matches($consentSource, 'https://([^/''"`]+)') |
+    ForEach-Object { $_.Groups[1].Value } |
+    Sort-Object -Unique
+$unexpectedHosts = $externalHosts | Where-Object { $_ -notin @('www.googletagmanager.com') }
+if ($unexpectedHosts) {
+    Add-Failure "El adaptador contiene destinos externos inesperados: $($unexpectedHosts -join ', ')"
+}
+
+$privacySource = Get-Content -Raw -LiteralPath $consentAdapterFiles[1]
+if (
+    $privacySource -notmatch "'version'\s*=>\s*'2\.0\.0'" -or
+    $privacySource -notmatch 'KERMANENTZAT_GA_APPROVED' -or
+    $privacySource -notmatch 'KERMANENTZAT_GA_MEASUREMENT_ID' -or
+    $privacySource -notmatch "wp_get_environment_type\(\)\s*===\s*'production'"
+) {
+    Add-Failure 'El registro no exige versión, aprobación, ID válido y producción'
+} else {
+    Add-Pass 'El registro exige aprobación explícita, ID y producción'
 }
 
 $styleFiles = Get-ChildItem -LiteralPath (Join-Path $workspacePath 'wp-content') -Recurse -Filter '*.css' -File
@@ -162,6 +248,16 @@ if (-not $SkipPhpLint) {
         if ($failures.Count -eq 0) { Add-Pass 'Sintaxis PHP válida' }
     }
     finally { Pop-Location }
+}
+
+$nodeCommand = Get-Command node -ErrorAction SilentlyContinue
+if ($nodeCommand) {
+    $javascriptFiles = Get-ChildItem -LiteralPath (Join-Path $workspacePath 'wp-content') -Recurse -Filter '*.js' -File
+    foreach ($file in $javascriptFiles) {
+        & $nodeCommand.Source --check $file.FullName 2>&1 | Out-Null
+        if ($LASTEXITCODE -ne 0) { Add-Failure "JavaScript inválido en $($file.FullName)" }
+    }
+    if ($failures.Count -eq 0) { Add-Pass 'Sintaxis JavaScript válida' }
 }
 
 Write-Host "Pruebas superadas: $($passes.Count)"

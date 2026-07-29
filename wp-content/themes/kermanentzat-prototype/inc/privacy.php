@@ -9,8 +9,8 @@ defined('ABSPATH') || exit;
 function kermanentzat_legal_config(): array
 {
     return [
-        'version' => '2026.07.22',
-        'last_reviewed' => '22/07/2026',
+        'version' => '2026.07.29',
+        'last_reviewed' => '29/07/2026',
         'name' => 'Egia Kermanentzat Elkartea',
         'nif' => 'G93797744',
         'address' => 'Zubiegi kalea 16, Bitoriano, 01139 Zuia, Álava',
@@ -22,21 +22,56 @@ function kermanentzat_legal_config(): array
         'gmail_contractual_setup' => null,
         'operational_contacts' => null,
         'donation_tax_status' => null,
+        'google_analytics_contractual_review' => null,
+        'google_analytics_transfer_safeguards' => null,
     ];
 }
 
+function kermanentzat_environment_value(string $name): string
+{
+    if (defined($name)) {
+        $value = constant($name);
+        return is_scalar($value) ? trim((string) $value) : '';
+    }
+
+    $value = getenv($name);
+    return $value === false ? '' : trim($value);
+}
+
+function kermanentzat_environment_flag(string $name): bool
+{
+    return filter_var(
+        kermanentzat_environment_value($name),
+        FILTER_VALIDATE_BOOLEAN,
+        FILTER_NULL_ON_FAILURE
+    ) === true;
+}
+
+function kermanentzat_ga_measurement_id(): string
+{
+    $measurement_id = strtoupper(kermanentzat_environment_value('KERMANENTZAT_GA_MEASUREMENT_ID'));
+    return preg_match('/^G-[A-Z0-9]{6,20}$/', $measurement_id) === 1 ? $measurement_id : '';
+}
+
+function kermanentzat_analytics_is_enabled(): bool
+{
+    return wp_get_environment_type() === 'production'
+        && kermanentzat_environment_flag('KERMANENTZAT_GA_APPROVED')
+        && kermanentzat_ga_measurement_id() !== '';
+}
+
 /**
- * Consent/service registry. Necessary services cannot be disabled. Optional
- * adapters may be registered later with the `kermanentzat_optional_services`
- * filter; no preference UI or storage exists while that list stays empty.
+ * Consent/service registry. Optional services are absent until their adapter is
+ * explicitly approved and configured in production.
  */
 function kermanentzat_service_registry(): array
 {
+    $analytics_enabled = kermanentzat_analytics_is_enabled();
     $registry = [
-        'version' => '1.0.0',
+        'version' => '2.0.0',
         'categories' => [
             'necessary' => ['active' => true, 'required' => true, 'configurable' => false],
-            'analytics' => ['active' => false, 'required' => false, 'configurable' => true],
+            'analytics' => ['active' => $analytics_enabled, 'required' => false, 'configurable' => true],
             'marketing' => ['active' => false, 'required' => false, 'configurable' => true],
             'preferences' => ['active' => false, 'required' => false, 'configurable' => true],
         ],
@@ -47,9 +82,25 @@ function kermanentzat_service_registry(): array
                 'storage' => ['wordpress_test_cookie', 'wordpress_sec_*', 'wordpress_logged_in_*', 'wp-settings-*'],
             ],
         ],
+        'optional_services' => [],
     ];
 
-    $optional = apply_filters('kermanentzat_optional_services', []);
+    if ($analytics_enabled) {
+        $registry['optional_services'][] = [
+            'id' => 'google_analytics_4',
+            'category' => 'analytics',
+            'enabled' => true,
+            'provider' => 'Google Ireland Limited',
+            'purpose' => 'Medición agregada de visitas e interacción con las acciones de apoyo',
+            'legal_basis' => 'consent',
+            'trigger' => 'affirmative_analytics_consent',
+            'storage' => ['_ga', '_ga_*', 'kermanentzat_consent'],
+            'retention' => 'GA4: 2 months; consent choice: 6 months',
+            'withdrawal' => 'footer_preferences_control',
+        ];
+    }
+
+    $optional = apply_filters('kermanentzat_optional_services', $registry['optional_services']);
     $registry['optional_services'] = is_array($optional)
         ? array_values(array_filter($optional, static function ($service) use ($registry): bool {
             if (!is_array($service) || empty($service['id']) || empty($service['category'])) {
@@ -58,6 +109,7 @@ function kermanentzat_service_registry(): array
             $category = (string) $service['category'];
             return $category !== 'necessary'
                 && isset($registry['categories'][$category])
+                && !empty($registry['categories'][$category]['active'])
                 && !empty($service['enabled']);
         }))
         : [];
@@ -70,15 +122,121 @@ function kermanentzat_has_optional_services(): bool
     return kermanentzat_service_registry()['optional_services'] !== [];
 }
 
-function kermanentzat_render_consent_controls(): void
+function kermanentzat_has_optional_service(string $id): bool
 {
-    if (!kermanentzat_has_optional_services()) {
+    foreach (kermanentzat_service_registry()['optional_services'] as $service) {
+        if (($service['id'] ?? '') === $id) {
+            return true;
+        }
+    }
+    return false;
+}
+
+function kermanentzat_consent_text(): array
+{
+    if (kermanentzat_language() === 'es') {
+        return [
+            'preferences' => 'Preferencias de cookies',
+            'title' => 'Analítica opcional',
+            'summary' => 'Nos gustaría usar Google Analytics para conocer de forma agregada qué páginas se visitan y si se copian los datos bancarios. No se carga nada de Google hasta que aceptes.',
+            'accept' => 'Aceptar analítica',
+            'reject' => 'Rechazar',
+            'configure' => 'Configurar',
+            'dialog_title' => 'Preferencias de privacidad',
+            'dialog_intro' => 'Puedes aceptar o rechazar la analítica. Las funciones necesarias del sitio siempre permanecen activas.',
+            'necessary_title' => 'Necesarias',
+            'necessary_description' => 'Permiten el funcionamiento y la seguridad del sitio. No se pueden desactivar.',
+            'analytics_title' => 'Google Analytics',
+            'analytics_description' => 'Mide visitas, procedencia aproximada, páginas e interacción. También registra si se copia el IBAN o el bloque bancario, nunca su contenido.',
+            'save' => 'Guardar preferencias',
+            'cancel' => 'Cancelar',
+            'policy' => 'Leer la política de cookies',
+        ];
+    }
+
+    return [
+        'preferences' => 'Cookie-lehentasunak',
+        'title' => 'Aukerako analitika',
+        'summary' => 'Google Analytics erabili nahi genuke, modu agregatuan zer orri bisitatzen diren eta banku-datuak kopiatzen diren jakiteko. Ez da Googleren ezer kargatzen onartu arte.',
+        'accept' => 'Onartu analitika',
+        'reject' => 'Baztertu',
+        'configure' => 'Konfiguratu',
+        'dialog_title' => 'Pribatutasun-lehentasunak',
+        'dialog_intro' => 'Analitika onartu edo baztertu dezakezu. Webgunearen beharrezko funtzioak beti daude aktibatuta.',
+        'necessary_title' => 'Beharrezkoak',
+        'necessary_description' => 'Webgunearen funtzionamendua eta segurtasuna ahalbidetzen dituzte. Ezin dira desaktibatu.',
+        'analytics_title' => 'Google Analytics',
+        'analytics_description' => 'Bisitak, gutxi gorabeherako jatorria, orriak eta interakzioa neurtzen ditu. IBANa edo banku-datuen blokea kopiatzen den ere jasotzen du, baina inoiz ez edukia.',
+        'save' => 'Gorde lehentasunak',
+        'cancel' => 'Utzi',
+        'policy' => 'Irakurri cookie-politika',
+    ];
+}
+
+function kermanentzat_render_consent_controls(string $context = 'banner'): void
+{
+    if (!kermanentzat_has_optional_service('google_analytics_4')) {
         return;
     }
 
-    /**
-     * Future adapters must render their accessible consent controls here and
-     * load optional services only after the corresponding affirmative choice.
-     */
-    do_action('kermanentzat_consent_controls', kermanentzat_service_registry());
+    $text = kermanentzat_consent_text();
+    if ($context === 'footer') {
+        printf(
+            '<button class="site-footer__consent" type="button" data-consent-open>%s</button>',
+            esc_html($text['preferences'])
+        );
+        return;
+    }
+
+    $registry = kermanentzat_service_registry();
+    $cookie_url = kermanentzat_url(kermanentzat_language(), 'cookies');
+    ?>
+    <section
+        class="consent-banner"
+        data-consent-banner
+        data-measurement-id="<?php echo esc_attr(kermanentzat_ga_measurement_id()); ?>"
+        data-registry-version="<?php echo esc_attr($registry['version']); ?>"
+        data-storage-key="kermanentzat_consent"
+        data-max-age-days="183"
+        aria-labelledby="consent-title"
+        hidden
+    >
+        <div class="consent-banner__content">
+            <div>
+                <h2 id="consent-title"><?php echo esc_html($text['title']); ?></h2>
+                <p><?php echo esc_html($text['summary']); ?> <a href="<?php echo esc_url($cookie_url); ?>"><?php echo esc_html($text['policy']); ?></a>.</p>
+            </div>
+            <div class="consent-banner__actions">
+                <button class="button button--primary" type="button" data-consent-accept><?php echo esc_html($text['accept']); ?></button>
+                <button class="button button--primary" type="button" data-consent-reject><?php echo esc_html($text['reject']); ?></button>
+                <button class="button" type="button" data-consent-configure><?php echo esc_html($text['configure']); ?></button>
+            </div>
+        </div>
+    </section>
+    <dialog class="consent-dialog" data-consent-dialog aria-labelledby="consent-dialog-title">
+        <form method="dialog" data-consent-form>
+            <h2 id="consent-dialog-title"><?php echo esc_html($text['dialog_title']); ?></h2>
+            <p><?php echo esc_html($text['dialog_intro']); ?></p>
+            <div class="consent-option">
+                <div>
+                    <strong><?php echo esc_html($text['necessary_title']); ?></strong>
+                    <p><?php echo esc_html($text['necessary_description']); ?></p>
+                </div>
+                <span aria-hidden="true">✓</span>
+            </div>
+            <label class="consent-option" for="consent-analytics">
+                <span>
+                    <strong><?php echo esc_html($text['analytics_title']); ?></strong>
+                    <span><?php echo esc_html($text['analytics_description']); ?></span>
+                </span>
+                <input id="consent-analytics" type="checkbox" data-consent-analytics>
+            </label>
+            <div class="consent-dialog__actions">
+                <button class="button button--primary" type="submit" value="save"><?php echo esc_html($text['save']); ?></button>
+                <button class="button button--primary" type="button" data-consent-dialog-reject><?php echo esc_html($text['reject']); ?></button>
+                <button class="button" type="button" data-consent-dialog-cancel><?php echo esc_html($text['cancel']); ?></button>
+            </div>
+        </form>
+    </dialog>
+    <?php
 }

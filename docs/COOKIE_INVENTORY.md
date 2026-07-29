@@ -1,39 +1,55 @@
 # Inventario de cookies, almacenamiento y servicios
 
-Versión del registro: `1.0.0`. Revisión: 2026-07-22.
+Versión del registro: `2.0.0`. Revisión técnica: 2026-07-29.
 
-## Navegación pública anónima
+## Estados de la navegación pública
 
-| Componente | Categoría | Cookie/almacenamiento | Recurso externo | Estado |
-|---|---|---|---|---|
-| Tema WordPress | necessary | Ninguno | Ninguno | Activo, mismo origen |
-| Analítica | analytics | Ninguno | Ninguno | No registrada |
-| Marketing/píxeles | marketing | Ninguno | Ninguno | No registrado |
-| Preferencias/embeds | preferences | Ninguno | Ninguno | No registrado |
-| Consentimiento | no aplicable | Ninguno | Ninguno | No se renderiza |
+| Estado | Almacenamiento | Solicitudes externas | Comportamiento |
+|---|---|---|---|
+| Analytics no configurado | Ninguno | Ninguna | No se renderizan controles de consentimiento |
+| Sin elección | Ninguno | Ninguna | Se muestra el banner; Google permanece bloqueado |
+| Analítica rechazada | `kermanentzat_consent` | Ninguna | Se recuerda el rechazo durante un máximo de seis meses |
+| Analítica aceptada | `kermanentzat_consent`, `_ga`, `_ga_*` | Google Tag y Analytics | Se miden páginas, procedencia aproximada, interacción y dos eventos de copia |
+| Consentimiento retirado | `kermanentzat_consent` | Ninguna futura | Se bloquea Analytics, se borran `_ga`/`_ga_*` y se recarga la página |
 
-No se invocan `document.cookie`, `localStorage`, `sessionStorage`, IndexedDB ni Beacon en el frontal. No hay iframes, fuentes remotas, vídeos embebidos, Analytics, Tag Manager o gestores de consentimiento.
+`kermanentzat_consent` contiene solo la versión `2.0.0`, un booleano para analítica y una fecha ISO. No contiene identificadores. Caduca lógicamente a los 183 días o al cambiar la versión.
+
+## Servicio opcional
+
+| Campo | Google Analytics 4 |
+|---|---|
+| Categoría | `analytics` |
+| Proveedor | Google Ireland Limited |
+| Finalidad | Estadísticas de páginas, fuente/medio/campaña, país aproximado, idioma, sesiones, interacción y acciones de copia bancaria |
+| Datos/eventos propios | `page_view`, `user_engagement`, `copy_iban`, `copy_bank_details` |
+| Exclusiones | No se envía IBAN, titular, concepto, importe, correo ni contenido copiado |
+| Activación | Producción + ID `G-…` válido + `KERMANENTZAT_GA_APPROVED=true` + consentimiento afirmativo |
+| Base jurídica | Consentimiento |
+| Conservación configurada | Datos de usuario/eventos: 2 meses; preferencia y cookies: hasta 6 meses |
+| Retirada | Control permanente en el pie; bloqueo, borrado de cookies y recarga |
+| Publicidad | Google Signals, personalización, User-ID y Google Ads desactivados |
+| Transferencias | Condiciones y garantías de Google pendientes de validación documental antes de marcar la aprobación de producción |
+
+Dominios permitidos por CSP cuando el adaptador está activo:
+
+- `www.googletagmanager.com`, exclusivamente para descargar `gtag.js` tras aceptar.
+- `www.google-analytics.com` y `region1.google-analytics.com`, exclusivamente para recopilación de GA4 tras aceptar.
+
+No se usa Google Tag Manager, una CMP, píxeles publicitarios, iframes, fuentes remotas, vídeos embebidos, `sessionStorage`, IndexedDB ni `sendBeacon` propio.
 
 ## Administración restringida de WordPress
 
-| Patrón | Proveedor | Propósito | Alcance | Duración/categoría |
-|---|---|---|---|---|
-| `wordpress_test_cookie` | WordPress propio | Comprobar soporte de cookies | Pantalla de acceso | Sesión; necesaria |
-| `wordpress_sec_*` | WordPress propio | Proteger autenticación | Administración autenticada | Según sesión; necesaria |
-| `wordpress_logged_in_*` | WordPress propio | Mantener sesión iniciada | Administración autenticada | Según opción de acceso; necesaria |
-| `wp-settings-*` | WordPress propio | Preferencias de la interfaz | Administración autenticada | Duración técnica de WordPress; necesaria |
-
-Estas cookies no aparecen en respuestas públicas anónimas y no son configurables porque permiten el acceso administrativo solicitado.
-
-## Terceros enlazados, no cargados
-
-| Destino | Activación | Datos antes del clic | Observación |
+| Patrón | Propósito | Alcance | Duración/categoría |
 |---|---|---|---|
-| Instagram | Clic explícito | Ninguno | Se abre el sitio del tercero |
-| saretu.es | Clic explícito | Ninguno | Crédito enlazado |
-| Correo electrónico | Clic explícito | Ninguno | Abre el cliente configurado |
+| `wordpress_test_cookie` | Comprobar soporte de cookies | Pantalla de acceso | Sesión; necesaria |
+| `wordpress_sec_*` | Proteger autenticación | Administración autenticada | Según sesión; necesaria |
+| `wordpress_logged_in_*` | Mantener sesión | Administración autenticada | Según opción de acceso; necesaria |
+| `wp-settings-*` | Preferencias administrativas | Administración autenticada | Duración técnica de WordPress; necesaria |
+
+## Terceros enlazados
+
+Instagram, saretu.es y el correo siguen siendo enlaces iniciados por la persona visitante. No reciben datos durante la carga.
 
 ## Regla de cambio
 
-Ningún servicio opcional puede cargarse solo por añadir código o configuración. Antes hay que documentarlo aquí, definir proveedor/finalidad/datos/retención/transferencias/base jurídica, registrar un adaptador en `kermanentzat_optional_services`, incrementar la versión y superar `scripts/test-privacy.ps1`. Si necesita consentimiento, permanecerá bloqueado hasta una elección afirmativa y revocable.
-
+No se puede activar Analytics únicamente configurando el ID. La persona responsable debe validar antes las condiciones de tratamiento, garantías de transferencia, propiedad institucional, retención de dos meses, accesos y configuración sin publicidad; solo entonces establecerá `KERMANENTZAT_GA_APPROVED=true`.

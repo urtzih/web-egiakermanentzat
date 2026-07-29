@@ -38,6 +38,13 @@ function kermanentzat_assets(): void
     wp_enqueue_style('kermanentzat-main', get_theme_file_uri('assets/css/main.css'), [], $style_version);
     wp_enqueue_script('kermanentzat-site', get_theme_file_uri('assets/js/site.js'), [], $script_version, true);
     wp_script_add_data('kermanentzat-site', 'defer', true);
+
+    if (kermanentzat_has_optional_service('google_analytics_4')) {
+        $consent_path = get_theme_file_path('assets/js/consent.js');
+        $consent_version = is_file($consent_path) ? (string) filemtime($consent_path) : $theme_version;
+        wp_enqueue_script('kermanentzat-consent', get_theme_file_uri('assets/js/consent.js'), [], $consent_version, true);
+        wp_script_add_data('kermanentzat-consent', 'defer', true);
+    }
 }
 add_action('wp_enqueue_scripts', 'kermanentzat_assets');
 
@@ -191,6 +198,115 @@ function kermanentzat_url(string $language, string $key): string
     $map = kermanentzat_page_map();
     return home_url($map[$language][$key] ?? $map[$language]['home']);
 }
+
+function kermanentzat_public_origin(): string
+{
+    return 'https://egiakermanentzat.eus';
+}
+
+function kermanentzat_sitemap_routes(): array
+{
+    return [
+        'eu' => [
+            '/',
+            '/kasuaren-laburpena/',
+            '/lagundu-eta-ekarpenak/',
+            '/kontaktua/',
+            '/lege-oharra/',
+            '/pribatutasun-politika/',
+            '/cookie-politika/',
+        ],
+        'es' => [
+            '/es/',
+            '/es/resumen-del-caso/',
+            '/es/ayuda-y-donaciones/',
+            '/es/contacto/',
+            '/es/aviso-legal/',
+            '/es/politica-de-privacidad/',
+            '/es/politica-de-cookies/',
+        ],
+    ];
+}
+
+function kermanentzat_sitemap_entries(string $language): array
+{
+    $routes = kermanentzat_sitemap_routes()[$language] ?? [];
+    $entries = [];
+
+    foreach ($routes as $path) {
+        $page = $path === '/'
+            ? get_post((int) get_option('page_on_front'))
+            : get_page_by_path(trim($path, '/'));
+        if (!$page instanceof WP_Post || $page->post_status !== 'publish') {
+            continue;
+        }
+
+        $entries[] = [
+            'loc' => kermanentzat_public_origin() . $path,
+            'lastmod' => get_post_modified_time('c', true, $page),
+        ];
+    }
+
+    return $entries;
+}
+
+function kermanentzat_render_sitemap(string $path): void
+{
+    status_header(200);
+    nocache_headers();
+    header('Content-Type: application/xml; charset=UTF-8', true);
+    echo '<?xml version="1.0" encoding="UTF-8"?>';
+
+    if ($path === '/sitemap.xml') {
+        echo '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+        foreach (['eu', 'es'] as $language) {
+            $entries = kermanentzat_sitemap_entries($language);
+            if ($entries === []) {
+                continue;
+            }
+            $lastmod = max(array_column($entries, 'lastmod'));
+            printf(
+                '<sitemap><loc>%s</loc><lastmod>%s</lastmod></sitemap>',
+                esc_xml(kermanentzat_public_origin() . '/sitemap-' . $language . '.xml'),
+                esc_xml($lastmod)
+            );
+        }
+        echo '</sitemapindex>';
+        exit;
+    }
+
+    $language = $path === '/sitemap-es.xml' ? 'es' : 'eu';
+    echo '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+    foreach (kermanentzat_sitemap_entries($language) as $entry) {
+        printf(
+            '<url><loc>%s</loc><lastmod>%s</lastmod></url>',
+            esc_xml($entry['loc']),
+            esc_xml($entry['lastmod'])
+        );
+    }
+    echo '</urlset>';
+    exit;
+}
+
+add_action('template_redirect', static function (): void {
+    $path = (string) wp_parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH);
+    if (in_array($path, ['/sitemap.xml', '/sitemap-eu.xml', '/sitemap-es.xml'], true)) {
+        kermanentzat_render_sitemap($path);
+    }
+}, 0);
+
+add_filter('wp_sitemaps_enabled', '__return_false');
+
+add_filter('robots_txt', static function (string $output): string {
+    $lines = [
+        'User-agent: *',
+        'Disallow: /wp-admin/',
+        'Allow: /wp-admin/admin-ajax.php',
+        '',
+        'Sitemap: ' . kermanentzat_public_origin() . '/sitemap.xml',
+    ];
+    return implode("\n", $lines) . "\n";
+}, 20);
 
 function kermanentzat_is_home(): bool
 {
@@ -358,3 +474,28 @@ remove_filter('the_content_feed', 'wp_staticize_emoji');
 remove_filter('comment_text_rss', 'wp_staticize_emoji');
 remove_filter('wp_mail', 'wp_staticize_emoji_for_email');
 add_filter('emoji_svg_url', '__return_false');
+
+add_action('admin_post_kermanentzat_seed_content', static function (): void {
+    if (!current_user_can('manage_options')) {
+        wp_die('Permisos insuficientes.');
+    }
+
+    check_admin_referer('kermanentzat_seed_content');
+    require get_theme_file_path('inc/seed.php');
+    wp_safe_redirect(add_query_arg('kermanentzat_seeded', '1', admin_url('themes.php')));
+    exit;
+});
+
+add_action('admin_notices', static function (): void {
+    if (!current_user_can('manage_options') || get_current_screen()?->base !== 'themes') {
+        return;
+    }
+
+    if (isset($_GET['kermanentzat_seeded'])) {
+        echo '<div class="notice notice-success is-dismissible"><p>Contenido de Egia Kermanentzat sincronizado.</p></div>';
+        return;
+    }
+
+    $url = wp_nonce_url(admin_url('admin-post.php?action=kermanentzat_seed_content'), 'kermanentzat_seed_content');
+    echo '<div class="notice notice-info"><p><strong>Egia Kermanentzat:</strong> ejecuta la sincronizacion inicial para crear o actualizar las paginas bilingues del MVP.</p><p><a class="button button-primary" href="' . esc_url($url) . '">Sincronizar contenido</a></p></div>';
+});

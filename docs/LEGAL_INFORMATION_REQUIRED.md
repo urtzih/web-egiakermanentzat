@@ -13,9 +13,9 @@ No completar ningún campo por inferencia. Conservar evidencia documental fuera 
 | Plazos contables/fiscales concretos | pendiente | Criterio de asesoría conforme a obligaciones aplicables | Registro de conservación |
 | Traducción jurídica al euskera | pendiente | Revisión lingüística y jurídica profesional | Seis textos sincronizados |
 | Revisión jurídica española | pendiente | Validación por profesional competente | Cierre de borrador legal |
+| Google Analytics | pendiente | Propiedad institucional, adenda de tratamiento, garantías de transferencia, retención, accesos y configuración sin publicidad | `KERMANENTZAT_GA_APPROVED` y políticas ES/EU |
 | HTTPS/HSTS y operación de incidentes | pendiente | Hosting definitivo, responsables y procedimiento | MU-plugin y documentación operativa |
 
 ## Datos que no deben incorporarse
 
 No guardar en Git ni publicar DNI, documentos firmados, firmas, certificados bancarios, credenciales, datos personales de representantes o identificadores registrales sin acreditar. La fecha técnica de un documento no convierte su contenido en dato verificado.
-

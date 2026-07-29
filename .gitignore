@@ -22,3 +22,4 @@ docs/discovery/restricted/**
 !docs/discovery/restricted/**/claims.csv
 !docs/discovery/restricted/**/chronology.csv
 .codex-remote-attachments/**
+dist/*

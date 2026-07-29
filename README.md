@@ -34,7 +34,9 @@ El procedimiento de SEO, rendimiento, accesibilidad y auditoría está en
 
 ## Privacidad y mantenimiento legal
 
-La navegación pública anónima no crea cookies ni usa almacenamiento del navegador. Para sincronizar las seis páginas legales y el contenido de aportaciones, ejecutar `scripts/setup-local.ps1`. La auditoría, el inventario y los datos pendientes están en `docs/PRIVACY_AUDIT.md`, `docs/COOKIE_INVENTORY.md` y `docs/LEGAL_INFORMATION_REQUIRED.md`.
+Sin Analytics configurado, la navegación pública anónima no crea cookies ni usa almacenamiento del navegador. Cuando el servicio está aprobado en producción, permanece bloqueado hasta una elección afirmativa y el rechazo solo guarda la preferencia mínima. Para sincronizar las seis páginas legales y el contenido de aportaciones, ejecutar `scripts/setup-local.ps1`. La auditoría, el inventario y los datos pendientes están en `docs/PRIVACY_AUDIT.md`, `docs/COOKIE_INVENTORY.md` y `docs/LEGAL_INFORMATION_REQUIRED.md`.
+
+Google Analytics 4 está preparado como servicio opcional y permanece ausente salvo en producción con un ID válido, `KERMANENTZAT_GA_APPROVED=true` y consentimiento afirmativo. La puesta en marcha institucional de GA4 y Search Console está documentada en `docs/GOOGLE_ANALYTICS_FUTURE_SETUP.md`. El sitemap público que debe enviarse a Search Console es `https://egiakermanentzat.eus/sitemap.xml`.
 
 Después de cualquier cambio relacionado con servicios, scripts, embeds, formularios, hosting o terceros, actualizar primero el inventario y la versión del registro y ejecutar:
 

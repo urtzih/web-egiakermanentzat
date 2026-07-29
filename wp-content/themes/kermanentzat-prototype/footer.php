@@ -15,7 +15,7 @@ $language = kermanentzat_language();
         <a href="<?php echo esc_url(kermanentzat_url($language, 'privacy')); ?>"><?php echo $language === 'eu' ? 'Pribatutasuna' : 'Privacidad'; ?></a>
         <a href="<?php echo esc_url(kermanentzat_url($language, 'cookies')); ?>"><?php echo $language === 'eu' ? 'Cookie-politika' : 'Política de cookies'; ?></a>
         <?php if (kermanentzat_has_optional_services()) : ?>
-            <?php kermanentzat_render_consent_controls(); ?>
+            <?php kermanentzat_render_consent_controls('footer'); ?>
         <?php endif; ?>
     </nav>
     <div class="site-footer__closing">
@@ -25,6 +25,7 @@ $language = kermanentzat_language();
         </p>
     </div>
 </footer>
+<?php kermanentzat_render_consent_controls('banner'); ?>
 <?php wp_footer(); ?>
 </body>
 </html>

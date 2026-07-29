@@ -51,6 +51,9 @@
       try {
         await navigator.clipboard.writeText(value);
         if (feedback) feedback.textContent = button.dataset.successMessage || 'Copiado.';
+        if (button.dataset.analyticsEvent && window.kermanentzatAnalytics) {
+          window.kermanentzatAnalytics.track(button.dataset.analyticsEvent);
+        }
       } catch {
         if (feedback) feedback.textContent = value;
       }

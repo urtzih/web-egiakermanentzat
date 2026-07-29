@@ -1,61 +1,62 @@
 # Auditoría de privacidad
 
-Fecha técnica: 2026-07-22. Alcance: tema `kermanentzat-prototype`, MU-plugin, contenido sincronizado y navegación pública anónima. Este documento describe la implementación técnica; no sustituye una revisión jurídica.
+Fecha técnica: 2026-07-29. Alcance: tema `kermanentzat-prototype`, MU-plugin, contenido sincronizado, sitemaps y navegación pública.
 
 ## Resultado ejecutivo
 
-La web pública no utiliza cookies, almacenamiento del navegador, analítica, píxeles, iframes, formularios ni recursos automáticos de terceros. No procede mostrar un banner sin finalidades opcionales. Las cookies técnicas de WordPress están limitadas al acceso administrativo solicitado por personas autorizadas.
+Google Analytics 4 queda preparado como servicio opcional, desactivado por defecto y protegido por tres condiciones: entorno de producción, identificador válido y aprobación operativa explícita. Aun cumpliéndose, el navegador no descarga la etiqueta ni contacta con Google hasta recibir consentimiento analítico afirmativo.
 
-La identidad publicable se centraliza en `inc/privacy.php`. El número registral permanece vacío hasta recibir resolución o certificado oficial. El identificador no acreditado que figuraba en cuatro documentos fue introducido por el commit `228570f`; se ha retirado por falta de evidencia suficiente.
+El rechazo conserva únicamente una preferencia versionada durante seis meses. La retirada deshabilita Analytics, elimina las cookies `_ga`/`_ga_*` y recarga la página para impedir solicitudes posteriores. Aceptar y rechazar tienen la misma jerarquía visual; el control permanente del pie permite revisar la elección.
 
 ## Arquitectura
 
-- `kermanentzat_legal_config()` concentra identidad, versión y pendientes verificables.
-- `kermanentzat_service_registry()` declara `necessary` como no configurable, tres categorías opcionales y versión `1.0.0`.
-- `kermanentzat_optional_services` es el único punto de registro de adaptadores futuros. La entrada exige id, categoría válida y activación explícita.
-- Mientras la lista opcional esté vacía, no se ejecuta el hook de controles, ni existe banner, panel o almacenamiento de preferencias.
-- `inc/legal-content.php` es la fuente bilingüe que consume el seed idempotente.
-- El MU-plugin aplica CSP y cabeceras defensivas al frontal en cualquier entorno; correo, indexación e integraciones se bloquean solo fuera de producción.
+- `kermanentzat_legal_config()` mantiene identidad y pendientes documentales.
+- `kermanentzat_service_registry()` usa la versión `2.0.0` y registra GA4 solo cuando `KERMANENTZAT_GA_MEASUREMENT_ID`, `KERMANENTZAT_GA_APPROVED=true` y producción coinciden.
+- `assets/js/consent.js` es el único adaptador autorizado para almacenamiento, cookies y carga de Google.
+- Consent Mode v2 parte de analítica y publicidad denegadas. Google Signals y personalización publicitaria permanecen desactivados.
+- La CSP solo amplía `script-src`, `img-src` y `connect-src` cuando el servicio está activo.
+- `inc/legal-content.php` sigue siendo la fuente bilingüe que consume el seed.
 
-## Tratamientos observados
+## Tratamientos
 
-| Actividad | Datos mínimos | Finalidad | Base prevista | Destinatarios | Conservación |
-|---|---|---|---|---|---|
-| Consultas voluntarias por correo | Remitente, contenido y metadatos del mensaje | Responder y documentar seguimiento | Medidas solicitadas e interés legítimo según el asunto | Proveedor de correo y personas autorizadas | Mientras sea necesario y para posibles responsabilidades |
-| Transferencias bancarias | Ordenante, cuenta/operación, importe, concepto y datos de incidencia | Contabilidad, obligaciones fiscales/documentales, justificantes, incidencias y devoluciones | Obligación legal, gestión de la aportación e interés legítimo antifraude | Banco, asesoría y administraciones cuando proceda | Plazos legales contables/fiscales aplicables, pendientes de validación concreta |
-| Logs del futuro hosting | IP, fecha, recurso, agente y diagnóstico mínimo | Seguridad, disponibilidad y resolución de fallos | Interés legítimo | Proveedor de hosting y soporte autorizado | Mínimo contractual aún pendiente |
-| Administración WordPress | Identificador, rol, autenticación y eventos técnicos | Publicación y mantenimiento seguro | Interés legítimo y relación organizativa/contractual | Personas administradoras y hosting | Mientras exista autorización y el mínimo necesario para seguridad |
+| Actividad | Datos mínimos | Finalidad/base | Destinatarios | Conservación |
+|---|---|---|---|---|
+| Consultas por correo | Remitente, contenido y metadatos | Responder; medidas solicitadas/interés legítimo según asunto | Correo y personas autorizadas | Necesidad y posibles responsabilidades |
+| Transferencias | Ordenante, operación, importe, concepto e incidencias | Gestión, contabilidad y obligaciones legales | Banco, asesoría y autoridades cuando proceda | Plazos legales aplicables |
+| Analytics aceptado | Navegación, fuente/campaña, país aproximado, idioma, interacción y eventos sin contenido bancario | Estadística agregada; consentimiento | Google Ireland Limited | GA4: 2 meses; preferencia/cookies: hasta 6 meses |
+| Logs de hosting | IP, fecha, recurso y agente mínimo | Seguridad/disponibilidad; interés legítimo | Hosting y soporte autorizado | Pendiente del contrato |
+| Administración | Identificador, rol, autenticación y eventos técnicos | Mantenimiento seguro | Personas administradoras y hosting | Mientras exista autorización y necesidad |
 
-No existen decisiones automatizadas, perfiles, cuentas públicas, formularios, newsletter, CAPTCHA, pasarela, plataforma de donación ni analítica.
+No hay formularios, cuentas públicas, newsletter, CAPTCHA, pasarela, perfiles publicitarios, Google Ads, User-ID ni decisiones automatizadas.
 
-## Recursos y terceros
+## Datos bancarios y eventos
 
-Los recursos de carga automática son del mismo origen. Instagram, saretu.es y el correo son enlaces activados por la persona visitante. No se contacta con esos proveedores durante la carga. Gmail y el futuro hosting deberán documentarse como encargados o proveedores según el servicio y contrato real.
+`copy_iban` y `copy_bank_details` se emiten solo después de una escritura correcta en el portapapeles y si Analytics ya está activo. El adaptador acepta exclusivamente esos dos nombres. El valor de `data-copy-value`, el IBAN y el bloque copiado nunca se pasan a `gtag`.
 
-## Cabeceras
+## Indexación
 
-El frontal sirve `Content-Security-Policy`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`, `Permissions-Policy` y `X-Frame-Options: DENY`. La CSP limita recursos al origen propio, bloquea objetos y frames y restringe conexiones. Se admite código inline porque WordPress lo genera actualmente; retirar esa excepción exige nonce/hash y una regresión separada. HSTS queda pendiente del hosting HTTPS definitivo.
+`/sitemap.xml` enlaza `/sitemap-eu.xml` y `/sitemap-es.xml`. Cada hijo contiene siete páginas publicadas con origen fijo `https://egiakermanentzat.eus`, HTTPS y `lastmod`; no incluye autores, adjuntos, búsquedas ni administración. `robots.txt` declara el índice y conserva el bloqueo administrativo.
 
-## Riesgos y mantenimiento
+## Riesgos y validaciones pendientes
 
-- No publicar el número registral hasta comprobar evidencia oficial.
-- Validar hosting, contrato de Gmail, transferencias internacionales, conservación y responsables operativos.
-- Confirmar con asesoría si la asociación cumple la Ley 49/2002 antes de anunciar deducciones.
-- Someter los textos a revisión jurídica y lingüística profesional en euskera.
-- Antes de registrar cualquier servicio opcional: actualizar inventario, finalidad/base, adaptador, versión, textos y pruebas; mantenerlo bloqueado hasta consentimiento afirmativo cuando corresponda.
+- No activar `KERMANENTZAT_GA_APPROVED` hasta aceptar y archivar las condiciones de tratamiento de Google, validar las garantías de transferencia y confirmar los ajustes de la propiedad.
+- Someter los textos a revisión jurídica española y lingüística profesional en euskera.
+- Validar hosting, Gmail, logs, responsables operativos y HSTS.
+- No publicar el número registral hasta disponer de evidencia oficial.
+- Confirmar con asesoría la situación fiscal antes de anunciar deducciones.
+- Repetir con lector de pantalla real, zoom 200 %, teclado, móvil, escritorio y movimiento reducido.
 
-## Requisitos finales
+Este documento describe controles técnicos y no declara cumplimiento jurídico integral.
 
-| Requisito | Estado | Evidencia | Acción pendiente |
-|---|---|---|---|
-| Frontal sin cookies ni almacenamiento | completado | Registro vacío y prueba automatizada | Repetir en cada despliegue |
-| Banner de consentimiento | no aplicable | No hay servicios opcionales | Implementar solo si cambia el inventario |
-| Seis páginas legales bilingües | completado | Seed, rutas y pie | Revisión jurídica/lingüística |
-| Identidad legal verificada | completado | Nombre, NIF, domicilio y correo centralizados | Incorporar registro solo con certificado |
-| Tratamientos reales documentados | completado | Política e inventario | Validar contratos y retención |
-| Donaciones transparentes | completado | Dos páginas de ayuda y privacidad | Confirmar fiscalidad Ley 49/2002 |
-| Cabeceras defensivas | completado | MU-plugin y prueba HTTP | Valorar HSTS en producción HTTPS |
-| Analytics | no aplicable | Sin servicio, ID, etiqueta o solicitud | Seguir guía futura si se aprueba |
-| Hosting y Gmail | pendiente | Campos centrales nulos | Revisar contrato, región y garantías |
-| Validación jurídica y euskera | pendiente | Avisos visibles en los textos | Revisión humana cualificada |
+## Estado de requisitos
 
+| Requisito | Estado |
+|---|---|
+| Analytics bloqueado antes del consentimiento | Implementado; prueba de producción pendiente |
+| Rechazo y retirada sin solicitudes futuras | Implementado; auditoría de red de producción pendiente |
+| Banner y preferencias ES/EU | Implementado; revisión humana pendiente |
+| Inventario y políticas versión `2.0.0` | Implementado |
+| Eventos sin valores bancarios | Implementado y comprobado estáticamente |
+| Sitemaps bilingües y robots | Implementado |
+| Cuenta GA4, contrato y garantías | Pendiente de la asociación |
+| Search Console y DNS | Pendiente del despliegue público |
