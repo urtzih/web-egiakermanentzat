@@ -250,6 +250,13 @@ if (!function_exists('wp_get_theme')) {
     }
 }
 
+if (!function_exists('wp_get_environment_type')) {
+    function wp_get_environment_type(): string
+    {
+        return 'local';
+    }
+}
+
 if (!function_exists('wp_head')) {
     function wp_head(): void
     {

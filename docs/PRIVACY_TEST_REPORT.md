@@ -41,6 +41,8 @@ La página de aportaciones se revisó a 390 × 844 px: sin desbordamiento horizo
 
 La primera capa móvil se compactó sin alterar el consentimiento: el texto visible ya no enumera acciones bancarias, aceptar y rechazar comparten fila, tamaño y jerarquía, sus etiquetas permanecen en una línea y «Configurar» conserva un objetivo táctil de 44 px como acción secundaria. El detector de layout no encontró incidencias.
 
+En escritorio ancho, la primera capa se reorganizó como una única franja horizontal: título, resumen, política, configuración y las dos decisiones comparten una fila de aproximadamente 60–65 px, manteniendo objetivos clicables de 44 px. Móvil y tablet conservan su composición específica.
+
 ## Validación de activación
 
 Una ejecución aislada de PHP con entorno `production`, ID ficticio válido y `KERMANENTZAT_GA_APPROVED=true` registró únicamente `google_analytics_4` en la categoría `analytics`. En el entorno local real permaneció ausente.

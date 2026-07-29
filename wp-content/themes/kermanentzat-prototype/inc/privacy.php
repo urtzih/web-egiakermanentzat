@@ -138,7 +138,7 @@ function kermanentzat_consent_text(): array
         return [
             'preferences' => 'Preferencias de cookies',
             'title' => 'Analítica opcional',
-            'summary' => 'Si la aceptas, Google Analytics nos ayuda a entender cómo se usa la web y a mejorarla. Rechazarla no limita ninguna función.',
+            'summary' => 'Analytics nos ayuda a mejorar la web si lo aceptas. Rechazarlo no limita ninguna función.',
             'accept' => 'Aceptar',
             'reject' => 'Rechazar',
             'configure' => 'Configurar',
@@ -157,7 +157,7 @@ function kermanentzat_consent_text(): array
     return [
         'preferences' => 'Cookie-lehentasunak',
         'title' => 'Aukerako analitika',
-        'summary' => 'Onartzen baduzu, Google Analytics-ek webgunea nola erabiltzen den ulertzen eta hobetzen lagunduko digu. Baztertzeak ez du funtziorik mugatzen.',
+        'summary' => 'Onartzen baduzu, Analytics-ek webgunea hobetzen lagunduko digu. Baztertzeak ez du funtziorik mugatzen.',
         'accept' => 'Onartu',
         'reject' => 'Baztertu',
         'configure' => 'Konfiguratu',
@@ -204,12 +204,15 @@ function kermanentzat_render_consent_controls(string $context = 'banner'): void
         <div class="consent-banner__content">
             <div>
                 <h2 id="consent-title"><?php echo esc_html($text['title']); ?></h2>
-                <p><?php echo esc_html($text['summary']); ?> <a href="<?php echo esc_url($cookie_url); ?>"><?php echo esc_html($text['policy']); ?></a>.</p>
+                <p><?php echo esc_html($text['summary']); ?></p>
+                <div class="consent-banner__links">
+                    <a href="<?php echo esc_url($cookie_url); ?>"><?php echo esc_html($text['policy']); ?></a>
+                    <button type="button" data-consent-configure><?php echo esc_html($text['configure']); ?></button>
+                </div>
             </div>
             <div class="consent-banner__actions">
                 <button class="button button--primary" type="button" data-consent-accept><?php echo esc_html($text['accept']); ?></button>
                 <button class="button button--primary" type="button" data-consent-reject><?php echo esc_html($text['reject']); ?></button>
-                <button class="button consent-banner__configure" type="button" data-consent-configure><?php echo esc_html($text['configure']); ?></button>
             </div>
         </div>
     </section>
