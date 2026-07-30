@@ -26,9 +26,9 @@ $baseUri = [Uri]$BaseUrl
 $unverifiedIdentifier = 'CEK1' + 'L0ZU0A'
 
 $routes = @(
-    '/', '/kasuaren-laburpena/', '/lagundu-eta-ekarpenak/', '/kontaktua/',
+    '/', '/kasuaren-laburpena/', '/berriak/', '/lagundu-eta-ekarpenak/', '/kontaktua/',
     '/lege-oharra/', '/pribatutasun-politika/', '/cookie-politika/',
-    '/es/', '/es/resumen-del-caso/', '/es/ayuda-y-donaciones/', '/es/contacto/',
+    '/es/', '/es/resumen-del-caso/', '/es/actualidad/', '/es/ayuda-y-donaciones/', '/es/contacto/',
     '/es/aviso-legal/', '/es/politica-de-privacidad/', '/es/politica-de-cookies/'
 )
 $legalRoutes = @(

@@ -43,6 +43,8 @@ La primera capa móvil se compactó sin alterar el consentimiento: el texto visi
 
 En escritorio ancho, la primera capa se reorganizó como una única franja horizontal: título, resumen, política, configuración y las dos decisiones comparten una fila de aproximadamente 60–65 px, manteniendo objetivos clicables de 44 px. Móvil y tablet conservan su composición específica.
 
+Las páginas de ayuda ES/EU incluyen el nuevo bloque de contacto sobre posibles agresiones en el entorno de Mitika. Las páginas de contacto incorporan una referencia breve y enlazan mediante anclas estables al bloque de ayuda del idioma correspondiente. Ambos textos usan el mismo correo público mediante `mailto:`, no añaden formularios ni almacenamiento y recomiendan acordar otro canal antes de enviar información delicada.
+
 ## Validación de activación
 
 Una ejecución aislada de PHP con entorno `production`, ID ficticio válido y `KERMANENTZAT_GA_APPROVED=true` registró únicamente `google_analytics_4` en la categoría `analytics`. En el entorno local real permaneció ausente.

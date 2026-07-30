@@ -11,9 +11,18 @@ $language = kermanentzat_language();
         <a href="https://www.instagram.com/justizia.kermanentzat/" target="_blank" rel="noopener noreferrer">Instagram · @justizia.kermanentzat</a>
     </div>
     <nav class="site-footer__legal" aria-label="<?php echo $language === 'eu' ? 'Lege-informazioa' : 'Información legal'; ?>">
-        <a href="<?php echo esc_url(kermanentzat_url($language, 'legal')); ?>"><?php echo $language === 'eu' ? 'Lege-oharra' : 'Aviso legal'; ?></a>
-        <a href="<?php echo esc_url(kermanentzat_url($language, 'privacy')); ?>"><?php echo $language === 'eu' ? 'Pribatutasuna' : 'Privacidad'; ?></a>
-        <a href="<?php echo esc_url(kermanentzat_url($language, 'cookies')); ?>"><?php echo $language === 'eu' ? 'Cookie-politika' : 'Política de cookies'; ?></a>
+        <a href="<?php echo esc_url(kermanentzat_url($language, 'legal')); ?>" aria-label="<?php echo $language === 'eu' ? 'Lege-oharra' : 'Aviso legal'; ?>">
+            <span class="site-footer__label--full"><?php echo $language === 'eu' ? 'Lege-oharra' : 'Aviso legal'; ?></span>
+            <span class="site-footer__label--compact" aria-hidden="true"><?php echo $language === 'eu' ? 'Lege-oharra' : 'Legal'; ?></span>
+        </a>
+        <a href="<?php echo esc_url(kermanentzat_url($language, 'privacy')); ?>" aria-label="<?php echo $language === 'eu' ? 'Pribatutasuna' : 'Privacidad'; ?>">
+            <span class="site-footer__label--full"><?php echo $language === 'eu' ? 'Pribatutasuna' : 'Privacidad'; ?></span>
+            <span class="site-footer__label--compact" aria-hidden="true"><?php echo $language === 'eu' ? 'Pribatutasuna' : 'Privacidad'; ?></span>
+        </a>
+        <a href="<?php echo esc_url(kermanentzat_url($language, 'cookies')); ?>" aria-label="<?php echo $language === 'eu' ? 'Cookie-politika' : 'Política de cookies'; ?>">
+            <span class="site-footer__label--full"><?php echo $language === 'eu' ? 'Cookie-politika' : 'Política de cookies'; ?></span>
+            <span class="site-footer__label--compact" aria-hidden="true"><?php echo $language === 'eu' ? 'Cookieak' : 'Cookies'; ?></span>
+        </a>
         <?php if (kermanentzat_has_optional_services()) : ?>
             <?php kermanentzat_render_consent_controls('footer'); ?>
         <?php endif; ?>

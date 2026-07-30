@@ -18,6 +18,7 @@ El rechazo conserva únicamente una preferencia versionada durante seis meses. L
 - `inc/legal-content.php` sigue siendo la fuente bilingüe que consume el seed.
 - La primera capa resume la finalidad general de la analítica sin enumerar eventos bancarios; el detalle permanece en la política y en el panel de preferencias. Aceptar y rechazar conservan igual visibilidad y facilidad de uso.
 - El registro permanece en `2.0.0`: el ajuste de texto y composición no cambia finalidades, proveedor, almacenamiento ni condiciones de activación, por lo que no obliga a solicitar de nuevo una elección ya válida.
+- La página de ayuda ofrece el correo público existente para comunicar posibles agresiones relacionadas con el entorno de Mitika, y la página de contacto incluye una referencia breve que enlaza directamente a esa orientación en el idioma correspondiente. No se incorporan formularios ni nuevos destinatarios y se advierte que la documentación sensible debe compartirse solo después de acordar un canal adecuado; no se publica una garantía absoluta de confidencialidad que el correo ordinario no pueda acreditar.
 
 ## Tratamientos
 

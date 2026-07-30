@@ -60,6 +60,7 @@ function kermanentzat_page_map(): array
         'es' => [
             'home' => '/es/',
             'case' => '/es/resumen-del-caso/',
+            'updates' => '/es/actualidad/',
             'support' => '/es/ayuda-y-donaciones/',
             'contact' => '/es/contacto/',
             'legal' => '/es/aviso-legal/',
@@ -69,6 +70,7 @@ function kermanentzat_page_map(): array
         'eu' => [
             'home' => '/',
             'case' => '/kasuaren-laburpena/',
+            'updates' => '/berriak/',
             'support' => '/lagundu-eta-ekarpenak/',
             'contact' => '/kontaktua/',
             'legal' => '/lege-oharra/',
@@ -89,6 +91,10 @@ function kermanentzat_page_meta(): array
             'case' => [
                 'title' => 'Resumen del caso',
                 'description' => 'Resumen de lo sucedido el 23 de febrero de 2025 y de la evolución judicial conocida del caso de Kerman Villate Beitia.',
+            ],
+            'updates' => [
+                'title' => 'Actualidad',
+                'description' => 'Próximamente, noticias, comunicados y novedades de Egia Kermanentzat Elkartea.',
             ],
             'support' => [
                 'title' => 'Ayuda y donaciones',
@@ -119,6 +125,10 @@ function kermanentzat_page_meta(): array
             'case' => [
                 'title' => 'Kasuaren laburpena',
                 'description' => '2025eko otsailaren 23an gertatutakoaren eta kasuaren ibilbide judizial ezagunaren laburpen argia.',
+            ],
+            'updates' => [
+                'title' => 'Berriak',
+                'description' => 'Laster, Egia Kermanentzat Elkartearen albisteak, komunikatuak eta berritasunak.',
             ],
             'support' => [
                 'title' => 'Lagundu eta ekarpenak',
@@ -152,6 +162,7 @@ function kermanentzat_page_key(): string
     $slug = get_post_field('post_name', get_queried_object_id());
     return match ($slug) {
         'resumen-del-caso', 'kasuaren-laburpena' => 'case',
+        'actualidad', 'berriak' => 'updates',
         'ayuda-y-donaciones', 'lagundu-eta-ekarpenak' => 'support',
         'contacto', 'kontaktua' => 'contact',
         'aviso-legal', 'lege-oharra' => 'legal',
@@ -189,6 +200,13 @@ add_filter('wp_robots', static function (array $robots): array {
         $robots['nofollow'] = true;
         $robots['noarchive'] = true;
         $robots['nosnippet'] = true;
+        return $robots;
+    }
+
+    if (kermanentzat_page_key() === 'updates') {
+        $robots['noindex'] = true;
+        $robots['follow'] = true;
+        $robots['noarchive'] = true;
         return $robots;
     }
 
@@ -409,9 +427,14 @@ add_action('wp_head', static function (): void {
     $language = kermanentzat_language();
     $meta = kermanentzat_meta_for_current_page();
     $current_url = kermanentzat_current_url();
-    $site_name = 'Egia Kermanentzat';
+    $site_name = 'Egia Kermanentzat Elkartea';
     $social_image = kermanentzat_social_image();
     $image_url = $social_image['url'];
+    $search_image = [
+        'url' => kermanentzat_portrait_image_url(),
+        'width' => 717,
+        'height' => 762,
+    ];
     $title = $meta['title'];
     $description = $meta['description'];
     printf('<meta name="description" content="%s">', esc_attr($description));
@@ -457,6 +480,10 @@ add_action('wp_head', static function (): void {
                 '@id' => home_url('/#website'),
                 'url' => home_url('/'),
                 'name' => $site_name,
+                'alternateName' => [
+                    'Egia Kermanentzat',
+                    'egiakermanentzat.eus',
+                ],
                 'inLanguage' => [$language],
                 'publisher' => [
                     '@id' => home_url('/#organization'),
@@ -477,9 +504,9 @@ add_action('wp_head', static function (): void {
                 ],
                 'primaryImageOfPage' => [
                     '@type' => 'ImageObject',
-                    'url' => $image_url,
-                    'width' => $social_image['width'],
-                    'height' => $social_image['height'],
+                    'url' => $search_image['url'],
+                    'width' => $search_image['width'],
+                    'height' => $search_image['height'],
                 ],
             ],
         ],
@@ -491,7 +518,7 @@ add_action('wp_head', static function (): void {
 add_filter('document_title_parts', static function (array $parts): array {
     $meta = kermanentzat_meta_for_current_page();
     $parts['title'] = $meta['title'];
-    $parts['site'] = 'Egia Kermanentzat';
+    $parts['site'] = 'Egia Kermanentzat Elkartea';
     unset($parts['tagline']);
     return $parts;
 });

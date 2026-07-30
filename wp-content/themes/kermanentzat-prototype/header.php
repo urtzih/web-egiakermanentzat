@@ -4,8 +4,8 @@ $language = kermanentzat_language();
 $other = $language === 'es' ? 'eu' : 'es';
 $key = kermanentzat_page_key();
 $labels = $language === 'eu'
-    ? ['home' => 'Hasiera', 'case' => 'Kasua', 'support' => 'Lagundu', 'contact' => 'Kontaktua']
-    : ['home' => 'Inicio', 'case' => 'El caso', 'support' => 'Ayuda', 'contact' => 'Contacto'];
+    ? ['home' => 'Hasiera', 'case' => 'Kasua', 'updates' => 'Berriak', 'support' => 'Lagundu', 'contact' => 'Kontaktua']
+    : ['home' => 'Inicio', 'case' => 'El caso', 'updates' => 'Actualidad', 'support' => 'Ayuda', 'contact' => 'Contacto'];
 ?><!doctype html>
 <html lang="<?php echo esc_attr($language); ?>">
 <head>

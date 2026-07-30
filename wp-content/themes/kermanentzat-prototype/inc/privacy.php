@@ -137,6 +137,7 @@ function kermanentzat_consent_text(): array
     if (kermanentzat_language() === 'es') {
         return [
             'preferences' => 'Preferencias de cookies',
+            'preferences_short' => 'Preferencias',
             'title' => 'Analítica opcional',
             'summary' => 'Analytics nos ayuda a mejorar la web si lo aceptas. Rechazarlo no limita ninguna función.',
             'accept' => 'Aceptar',
@@ -156,6 +157,7 @@ function kermanentzat_consent_text(): array
 
     return [
         'preferences' => 'Cookie-lehentasunak',
+        'preferences_short' => 'Lehentasunak',
         'title' => 'Aukerako analitika',
         'summary' => 'Onartzen baduzu, Analytics-ek webgunea hobetzen lagunduko digu. Baztertzeak ez du funtziorik mugatzen.',
         'accept' => 'Onartu',
@@ -182,8 +184,10 @@ function kermanentzat_render_consent_controls(string $context = 'banner'): void
     $text = kermanentzat_consent_text();
     if ($context === 'footer') {
         printf(
-            '<button class="site-footer__consent" type="button" data-consent-open>%s</button>',
-            esc_html($text['preferences'])
+            '<button class="site-footer__consent" type="button" data-consent-open aria-label="%1$s"><span class="site-footer__label--full">%2$s</span><span class="site-footer__label--compact" aria-hidden="true">%3$s</span></button>',
+            esc_attr($text['preferences']),
+            esc_html($text['preferences']),
+            esc_html($text['preferences_short'])
         );
         return;
     }
