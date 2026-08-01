@@ -1,6 +1,8 @@
 [CmdletBinding()]
 param(
     [string]$BaseUrl = '',
+    [ValidateSet('inactive', 'active')]
+    [string]$ConsentService = 'inactive',
     [switch]$SkipPhpLint
 )
 
@@ -85,8 +87,13 @@ foreach ($route in $routes) {
             Add-Failure "$route contiene almacenamiento o un destino externo en un script inline"
         }
     }
-    if ($html -match '(?i)(class|id)=["''][^"'']*(cookie-banner|consent-banner|consent-panel)|data-consent-storage') {
-        Add-Failure "$route renderiza consentimiento sin un servicio opcional activo"
+    $rendersConsent = $html -match '(?i)(class|id)=["''][^"'']*(cookie-banner|consent-banner|consent-panel)|data-consent-storage'
+    if ($ConsentService -eq 'active' -and -not $rendersConsent) {
+        Add-Failure "$route no renderiza consentimiento pese a esperar un servicio opcional activo"
+    } elseif ($ConsentService -eq 'inactive' -and $rendersConsent) {
+        Add-Failure "$route renderiza consentimiento sin esperar un servicio opcional activo"
+    } else {
+        Add-Pass "$route coincide con el estado de consentimiento esperado ($ConsentService)"
     }
 
     $resourceMatches = [regex]::Matches($html, '(?is)<(?:script|img|iframe|source|link)\b[^>]*?\s(?:src|href)=["'']([^"'']+)["'']')

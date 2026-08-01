@@ -44,4 +44,14 @@ Después de cualquier cambio relacionado con servicios, scripts, embeds, formula
 powershell -ExecutionPolicy Bypass -File scripts/test-privacy.ps1
 ```
 
+Para comprobar producción, donde el servicio opcional de Analytics está
+configurado pero debe seguir bloqueado hasta una elección afirmativa, ejecutar:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/test-privacy.ps1 `
+  -BaseUrl 'https://egiakermanentzat.eus' `
+  -ConsentService active `
+  -SkipPhpLint
+```
+
 No registrar ni cargar un servicio opcional sin definir su adaptador, base jurídica, textos bilingües y pruebas. Mientras el registro opcional esté vacío no se renderizan banner, panel ni almacenamiento de consentimiento.
