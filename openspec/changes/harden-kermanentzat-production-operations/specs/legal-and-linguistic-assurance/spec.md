@@ -34,3 +34,10 @@ La aceptación de producción MUST incluir pruebas manuales de teclado, lector d
 #### Scenario: Cierre de auditoría
 - **WHEN** se declara completada la revisión
 - **THEN** cada recorrido crítico tiene evidencia, resultado y resolución de defectos materiales
+
+### Requirement: Procedimiento informado de alta de socios
+Antes de solicitar los datos completos de una persona interesada, la asociación MUST definir el órgano y las reglas de admisión, justificar los datos estrictamente necesarios, establecer base jurídica, destinatarios, accesos, conservación y canal, y facilitar información de privacidad ES/EU en el momento de la recogida.
+
+#### Scenario: Solicitud inicial por correo
+- **WHEN** una persona escribe expresando que quiere hacerse socia
+- **THEN** recibe el procedimiento y la información aplicable antes de que se le soliciten DNI/NAN u otros datos adicionales

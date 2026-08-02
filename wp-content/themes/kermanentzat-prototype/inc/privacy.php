@@ -9,8 +9,8 @@ defined('ABSPATH') || exit;
 function kermanentzat_legal_config(): array
 {
     return [
-        'version' => '2026.07.29',
-        'last_reviewed' => '29/07/2026',
+        'version' => '2026.08.02',
+        'last_reviewed' => '02/08/2026',
         'name' => 'Egia Kermanentzat Elkartea',
         'nif' => 'G93797744',
         'address' => 'Zubiegi kalea 16, Bitoriano, 01139 Zuia, Álava',

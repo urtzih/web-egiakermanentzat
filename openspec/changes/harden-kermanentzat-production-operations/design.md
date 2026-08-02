@@ -39,6 +39,10 @@ La auditoría combinará automatización con teclado, lector de pantalla, zoom 2
 
 La configuración técnica de consentimiento no sustituye la aprobación contractual. Si la evidencia exigida no está disponible, Analytics se desactivará hasta resolverla; Search Console y el sitemap pueden mantenerse sin analítica.
 
+### 6. Alta de socios en dos pasos
+
+La web solo invitará a expresar interés por correo, sin pedir DNI/NAN ni documentación en el primer mensaje. Antes de solicitar una ficha completa, la asociación deberá aprobar el órgano y las reglas de admisión, justificar cada dato, definir accesos y conservación y entregar la información de privacidad aplicable.
+
 ## Risks / Trade-offs
 
 - [La evidencia depende de terceros] → Asignar responsable y mantener desactivada la función condicionada.
@@ -59,3 +63,4 @@ La configuración técnica de consentimiento no sustituye la aprobación contrac
 - Identidad de asesoría y revisores profesionales.
 - RPO/RTO y retención aceptados por la asociación.
 - Proveedor contractual, ubicación y retención definitiva de hosting y correo.
+- Datos y canal definitivos para tramitar el alta conforme a los estatutos.

@@ -76,6 +76,13 @@ if (!function_exists('add_filter')) {
     }
 }
 
+if (!function_exists('apply_filters')) {
+    function apply_filters(string $hook_name, $value, ...$args)
+    {
+        return $value;
+    }
+}
+
 if (!function_exists('add_theme_support')) {
     function add_theme_support(string $feature, ...$args): void
     {
@@ -270,6 +277,13 @@ if (!function_exists('wp_insert_post')) {
     function wp_insert_post(array $postarr = [], bool $wp_error = false, bool $fire_after_hooks = true)
     {
         return 0;
+    }
+}
+
+if (!function_exists('wp_make_link_relative')) {
+    function wp_make_link_relative(string $link): string
+    {
+        return $link;
     }
 }
 

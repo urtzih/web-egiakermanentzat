@@ -224,6 +224,36 @@ if (
     Add-Pass 'El registro exige aprobación explícita, ID y producción'
 }
 
+$seedSource = Get-Content -Raw -LiteralPath (Join-Path $workspacePath 'wp-content\themes\kermanentzat-prototype\inc\seed.php')
+$legalContentSource = Get-Content -Raw -LiteralPath (Join-Path $workspacePath 'wp-content\themes\kermanentzat-prototype\inc\legal-content.php')
+if (
+    $seedSource -notmatch 'Alta de socio/a' -or
+    $seedSource -notmatch '<strong>¿Quieres hacerte socio/a\?</strong>' -or
+    $seedSource -notmatch 'En el primer correo, indica únicamente tu interés' -or
+    $seedSource -notmatch 'Bazkide alta' -or
+    $seedSource -notmatch '<strong>Bazkide izan nahi duzu\?</strong>' -or
+    $seedSource -notmatch 'Lehen mezuan, adierazi zure interesa bakarrik'
+) {
+    Add-Failure 'La invitación para hacerse socio/a no conserva el primer contacto minimizado en ES/EU'
+} elseif (
+    $seedSource -match '(?is)nombre.{0,80}apellidos.{0,80}DNI.{0,80}tel[eé]fono' -or
+    $seedSource -match '(?is)izena.{0,80}abizenak.{0,80}NAN.{0,80}telefono'
+) {
+    Add-Failure 'La página solicita el conjunto completo de datos personales en el primer correo de alta'
+} else {
+    Add-Pass 'El primer contacto para hacerse socio/a está minimizado en ES/EU'
+}
+if (
+    $legalContentSource -notmatch 'solicitudes iniciales para hacerse socio/a' -or
+    $legalContentSource -notmatch 'bazkide izateko hasierako eskaerei' -or
+    $legalContentSource -notmatch 'Antes de recabar datos adicionales' -or
+    $legalContentSource -notmatch 'Datu gehiago eskatu aurretik'
+) {
+    Add-Failure 'La política de privacidad no explica el contacto inicial de alta en ES/EU'
+} else {
+    Add-Pass 'La política de privacidad explica el contacto inicial de alta en ES/EU'
+}
+
 $styleFiles = Get-ChildItem -LiteralPath (Join-Path $workspacePath 'wp-content') -Recurse -Filter '*.css' -File
 foreach ($file in $styleFiles) {
     $source = Get-Content -Raw -LiteralPath $file.FullName

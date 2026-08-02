@@ -4,6 +4,7 @@
 - [ ] 1.2 Designar responsables y suplentes de revisión factual, jurídica, lingüística, editorial, técnica y tesorería (origen 2.3)
 - [ ] 1.3 Obtener revisión jurídica española y lingüística profesional EU de avisos, privacidad, cookies, aportaciones y contacto (orígenes 5.4–5.5, 6.2 y 7.6)
 - [ ] 1.4 Resolver fiscalidad, certificados, devoluciones, justificantes, conciliación y transparencia de aportaciones (orígenes 2.5 y 6.5)
+- [ ] 1.5 Definir y validar el alta de socios: órgano competente, campos necesarios, base jurídica, información ES/EU, conservación, accesos y canal para documentación
 
 ## 2. Proveedores y accesos
 

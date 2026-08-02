@@ -1,5 +1,39 @@
 # Informe de pruebas de privacidad
 
+## Verificación del primer contacto de alta — 2026-08-02
+
+Se ejecutó la batería contra `https://egiakermanentzat.eus` con el servicio de
+consentimiento activo y las comprobaciones estáticas del contenido preparado:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/test-privacy.ps1 `
+  -BaseUrl 'https://egiakermanentzat.eus' `
+  -ConsentService active `
+  -SkipPhpLint
+```
+
+Resultado de producción y comprobaciones estáticas: **58 comprobaciones
+superadas, 0 fallos**. Después se sincronizó el seed en WordPress local y se
+ejecutó la batería completa, incluido el lint PHP:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts/setup-local.ps1
+powershell -ExecutionPolicy Bypass -File scripts/test-privacy.ps1
+```
+
+Resultado local: **59 comprobaciones superadas, 0 fallos**. La prueba confirma
+que:
+
+- el seed ES/EU invita a expresar interés sin pedir nombre, apellidos, DNI/NAN,
+  teléfono ni documentación en el primer correo;
+- ambos textos indican que el procedimiento se facilitará antes de solicitar
+  datos adicionales;
+- la política de privacidad describe la finalidad en los dos idiomas;
+- no se añaden formularios, almacenamiento, eventos ni servicios externos y el
+  registro de consentimiento permanece en `2.0.0`.
+- las rutas locales ES/EU destacan la invitación y limitan el primer mensaje a
+  expresar interés, y todos los archivos PHP conservan sintaxis válida.
+
 Ejecución: 2026-07-29. Entorno: WordPress 7.0.2, PHP 8.4, Apache y MariaDB 11.8 en Docker; URL local `http://localhost:8082`.
 
 ## Resultado automatizado

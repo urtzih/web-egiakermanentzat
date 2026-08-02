@@ -1,6 +1,6 @@
 # Inventario de cookies, almacenamiento y servicios
 
-Versión del registro: `2.0.0`. Revisión técnica: 2026-07-29.
+Versión del registro: `2.0.0`. Revisión técnica: 2026-08-02.
 
 ## Estados de la navegación pública
 
@@ -48,7 +48,7 @@ No se usa Google Tag Manager, una CMP, píxeles publicitarios, iframes, fuentes 
 
 ## Terceros enlazados
 
-Instagram, saretu.es y el correo siguen siendo enlaces iniciados por la persona visitante. No reciben datos durante la carga.
+Instagram, saretu.es y el correo siguen siendo enlaces iniciados por la persona visitante. No reciben datos durante la carga. La invitación para hacerse socio/a abre el mismo correo y pide únicamente expresar interés en el primer mensaje, sin DNI/NAN ni documentación sensible.
 
 ## Regla de cambio
 
@@ -58,3 +58,7 @@ operativa fue autorizada el 29-07-2026 y se estableció
 condiciones de tratamiento, garantías de transferencia, propiedad
 institucional, retención de dos meses, accesos y configuración sin publicidad,
 además de completar la revisión jurídica.
+
+La revisión del 02-08-2026 añade una finalidad de contacto por correo, pero no
+incorpora servicios, cookies, almacenamiento ni eventos. Por eso no cambia la
+versión `2.0.0` del registro de consentimiento.

@@ -9,6 +9,7 @@ No completar ningún campo por inferencia. Conservar evidencia documental fuera 
 | Retención de logs | pendiente | Configuración/contrato y necesidad operativa | Privacidad e inventario |
 | Gmail | pendiente | Modalidad de cuenta, condiciones, entidad contractual y garantías de transferencia | Privacidad |
 | Responsables operativos | pendiente | Designación interna y permisos mínimos | Registro interno, no publicación nominal salvo necesidad |
+| Procedimiento de alta de socios | pendiente | Estatutos y órgano de admisión; datos estrictamente necesarios; base jurídica; información por capas; conservación; accesos y canal aprobado para documentación | Respuesta de alta, política de privacidad y registro interno de socios |
 | Fiscalidad de aportaciones | pendiente | Asesoría y confirmación de requisitos de Ley 49/2002 | Página de ayuda; nunca prometer antes |
 | Plazos contables/fiscales concretos | pendiente | Criterio de asesoría conforme a obligaciones aplicables | Registro de conservación |
 | Traducción jurídica al euskera | pendiente | Revisión lingüística y jurídica profesional | Seis textos sincronizados |

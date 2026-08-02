@@ -33,3 +33,10 @@ El MVP MUST NOT ofrecer comentarios, cuentas públicas, muro ni publicación aut
 #### Scenario: Propuesta de testimonio
 - **WHEN** una persona quiere aportar un testimonio
 - **THEN** se la deriva al canal privado de contacto sin publicación automática
+
+### Requirement: Consulta inicial para hacerse socio/a
+El sitio MUST permitir expresar por correo el interés en hacerse socio/a, MUST limitar el primer mensaje a esa expresión de interés sin solicitar DNI/NAN ni documentación sensible y MUST facilitar el procedimiento y la información de privacidad aplicable antes de solicitar otros datos.
+
+#### Scenario: Primer contacto de alta
+- **WHEN** una persona quiere hacerse socio/a
+- **THEN** encuentra el correo y un asunto recomendado, y se le indica que espere el procedimiento antes de enviar datos adicionales

@@ -5,6 +5,7 @@ El MVP está en producción, pero varias garantías jurídicas, lingüísticas y
 ## What Changes
 
 - Verificar identidad registral, facultades, fiscalidad, textos legales y traducciones con profesionales competentes.
+- Definir el procedimiento de alta de socios, los datos estrictamente necesarios y la información de privacidad previa a su recogida.
 - Regularizar la operación de Google Analytics, Gmail, hosting y logs mediante contratos, bases, retenciones, accesos y evidencia de aprobación.
 - Definir cuentas individuales, MFA, mínimo privilegio, custodios, alta/baja y recuperación de accesos.
 - Documentar copias separadas, restauración ensayada, RPO/RTO, actualizaciones, monitorización, incidentes y relevo técnico.
