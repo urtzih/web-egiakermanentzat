@@ -56,7 +56,7 @@ Resultado: **37 comprobaciones superadas, 0 fallos**.
 | Registro | Versión `2.0.0`; exige producción, ID válido y aprobación |
 | Consent Mode | Analítica y cuatro señales publicitarias denegadas por defecto; Signals y personalización desactivados |
 | Eventos bancarios | Lista cerrada a `copy_iban`/`copy_bank_details`; sin contenido copiado |
-| Sitemap | Índice ES/EU y dos hijos con siete URLs HTTPS cada uno |
+| Sitemap | Índice ES/EU y dos hijos con ocho URLs HTTPS cada uno |
 | Robots | Administración restringida y sitemap de producción |
 | Sintaxis | PHP y JavaScript válidos |
 

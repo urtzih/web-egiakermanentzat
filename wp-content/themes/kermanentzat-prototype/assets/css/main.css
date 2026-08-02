@@ -474,6 +474,81 @@ body.admin-bar .mobile-nav[open] nav { top: calc(4.5rem + 32px); }
   text-transform: uppercase;
   white-space: nowrap;
 }
+.updates-feed { background: var(--color-canvas); }
+.updates-feed__intro {
+  display: grid;
+  gap: 1rem;
+  padding-bottom: clamp(2rem, 5vw, 4rem);
+  border-bottom: 4px solid var(--color-ink);
+}
+.updates-feed__intro h2,
+.updates-feed__intro p { margin: 0; }
+.updates-feed__intro h2 {
+  max-width: none;
+  font-size: clamp(2rem, 3.25vw, 2.9rem);
+  overflow-wrap: anywhere;
+}
+.updates-feed__intro p {
+  max-width: 62ch;
+  color: var(--color-muted);
+  text-wrap: pretty;
+}
+.updates-entry {
+  display: grid;
+  gap: clamp(1.75rem, 4vw, 4rem);
+  padding-block: clamp(2rem, 6vw, 5rem);
+  border-bottom: 1px solid var(--color-ink);
+}
+.updates-entry__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: .45rem;
+  font-size: .88rem;
+  font-weight: 700;
+  line-height: 1.4;
+}
+.updates-entry__nature {
+  display: inline-block;
+  padding: .3rem .5rem;
+  background: var(--color-campaign);
+  color: var(--color-ink);
+  font-size: .78rem;
+  font-weight: 800;
+  letter-spacing: .025em;
+  text-transform: uppercase;
+}
+.updates-entry__body { max-width: 54rem; }
+.updates-entry__body h3 {
+  margin: 0;
+  font-size: clamp(1.65rem, 4.6vw, 3.35rem);
+  line-height: 1.08;
+  letter-spacing: -.025em;
+  text-wrap: balance;
+  overflow-wrap: anywhere;
+}
+.updates-entry__body p {
+  max-width: 66ch;
+  margin: 1.5rem 0 0;
+  font-size: clamp(1.05rem, 1rem + .25vw, 1.2rem);
+  text-wrap: pretty;
+}
+.updates-entry__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 1.75rem;
+  border-bottom: 3px solid var(--color-campaign);
+  font-weight: 800;
+  text-decoration: none;
+  transition: color 180ms var(--ease-out), border-color 180ms var(--ease-out);
+}
+@media (hover: hover) {
+  .updates-entry__link:hover {
+    color: var(--color-action);
+    border-bottom-color: currentColor;
+  }
+}
 .page-hero h1,
 .display-heading,
 .campaign-heading {
@@ -1000,6 +1075,14 @@ body.admin-bar .mobile-nav[open] nav { top: calc(4.5rem + 32px); }
   .support-grid { grid-template-columns: minmax(16rem, .75fr) minmax(24rem, 1.25fr); }
   .contact-grid { grid-template-columns: minmax(16rem, .75fr) minmax(22rem, 1.25fr); }
   .evidence-row { grid-template-columns: minmax(10rem, .35fr) 1fr; }
+  .updates-feed__intro {
+    grid-template-columns: minmax(20rem, .55fr) minmax(0, 1.45fr);
+    column-gap: clamp(3rem, 6vw, 7rem);
+  }
+  .updates-feed__intro > * { min-width: 0; }
+  .updates-feed__intro h2 { white-space: nowrap; }
+  .updates-feed__intro p { padding-top: .4rem; }
+  .updates-entry { grid-template-columns: minmax(13rem, .42fr) minmax(30rem, 1.58fr); }
 }
 
 @media (min-width: 75rem) {

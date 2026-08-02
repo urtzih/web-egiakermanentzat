@@ -144,13 +144,13 @@ foreach ($sitemapRoute in @('/sitemap-eu.xml', '/sitemap-es.xml')) {
     $sitemapResponse = Invoke-WebRequest -UseBasicParsing -Uri "$BaseUrl$sitemapRoute"
     $sitemapXml = [string]$sitemapResponse.Content
     $urlCount = ([regex]::Matches($sitemapXml, '<url>')).Count
-    if ($sitemapResponse.StatusCode -ne 200 -or $urlCount -ne 7) {
-        Add-Failure "$sitemapRoute debe contener exactamente siete URLs"
+    if ($sitemapResponse.StatusCode -ne 200 -or $urlCount -ne 8) {
+        Add-Failure "$sitemapRoute debe contener exactamente ocho URLs"
     }
     if ($sitemapXml -match '(?i)localhost|/wp-admin/|/author/|/attachment/|<loc>http://') {
         Add-Failure "$sitemapRoute contiene una URL no pública o no HTTPS"
     } else {
-        Add-Pass "$sitemapRoute contiene siete URLs HTTPS públicas"
+        Add-Pass "$sitemapRoute contiene ocho URLs HTTPS públicas"
     }
 }
 

@@ -40,7 +40,7 @@ No hay formularios, cuentas públicas, newsletter, CAPTCHA, pasarela, perfiles p
 
 ## Indexación
 
-`/sitemap.xml` enlaza `/sitemap-eu.xml` y `/sitemap-es.xml`. Cada hijo contiene siete páginas publicadas con origen fijo `https://egiakermanentzat.eus`, HTTPS y `lastmod`; no incluye autores, adjuntos, búsquedas ni administración. `robots.txt` declara el índice y conserva el bloqueo administrativo.
+`/sitemap.xml` enlaza `/sitemap-eu.xml` y `/sitemap-es.xml`. Cada hijo contiene ocho páginas publicadas con origen fijo `https://egiakermanentzat.eus`, HTTPS y `lastmod`, incluidas las rutas de actualidad desde que contienen cobertura real; no incluye autores, adjuntos, búsquedas ni administración. `robots.txt` declara el índice y conserva el bloqueo administrativo.
 
 ## Riesgos y validaciones pendientes
 

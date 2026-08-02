@@ -21,20 +21,29 @@ if (-not $BaseUrl) {
     $BaseUrl = "http://localhost:$port"
 }
 $BaseUrl = $BaseUrl.TrimEnd('/')
+$isProduction = ([uri]$BaseUrl).Host -eq 'egiakermanentzat.eus'
 
 $routes = @(
     @{
         Path = '/berriak/'
         MenuLabel = 'Berriak'
         Heading = 'Berriak'
-        StatusPattern = 'Laster eskuragarri'
+        StatusPattern = 'Atala eraikitzen'
+        SectionHeading = 'Hedabideetan'
+        Nature = 'Kazetaritza-estaldura'
+        Date = '2026ko abuztuaren 2a'
+        SourceUrl = 'https://orain.eus/eu/aktualitatea/gizartea/2026/08/02/testigantza-berriek-agerian-utzi-dituzte-mitikako-atezainek-kerman-villate-hil-aurretik-behin-eta-berriz-egindako-erasoak/'
         Alternate = '/es/actualidad/'
     },
     @{
         Path = '/es/actualidad/'
         MenuLabel = 'Actualidad'
         Heading = 'Actualidad'
-        StatusPattern = 'Pr.ximamente disponible'
+        StatusPattern = 'Secci.n en construcci.n'
+        SectionHeading = 'En los medios'
+        Nature = 'Cobertura period.stica'
+        Date = '2 de agosto de 2026'
+        SourceUrl = 'https://orain.eus/es/actualidad/sociedad/2026/08/02/nuevos-testimonios-apuntan-agresiones-reiteradas-porteros-mitika-antes-la-muerte-kerman-villate/'
         Alternate = '/berriak/'
     }
 )
@@ -53,9 +62,33 @@ foreach ($route in $routes) {
 
     $headingPattern = '<h1[^>]*>\s*' + [regex]::Escape($route.Heading) + '\s*</h1>'
     if (($html -match $headingPattern) -and ($html -match [string]$route.StatusPattern)) {
-        Add-Pass "$($route.Path) muestra el aviso temporal"
+        Add-Pass "$($route.Path) mantiene el estado de construcción"
     } else {
         Add-Failure "$($route.Path) no muestra el título o estado esperado"
+    }
+
+    if (
+        $html -match ('<h2[^>]*>\s*' + [regex]::Escape($route.SectionHeading) + '\s*</h2>') -and
+        $html -match [string]$route.Nature -and
+        $html -match [regex]::Escape($route.Date) -and
+        $html -match 'ORAIN\s*.\s*Radio Euskadi'
+    ) {
+        Add-Pass "$($route.Path) identifica naturaleza, medio y fecha"
+    } else {
+        Add-Failure "$($route.Path) no publica la atribución periodística completa"
+    }
+
+    $sourcePattern = 'href=["'']' + [regex]::Escape($route.SourceUrl) + '["''][^>]*target=["'']_blank["''][^>]*rel=["'']noopener noreferrer["'']'
+    if ($html -match $sourcePattern) {
+        Add-Pass "$($route.Path) enlaza la fuente lingüística de forma segura"
+    } else {
+        Add-Failure "$($route.Path) no enlaza la fuente esperada con atributos seguros"
+    }
+
+    if ($html -match 'gaztea\.eus|eitb\.scene7\.com|20250225201739_discoteka-mitika') {
+        Add-Failure "$($route.Path) reutiliza una imagen de terceros"
+    } else {
+        Add-Pass "$($route.Path) no reutiliza recursos multimedia de ORAIN"
     }
 
     $currentPattern = '<a[^>]+aria-current=["'']page["''][^>]*>\s*' + [regex]::Escape($route.MenuLabel) + '\s*</a>|<a[^>]*>\s*' + [regex]::Escape($route.MenuLabel) + '\s*</a>'
@@ -65,10 +98,11 @@ foreach ($route in $routes) {
         Add-Failure "$($route.Path) no marca la sección actual en el menú"
     }
 
-    if ($html -match '<meta\s+name=["'']robots["''][^>]+content=["''][^"'']*noindex') {
-        Add-Pass "$($route.Path) publica noindex"
+    $hasNoindex = $html -match '<meta\s+name=["'']robots["''][^>]+content=["''][^"'']*noindex'
+    if ($isProduction -and $hasNoindex) {
+        Add-Failure "$($route.Path) mantiene noindex en producción pese a contener publicaciones"
     } else {
-        Add-Failure "$($route.Path) no publica noindex"
+        Add-Pass "$($route.Path) publica la directiva robots adecuada al entorno"
     }
 
     if ($html -match ('hreflang=["''](?:eu|es)["''][^>]+href=["''][^"'']*' + [regex]::Escape($route.Alternate))) {
@@ -78,12 +112,30 @@ foreach ($route in $routes) {
     }
 }
 
+$functionsSource = Get-Content -Raw -LiteralPath (Join-Path $workspacePath 'wp-content\themes\kermanentzat-prototype\functions.php')
+if ($functionsSource -match "kermanentzat_page_key\(\)\s*===\s*'updates'") {
+    Add-Failure 'functions.php conserva un noindex específico para actualidad'
+} else {
+    Add-Pass 'functions.php no bloquea la indexación específica de actualidad'
+}
+
 foreach ($sitemapPath in @('/sitemap-eu.xml', '/sitemap-es.xml')) {
     $sitemap = Invoke-WebRequest -UseBasicParsing -Uri "$BaseUrl$sitemapPath"
-    if ([string]$sitemap.Content -match '/berriak/|/es/actualidad/') {
-        Add-Failure "$sitemapPath incluye el marcador temporal"
+    $expectedPath = if ($sitemapPath -eq '/sitemap-eu.xml') { '/berriak/' } else { '/es/actualidad/' }
+    if ([string]$sitemap.Content -match [regex]::Escape($expectedPath)) {
+        Add-Pass "$sitemapPath incluye la sección con contenido real"
     } else {
-        Add-Pass "$sitemapPath excluye el marcador temporal"
+        Add-Failure "$sitemapPath no incluye $expectedPath"
+    }
+}
+
+foreach ($sourceUrl in ($routes | ForEach-Object SourceUrl)) {
+    try {
+        $sourceResponse = Invoke-WebRequest -UseBasicParsing -Uri $sourceUrl -MaximumRedirection 5
+        if ($sourceResponse.StatusCode -eq 200) { Add-Pass "La fuente ORAIN responde 200" }
+        else { Add-Failure "La fuente ORAIN devolvió HTTP $($sourceResponse.StatusCode): $sourceUrl" }
+    } catch {
+        Add-Failure "La fuente ORAIN no respondió: $sourceUrl"
     }
 }
 
@@ -94,4 +146,4 @@ if ($failures.Count -gt 0) {
     exit 1
 }
 
-Write-Host 'Actualidad / Berriak: OK' -ForegroundColor Green
+Write-Host 'Actualidad / Berriak con publicaciones: OK' -ForegroundColor Green

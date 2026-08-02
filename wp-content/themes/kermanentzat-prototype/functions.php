@@ -94,7 +94,7 @@ function kermanentzat_page_meta(): array
             ],
             'updates' => [
                 'title' => 'Actualidad',
-                'description' => 'Próximamente, noticias, comunicados y novedades de Egia Kermanentzat Elkartea.',
+                'description' => 'Noticias, comunicados y cobertura periodística relacionada con Kerman y con el trabajo de Egia Kermanentzat Elkartea.',
             ],
             'support' => [
                 'title' => 'Ayuda y donaciones',
@@ -128,7 +128,7 @@ function kermanentzat_page_meta(): array
             ],
             'updates' => [
                 'title' => 'Berriak',
-                'description' => 'Laster, Egia Kermanentzat Elkartearen albisteak, komunikatuak eta berritasunak.',
+                'description' => 'Kermani eta Egia Kermanentzat Elkartearen lanari buruzko albisteak, komunikatuak eta kazetaritza-estaldura.',
             ],
             'support' => [
                 'title' => 'Lagundu eta ekarpenak',
@@ -203,13 +203,6 @@ add_filter('wp_robots', static function (array $robots): array {
         return $robots;
     }
 
-    if (kermanentzat_page_key() === 'updates') {
-        $robots['noindex'] = true;
-        $robots['follow'] = true;
-        $robots['noarchive'] = true;
-        return $robots;
-    }
-
     $robots['max-snippet'] = '150';
     $robots['max-image-preview'] = 'large';
     return $robots;
@@ -274,6 +267,7 @@ function kermanentzat_sitemap_routes(): array
         'eu' => [
             '/',
             '/kasuaren-laburpena/',
+            '/berriak/',
             '/lagundu-eta-ekarpenak/',
             '/kontaktua/',
             '/lege-oharra/',
@@ -283,6 +277,7 @@ function kermanentzat_sitemap_routes(): array
         'es' => [
             '/es/',
             '/es/resumen-del-caso/',
+            '/es/actualidad/',
             '/es/ayuda-y-donaciones/',
             '/es/contacto/',
             '/es/aviso-legal/',

@@ -47,6 +47,8 @@ $caseArt = '<div class="page-hero__art" aria-hidden="true"><picture><source srcs
 $legalConfig = kermanentzat_legal_config();
 $email = $legalConfig['email'];
 $instagram = 'https://www.instagram.com/justizia.kermanentzat/';
+$orainEs = 'https://orain.eus/es/actualidad/sociedad/2026/08/02/nuevos-testimonios-apuntan-agresiones-reiteradas-porteros-mitika-antes-la-muerte-kerman-villate/';
+$orainEu = 'https://orain.eus/eu/aktualitatea/gizartea/2026/08/02/testigantza-berriek-agerian-utzi-dituzte-mitikako-atezainek-kerman-villate-hil-aurretik-behin-eta-berriz-egindako-erasoak/';
 $iban = 'ES0830350079270790062136';
 $ibanDisplay = 'ES08 3035 0079 2707 9006 2136';
 $bic = 'CLPEES2MXXX';
@@ -169,30 +171,70 @@ $updatesEs = <<<HTML
 <header class="page-hero page-hero--updates content-band--dark">
   <div class="updates-wordmark" aria-hidden="true">ACTUALIDAD</div>
   <div class="content-wrap">
-    <p class="updates-status">Próximamente disponible</p>
+    <p class="updates-status">Sección en construcción</p>
     <h1>Actualidad</h1>
-    <p>Estamos preparando este espacio para compartir noticias, comunicados y novedades. Esta sección se encuentra actualmente en construcción.</p>
+    <p>Estamos construyendo este espacio poco a poco para compartir noticias, comunicados y novedades. Ya puedes consultar las primeras publicaciones.</p>
     <div class="hero-actions">
       <a class="button button--primary" href="{$instagram}" target="_blank" rel="noopener noreferrer">Seguir la actividad en Instagram</a>
       <a class="button button--inverse" href="/es/contacto/">Contactar</a>
     </div>
   </div>
 </header>
+<section class="content-band content-band--light updates-feed" aria-labelledby="updates-heading-es">
+  <div class="content-wrap">
+    <div class="updates-feed__intro">
+      <h2 class="section-heading" id="updates-heading-es">En los medios</h2>
+      <p>Coberturas periodísticas sobre Kerman y la asociación.</p>
+    </div>
+    <article class="updates-entry">
+      <div class="updates-entry__meta">
+        <span class="updates-entry__nature">Cobertura periodística</span>
+        <span>ORAIN · Radio Euskadi</span>
+        <time datetime="2026-08-02">2 de agosto de 2026</time>
+      </div>
+      <div class="updates-entry__body">
+        <h3>Nuevos testimonios apuntan a agresiones reiteradas de porteros de Mítika antes de la muerte de Kerman Villate</h3>
+        <p>ORAIN recoge cuatro testimonios sobre presuntas agresiones ocurridas en los meses anteriores a la muerte de Kerman e informa de que los casos fueron denunciados ante la Ertzaintza.</p>
+        <a class="updates-entry__link" href="{$orainEs}" target="_blank" rel="noopener noreferrer">Leer la noticia en ORAIN <span aria-hidden="true">↗</span><span class="screen-reader-text"> (se abre en una pestaña nueva)</span></a>
+      </div>
+    </article>
+  </div>
+</section>
 HTML;
 
 $updatesEu = <<<HTML
 <header class="page-hero page-hero--updates content-band--dark">
   <div class="updates-wordmark" aria-hidden="true">BERRIAK</div>
   <div class="content-wrap">
-    <p class="updates-status">Laster eskuragarri</p>
+    <p class="updates-status">Atala eraikitzen</p>
     <h1>Berriak</h1>
-    <p>Gune hau albisteak, komunikatuak eta berriak partekatzeko prestatzen ari gara. Atala laster egongo da erabilgarri.</p>
+    <p>Gune hau pixkanaka osatzen ari gara, albisteak, komunikatuak eta berritasunak partekatzeko. Dagoeneko lehen argitalpenak kontsulta ditzakezu.</p>
     <div class="hero-actions">
       <a class="button button--primary" href="{$instagram}" target="_blank" rel="noopener noreferrer">Jarraitu Instagramen</a>
       <a class="button button--inverse" href="/kontaktua/">Jarri harremanetan</a>
     </div>
   </div>
 </header>
+<section class="content-band content-band--light updates-feed" aria-labelledby="updates-heading-eu">
+  <div class="content-wrap">
+    <div class="updates-feed__intro">
+      <h2 class="section-heading" id="updates-heading-eu">Hedabideetan</h2>
+      <p>Kermani eta elkarteari buruzko kazetaritza-estaldurak.</p>
+    </div>
+    <article class="updates-entry">
+      <div class="updates-entry__meta">
+        <span class="updates-entry__nature">Kazetaritza-estaldura</span>
+        <span>ORAIN · Radio Euskadi</span>
+        <time datetime="2026-08-02">2026ko abuztuaren 2a</time>
+      </div>
+      <div class="updates-entry__body">
+        <h3>Testigantza berriek agerian utzi dituzte Mitikako zaindariek Kerman Villate hil aurretik behin eta berriz egindako erasoak</h3>
+        <p>ORAINek Kerman hil aurreko hilabeteetan Mitikako atezainek egindako ustezko erasoei buruzko lau testigantza jaso ditu, eta kasuak Ertzaintzaren aurrean salatu zituztela adierazi du.</p>
+        <a class="updates-entry__link" href="{$orainEu}" target="_blank" rel="noopener noreferrer">Irakurri albistea ORAINen <span aria-hidden="true">↗</span><span class="screen-reader-text"> (fitxa berri batean irekiko da)</span></a>
+      </div>
+    </article>
+  </div>
+</section>
 HTML;
 
 $contactEs = <<<HTML

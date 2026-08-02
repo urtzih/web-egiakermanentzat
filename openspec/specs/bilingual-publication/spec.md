@@ -21,11 +21,15 @@ Cada página indexable MUST publicar canonical propio y alternativos `hreflang` 
 - **THEN** encuentra canonical castellano y alternativos que enlazan ambas versiones
 
 ### Requirement: Sitemaps bilingües controlados
-El índice `/sitemap.xml` MUST enlazar sitemaps separados ES/EU y MUST excluir marcadores temporales que todavía no contienen publicaciones reales.
+El índice `/sitemap.xml` MUST enlazar sitemaps separados ES/EU, MUST excluir marcadores temporales que todavía no contienen publicaciones reales y MUST incluir las rutas bilingües de actualidad cuando contienen al menos una publicación real.
 
 #### Scenario: Sección de actualidad todavía vacía
 - **WHEN** `Berriak/Actualidad` solo muestra un mensaje de preparación
 - **THEN** sus rutas siguen accesibles pero no aparecen en los sitemaps públicos
+
+#### Scenario: Sección de actualidad con contenido real
+- **WHEN** `Berriak/Actualidad` publica al menos una referencia o noticia real en ambos idiomas
+- **THEN** ambas rutas son indexables en producción y aparecen en sus respectivos sitemaps
 
 ### Requirement: Paridad de la superficie pública
 La navegación, las llamadas a la acción, el contenido principal, los avisos legales y los metadatos sociales del MVP MUST estar disponibles en ambos idiomas.
