@@ -4,9 +4,9 @@ El MVP está en producción, pero varias garantías jurídicas, lingüísticas y
 
 ## What Changes
 
-- Verificar identidad registral, facultades, fiscalidad, textos legales y traducciones con profesionales competentes.
+- Verificar la identidad registral y las facultades contra evidencia oficial; mantener como provisionales los textos legales y fiscales mientras la asociación aplaza la revisión profesional.
 - Definir el procedimiento de alta de socios, los datos estrictamente necesarios y la información de privacidad previa a su recogida.
-- Regularizar la operación de Google Analytics, Gmail, hosting y logs mediante contratos, bases, retenciones, accesos y evidencia de aprobación.
+- Regularizar la operación de Google Analytics, Search Console, Gmail, hosting, dominio, correo provisionado y logs mediante contratos, bases, retenciones, accesos y evidencia de aprobación o estado de no uso.
 - Definir cuentas individuales, MFA, mínimo privilegio, custodios, alta/baja y recuperación de accesos.
 - Documentar copias separadas, restauración ensayada, RPO/RTO, actualizaciones, monitorización, incidentes y relevo técnico.
 - Completar pruebas manuales de teclado, lector de pantalla, zoom, dispositivos y reducción de movimiento.
@@ -17,7 +17,7 @@ El MVP está en producción, pero varias garantías jurídicas, lingüísticas y
 ### New Capabilities
 
 - `production-operations`: Gobierno de accesos, proveedores, copias, recuperación, incidentes, mantenimiento y continuidad.
-- `legal-and-linguistic-assurance`: Evidencia registral, fiscal, contractual, jurídica y lingüística necesaria para la operación pública.
+- `legal-and-linguistic-assurance`: Evidencia registral y cautelas necesarias para no presentar como definitivos extremos jurídicos, fiscales o lingüísticos cuya revisión profesional se ha aplazado.
 
 ### Modified Capabilities
 

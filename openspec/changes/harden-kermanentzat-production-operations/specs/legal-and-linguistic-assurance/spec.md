@@ -14,12 +14,20 @@ Aviso legal, privacidad, cookies, aportaciones y textos sensibles MUST recibir r
 - **WHEN** se modifica un tratamiento o proveedor
 - **THEN** ambas versiones se revisan, fechan y publican juntas con evidencia restringida de aprobación
 
+#### Scenario: Revisión profesional aplazada
+- **WHEN** la asociación decide no contratar por ahora revisión jurídica o lingüística profesional
+- **THEN** los textos permanecen identificados como provisionales y no se declara que han sido validados profesionalmente
+
 ### Requirement: Fiscalidad sin promesas no acreditadas
 La comunicación sobre certificados o deducciones MUST basarse en asesoría vigente y MUST NOT prometer beneficios fiscales mientras la situación no esté confirmada.
 
 #### Scenario: Solicitud de certificado
 - **WHEN** una persona pregunta por una deducción
 - **THEN** recibe únicamente la política validada o una indicación expresa de que no está confirmada
+
+#### Scenario: Fiscalidad aplazada
+- **WHEN** no se obtiene asesoría fiscal vigente
+- **THEN** no se anuncian deducciones ni certificados y permanecen abiertas las decisiones operativas sobre justificantes, devoluciones, conciliación y transparencia
 
 ### Requirement: Analítica con aprobación contractual
 Analytics MUST permanecer desactivado salvo que exista propiedad institucional, aprobación operativa, condiciones de tratamiento evaluadas, garantías de transferencia, retención y accesos documentados.
