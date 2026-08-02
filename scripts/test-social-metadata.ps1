@@ -39,26 +39,31 @@ $BaseUrl = $BaseUrl.TrimEnd('/')
 
 $imageDirectory = Join-Path $workspacePath 'wp-content\themes\kermanentzat-prototype\assets\images'
 Add-Type -AssemblyName System.Drawing
-foreach ($language in @('eu', 'es')) {
-    $imagePath = Join-Path $imageDirectory "social-card-$language-v1.png"
+$imageExpectations = @(
+    @{ File = 'social-card-whatsapp-v2.png'; Width = 1200; Height = 1200 },
+    @{ File = 'social-card-eu-v1.png'; Width = 1200; Height = 630 },
+    @{ File = 'social-card-es-v1.png'; Width = 1200; Height = 630 }
+)
+foreach ($expectedImage in $imageExpectations) {
+    $imagePath = Join-Path $imageDirectory $expectedImage.File
     if (-not (Test-Path -LiteralPath $imagePath)) {
-        Add-Failure "No existe social-card-$language-v1.png"
+        Add-Failure "No existe $($expectedImage.File)"
         continue
     }
 
     $file = Get-Item -LiteralPath $imagePath
     $image = [System.Drawing.Image]::FromFile($file.FullName)
     try {
-        Assert-Equal "social-card-$language-v1.png tiene 1200 px de ancho" $image.Width 1200
-        Assert-Equal "social-card-$language-v1.png tiene 630 px de alto" $image.Height 630
+        Assert-Equal "$($expectedImage.File) tiene el ancho correcto" $image.Width $expectedImage.Width
+        Assert-Equal "$($expectedImage.File) tiene el alto correcto" $image.Height $expectedImage.Height
     } finally {
         $image.Dispose()
     }
 
     if ($file.Length -le 0 -or $file.Length -gt 1MB) {
-        Add-Failure "social-card-$language-v1.png debe pesar entre 1 byte y 1 MB"
+        Add-Failure "$($expectedImage.File) debe pesar entre 1 byte y 1 MB"
     } else {
-        Add-Pass "social-card-$language-v1.png tiene un peso adecuado"
+        Add-Pass "$($expectedImage.File) tiene un peso adecuado"
     }
 }
 
@@ -66,21 +71,24 @@ $routes = @(
     @{
         Path = '/'
         Title = 'Kermanentzat memoria, egia eta justizia'
-        Image = 'social-card-eu-v1.png'
+        Image = 'social-card-whatsapp-v2.png'
+        TwitterImage = 'social-card-eu-v1.png'
         Width = '1200'
-        Height = '630'
+        Height = '1200'
     },
     @{
         Path = '/es/'
         Title = 'Memoria, verdad y justicia para Kerman'
-        Image = 'social-card-es-v1.png'
+        Image = 'social-card-whatsapp-v2.png'
+        TwitterImage = 'social-card-es-v1.png'
         Width = '1200'
-        Height = '630'
+        Height = '1200'
     },
     @{
         Path = '/kasuaren-laburpena/'
         Title = 'Kasuaren laburpena'
         Image = 'kerman-portrait-clean.png'
+        TwitterImage = 'kerman-portrait-clean.png'
         Width = '717'
         Height = '762'
     },
@@ -88,6 +96,7 @@ $routes = @(
         Path = '/es/resumen-del-caso/'
         Title = 'Resumen del caso'
         Image = 'kerman-portrait-clean.png'
+        TwitterImage = 'kerman-portrait-clean.png'
         Width = '717'
         Height = '762'
     }
@@ -109,12 +118,18 @@ foreach ($route in $routes) {
     Assert-Equal "$($route.Path) publica og:image:type" (Get-MetaContent $html 'og:image:type') 'image/png'
     Assert-Equal "$($route.Path) publica og:image:width" (Get-MetaContent $html 'og:image:width') $route.Width
     Assert-Equal "$($route.Path) publica og:image:height" (Get-MetaContent $html 'og:image:height') $route.Height
-    Assert-Equal "$($route.Path) reutiliza la imagen en Twitter" (Get-MetaContent $html 'twitter:image') $imageUrl
+    $twitterImageUrl = Get-MetaContent $html 'twitter:image'
 
     if ($imageUrl -notmatch [regex]::Escape($route.Image)) {
         Add-Failure "$($route.Path) no usa $($route.Image): $imageUrl"
     } else {
         Add-Pass "$($route.Path) usa $($route.Image)"
+    }
+
+    if ($twitterImageUrl -notmatch [regex]::Escape($route.TwitterImage)) {
+        Add-Failure "$($route.Path) no usa $($route.TwitterImage) en Twitter: $twitterImageUrl"
+    } else {
+        Add-Pass "$($route.Path) usa $($route.TwitterImage) en Twitter"
     }
 
     if (-not (Get-MetaContent $html 'og:description') -or -not (Get-MetaContent $html 'og:image:alt') -or -not (Get-MetaContent $html 'twitter:image:alt')) {
@@ -142,7 +157,7 @@ foreach ($crawler in @(
     try {
         $headers = @{ 'User-Agent' = $crawler }
         $response = Invoke-WebRequest -UseBasicParsing -Uri "$BaseUrl/" -Headers $headers
-        if ((Get-MetaContent ([string]$response.Content) 'og:image') -notmatch 'social-card-eu-v1\.png') {
+        if ((Get-MetaContent ([string]$response.Content) 'og:image') -notmatch 'social-card-whatsapp-v2\.png') {
             Add-Failure "La portada no entrega la tarjeta social al crawler $crawler"
         } else {
             Add-Pass "La portada entrega la tarjeta social al crawler $crawler"

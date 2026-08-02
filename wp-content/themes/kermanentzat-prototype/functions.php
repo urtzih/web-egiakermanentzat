@@ -219,13 +219,13 @@ function kermanentzat_social_image(): array
 
     if (kermanentzat_is_home()) {
         return [
-            'url' => get_theme_file_uri('assets/images/social-card-' . $language . '-v1.png'),
+            'url' => get_theme_file_uri('assets/images/social-card-whatsapp-v2.png'),
             'type' => 'image/png',
             'width' => 1200,
-            'height' => 630,
+            'height' => 1200,
             'alt' => $language === 'es'
-                ? 'Tarjeta de Egia Kermanentzat con el retrato de Kerman y el lema Memoria, verdad y justicia para Kerman'
-                : 'Egia Kermanentzaten txartela, Kermanen erretratuarekin eta Kermanentzat memoria, egia eta justizia leloarekin',
+                ? 'Retrato de Kerman con la identidad de Egia Kermanentzat'
+                : 'Kermanen erretratua Egia Kermanentzaten identitatearekin',
         ];
     }
 
@@ -237,6 +237,24 @@ function kermanentzat_social_image(): array
         'alt' => $language === 'es'
             ? 'Retrato de Kerman en blanco y negro'
             : 'Kermanen zuri-beltzeko erretratua',
+    ];
+}
+
+function kermanentzat_twitter_image(): array
+{
+    if (!kermanentzat_is_home()) {
+        return kermanentzat_social_image();
+    }
+
+    $language = kermanentzat_language();
+    return [
+        'url' => get_theme_file_uri('assets/images/social-card-' . $language . '-v1.png'),
+        'type' => 'image/png',
+        'width' => 1200,
+        'height' => 630,
+        'alt' => $language === 'es'
+            ? 'Tarjeta de Egia Kermanentzat con el retrato de Kerman y el lema Memoria, verdad y justicia para Kerman'
+            : 'Egia Kermanentzaten txartela, Kermanen erretratuarekin eta Kermanentzat memoria, egia eta justizia leloarekin',
     ];
 }
 
@@ -424,6 +442,7 @@ add_action('wp_head', static function (): void {
     $current_url = kermanentzat_current_url();
     $site_name = 'Egia Kermanentzat Elkartea';
     $social_image = kermanentzat_social_image();
+    $twitter_image = kermanentzat_twitter_image();
     $image_url = $social_image['url'];
     $search_image = [
         'url' => kermanentzat_portrait_image_url(),
@@ -450,8 +469,8 @@ add_action('wp_head', static function (): void {
     echo '<meta name="twitter:card" content="summary_large_image">';
     printf('<meta name="twitter:title" content="%s">', esc_attr($title));
     printf('<meta name="twitter:description" content="%s">', esc_attr($description));
-    printf('<meta name="twitter:image" content="%s">', esc_url($image_url));
-    printf('<meta name="twitter:image:alt" content="%s">', esc_attr($social_image['alt']));
+    printf('<meta name="twitter:image" content="%s">', esc_url($twitter_image['url']));
+    printf('<meta name="twitter:image:alt" content="%s">', esc_attr($twitter_image['alt']));
 
     $schema = [
         '@context' => 'https://schema.org',
