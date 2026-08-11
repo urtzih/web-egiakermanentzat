@@ -1,113 +1,98 @@
-# Operación del entorno de staging
+# Operación segura del entorno de staging
 
-Este documento explica cómo consultar, actualizar y desplegar
-`web-egiakermanentzat` en el servidor de staging.
+Staging reproduce el WordPress editorial sin reemplazar su base de datos ni sus medios.
 
 - URL pública: <https://web-egiakermanentzat.stag.urtzi.fun/>
-- Acceso: Basic Auth gestionado por Traefik
 - URL LAN: <http://192.168.10.42:18081/>
 - Host SSH: `lxc-apps-staging`
 - Repositorio: `/opt/staging/projects/web-egiakermanentzat/repository`
-- Compose: `/opt/staging/projects/web-egiakermanentzat/compose.staging.yml`
-- Entorno Compose: `/opt/staging/projects/web-egiakermanentzat/.env.staging`
+- Compose versionado: `repository/compose.staging.yml`
+- Secretos: `/opt/staging/projects/web-egiakermanentzat/.env.staging`
+- Backups: `/opt/staging/backups/web-egiakermanentzat/`
 - Rama desplegable: `main`
 
 ## Configuración local
-
-El script lee `.env.staging.local`. El archivo está ignorado por Git y solo
-contiene rutas y nombres operativos; las claves SSH y credenciales de WordPress
-o MariaDB no se guardan en él.
-
-Para reconstruirlo:
 
 ```powershell
 Copy-Item .env.staging.example .env.staging.local
 ```
 
-La conexión utiliza el alias `lxc-apps-staging` definido en `~/.ssh/config`.
+`.env.staging.local` solo contiene host, rutas, URL y rama. Las credenciales de WordPress, MariaDB y Sender permanecen en el archivo remoto con permisos restringidos.
 
-## Comandos
+El Compose usa explícitamente `name: web-egiakermanentzat`; cambiar ese nombre crearía otros volúmenes y dejaría de utilizar los datos actuales.
 
-Ejecutar desde la raíz del repositorio:
+## Flujo normal
 
 ```powershell
-# Git remoto, contenedores, HTTP, noindex, CSP y ausencia de Set-Cookie
+# Lectura: Git, contenedores y comprobación pública básica
 .\scripts\staging.ps1 status
 
 # Traer origin/main sin tocar contenedores ni base de datos
 .\scripts\staging.ps1 pull
 
-# Actualizar Git, levantar servicios y sincronizar el contenido bilingüe
-.\scripts\staging.ps1 deploy
+# Desplegar código exacto y mostrar el plan de migración, sin aplicarlo
+.\scripts\staging.ps1 deploy -ExpectedSha <sha>
 
-# Últimas 200 líneas de log de los servicios
+# Crear y probar backup, aplicar la migración y comprobar idempotencia
+.\scripts\staging.ps1 migrate -ExpectedSha <sha>
+
+# Repetir todas las comprobaciones del runtime y del frontal
+.\scripts\staging.ps1 verify -ExpectedSha <sha>
+
+# Consultar o seguir logs
 .\scripts\staging.ps1 logs
-
-# Seguir los logs; Ctrl+C termina el seguimiento
 .\scripts\staging.ps1 logs -Follow
-
-# Reiniciar únicamente WordPress y comprobar que recupera la salud
-.\scripts\staging.ps1 restart
 ```
 
-`status` y `logs` son operaciones de lectura. `pull`, `deploy` y `restart`
-modifican staging y solo deben ejecutarse por instrucción expresa.
+`deploy` activa tema y plugin, ejecuta el seed no destructivo y termina con `wp kermanentzat editorial migrate --dry-run --strict`. El contenido solo cambia al ejecutar `migrate`.
 
-## Flujo de despliegue
+`migrate` crea antes un backup SQL y de `uploads`, verifica ambos archivos y restaura el SQL en una base temporal aislada. Solo después aplica la migración. La segunda planificación forzada debe informar `0 operaciones planificadas`.
 
-1. Confirmar que los cambios están revisados y publicados en `origin/main`.
-2. Ejecutar las pruebas locales y `scripts/test-privacy.ps1`.
-3. Ejecutar `.\scripts\staging.ps1 status`.
-4. Ejecutar `.\scripts\staging.ps1 deploy`.
-5. Repetir `status` y validar `/`, `/es/` y las páginas legales.
-6. Informar del commit desplegado y del resultado de las comprobaciones.
+## Variables remotas
 
-El despliegue:
+El archivo `.env.staging` debe contener las credenciales existentes y:
 
-- rechaza ramas distintas de `main`, cambios versionados y archivos inesperados;
-- permite únicamente el `.env.local` operativo legado durante el primer `pull`;
-- exige un avance `fast-forward` desde `origin/main`;
-- usa siempre el `.env.staging` remoto al invocar Compose;
-- conserva los volúmenes de MariaDB y WordPress;
-- exige que WordPress ya esté instalado;
-- activa el tema, aplica el seed idempotente y regenera los enlaces permanentes;
-- comprueba el frontal con el hostname público y protocolo reenviado HTTPS.
+```dotenv
+KERMANENTZAT_GA_MEASUREMENT_ID=
+KERMANENTZAT_GA_APPROVED=false
+KERMANENTZAT_SENDER_APPROVED=false
+KERMANENTZAT_SENDER_API_TOKEN=<secreto del gestor operativo>
+```
 
-La comprobación se hace directamente contra el puerto LAN para no almacenar ni
-transmitir en el script las credenciales de Basic Auth de Traefik. Una respuesta
-`401` al abrir el dominio público sin credenciales es el comportamiento esperado.
+No usar el alias `SENDER_API_TOK` en configuraciones nuevas. Sender debe permanecer apagado hasta archivar el expediente contractual, transferencias, conservación, DNS, double opt-in y revisión bilingüe.
 
-## Comprobaciones manuales
+## Verificación
+
+El script exige:
+
+- checkout limpio, rama `main` y SHA esperado;
+- WordPress, MariaDB y cron saludables;
+- plugin editorial activo y su comando de verificación correcto;
+- Sender desactivado;
+- rutas estructurales ES/EU con HTTP 200;
+- `noindex`, CSP, HTTPS y ausencia de `Set-Cookie` anónimo;
+- ausencia de recursos Sender en el HTML mientras el servicio esté apagado.
+
+Después se realiza la revisión manual indicada en `docs/EDITORIAL_OPERATIONS.md` y en el manual administrativo.
+
+## Backups y retención
+
+Cada copia tiene un identificador `<UTC>-<sha>`, permisos privados, `database.sql.gz`, `uploads.tar.gz`, hashes y manifiesto. Se conserva durante 14 días y se elimina manualmente solo después de confirmar que ya no es necesaria para rollback.
+
+Para listar copias sin mostrar su contenido:
 
 ```bash
-git -C /opt/staging/projects/web-egiakermanentzat/repository status --short --branch
-
-docker compose \
-  --env-file /opt/staging/projects/web-egiakermanentzat/.env.staging \
-  -f /opt/staging/projects/web-egiakermanentzat/compose.staging.yml \
-  ps
-
-curl -fsS -D - -o /dev/null \
-  -H 'Host: web-egiakermanentzat.stag.urtzi.fun' \
-  -H 'X-Forwarded-Proto: https' \
-  http://192.168.10.42:18081/
+ssh lxc-apps-staging "find /opt/staging/backups/web-egiakermanentzat -mindepth 1 -maxdepth 1 -type d -printf '%f\n' | sort"
 ```
 
-## Persistencia y recuperación
+## Restauración
 
-La base de datos y la instalación de WordPress viven en volúmenes Docker. El
-script no ejecuta `down`, no usa `-v` y no elimina volúmenes. El seed actualiza
-las páginas gestionadas por el repositorio, por lo que cualquier edición manual
-de esas páginas en staging será sustituida en el siguiente `deploy`.
+Primero se revisa el identificador y el commit descrito en su manifiesto. La restauración de base y medios requiere dos argumentos deliberados:
 
-Antes de una intervención manual o una migración se debe conservar:
+```powershell
+.\scripts\staging.ps1 restore -BackupId <id> -ConfirmRestore
+```
 
-- commit actualmente desplegado;
-- volcado de MariaDB;
-- copia de los volúmenes o del contenido necesario;
-- `compose.staging.yml` y una copia protegida de `.env.staging`.
+El comando activa mantenimiento, verifica hashes, importa el SQL y sustituye únicamente `/var/www/html/wp-content/uploads`. No cambia Git. Si también se debe volver al código anterior, se crea y despliega un commit de reversión en `main`; no se usa `git reset --hard`.
 
-Si una sincronización falla, conservar los logs y el estado antes de intervenir.
-No ejecutar `git reset --hard`, borrar el checkout, eliminar volúmenes ni cambiar
-Traefik, DNS o certificados sin una instrucción específica y una copia
-recuperable.
+No ejecutar `docker compose down -v`, borrar volúmenes, editar la base manualmente ni usar el seed como restauración.

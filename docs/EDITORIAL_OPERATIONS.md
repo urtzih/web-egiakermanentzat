@@ -2,11 +2,11 @@
 
 ## Despliegue de la fase editorial
 
-1. Crear una copia restaurable de base de datos y `wp-content/uploads`.
-2. Desplegar tema, plugin y montajes sin ejecutar todavía la migración.
+1. Ejecutar `staging.ps1 deploy -ExpectedSha <sha>` para desplegar tema, plugin y montajes sin aplicar todavía la migración.
+2. Revisar el resultado estricto de `wp kermanentzat editorial migrate --dry-run --strict`.
 3. Activar `kermanentzat-editorial` y Polylang Free; ACF Free puede utilizarse para extender formularios, pero los campos esenciales permanecen registrados por código.
-4. Ejecutar `wp kermanentzat editorial migrate --dry-run` y revisar cada operación.
-5. Migrar primero en staging con `wp kermanentzat editorial migrate`.
+4. Ejecutar `staging.ps1 migrate -ExpectedSha <sha>`; el comando crea y restaura una copia aislada de base de datos y `wp-content/uploads` antes de escribir.
+5. Conservar el identificador de backup mostrado por el comando.
 6. Comparar las URLs actuales, contenido, canonical, `hreflang`, metadatos, sitemaps, accesibilidad y logs.
 7. Repetir el comando: debe informar que la versión ya está registrada y no modificar contenido.
 8. Aplicar el mismo procedimiento en producción durante una ventana con backup verificado.
@@ -24,7 +24,7 @@ Sender permanece desactivado salvo que se cumplan todas estas condiciones:
 - un formulario bilingüe publicado, conectado al grupo `Suscriptores web` y con double opt-in;
 - textos legales bilingües revisados;
 - constante `KERMANENTZAT_SENDER_APPROVED=true`;
-- secreto `SENDER_API_TOK` disponible solo en servidor y mapeado internamente a `KERMANENTZAT_SENDER_API_TOKEN`;
+- secreto canónico `KERMANENTZAT_SENDER_API_TOKEN` disponible solo en servidor; `SENDER_API_TOK` se admite únicamente como compatibilidad transitoria;
 - ID público de cuenta, ID SDK, grupo, URL alternativa y remitente configurados en Ajustes → Kermanentzat Editorial.
 
 El hosting debe ejecutar WP-Cron cada cinco minutos. Desactivar `KERMANENTZAT_SENDER_APPROVED` detiene formularios y nuevos envíos sin borrar la lista externa.

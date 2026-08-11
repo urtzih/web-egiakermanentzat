@@ -16,6 +16,12 @@ $kermanentzat_environment_flag = static function (string $name): bool {
     return is_scalar($value) && filter_var((string) $value, FILTER_VALIDATE_BOOL);
 };
 
+if (!defined('DISALLOW_FILE_EDIT')) {
+    define('DISALLOW_FILE_EDIT', true);
+}
+if (!defined('AUTOMATIC_UPDATER_DISABLED')) {
+    define('AUTOMATIC_UPDATER_DISABLED', true);
+}
 if (!defined('WP_HTTP_BLOCK_EXTERNAL')) {
     define('WP_HTTP_BLOCK_EXTERNAL', true);
 }

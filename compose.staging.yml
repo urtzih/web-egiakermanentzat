@@ -1,0 +1,106 @@
+name: web-egiakermanentzat
+
+services:
+  db:
+    image: mariadb:11.8
+    container_name: web-egiakermanentzat-db-staging
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: ${WP_DB_NAME}
+      MARIADB_USER: ${WP_DB_USER}
+      MARIADB_PASSWORD: ${WP_DB_PASSWORD}
+      MARIADB_ROOT_PASSWORD: ${WP_DB_ROOT_PASSWORD}
+    command:
+      - --transaction-isolation=READ-COMMITTED
+      - --binlog-format=ROW
+    volumes:
+      - web_egiakermanentzat_db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  wordpress:
+    image: wordpress:7.0.2-php8.4-apache
+    container_name: web-egiakermanentzat-staging
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "192.168.10.42:18081:80"
+    environment: &wordpress-environment
+      WORDPRESS_DB_HOST: db:3306
+      WORDPRESS_DB_NAME: ${WP_DB_NAME}
+      WORDPRESS_DB_USER: ${WP_DB_USER}
+      WORDPRESS_DB_PASSWORD: ${WP_DB_PASSWORD}
+      WP_ENVIRONMENT_TYPE: staging
+      KERMANENTZAT_GA_MEASUREMENT_ID: ${KERMANENTZAT_GA_MEASUREMENT_ID:-}
+      KERMANENTZAT_GA_APPROVED: ${KERMANENTZAT_GA_APPROVED:-false}
+      KERMANENTZAT_SENDER_APPROVED: ${KERMANENTZAT_SENDER_APPROVED:-false}
+      KERMANENTZAT_SENDER_API_TOKEN: ${KERMANENTZAT_SENDER_API_TOKEN:-}
+      WORDPRESS_CONFIG_EXTRA: |
+        define('WP_ENVIRONMENT_TYPE', 'staging');
+        $$kerman_fallback_url = '${WP_SITE_URL}';
+        $$kerman_host = $$_SERVER['HTTP_X_FORWARDED_HOST'] ?? $$_SERVER['HTTP_HOST'] ?? '';
+        $$kerman_forwarded_proto = $$_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '';
+        $$kerman_https = (!empty($$_SERVER['HTTPS']) && $$_SERVER['HTTPS'] !== 'off') || $$kerman_forwarded_proto === 'https';
+        $$kerman_scheme = $$kerman_https ? 'https' : 'http';
+        if ($$kerman_host !== '') {
+          define('WP_HOME', $$kerman_scheme . '://' . $$kerman_host);
+          define('WP_SITEURL', $$kerman_scheme . '://' . $$kerman_host);
+        } else {
+          define('WP_HOME', $$kerman_fallback_url);
+          define('WP_SITEURL', $$kerman_fallback_url);
+        }
+        define('DISALLOW_FILE_EDIT', true);
+        define('AUTOMATIC_UPDATER_DISABLED', true);
+    volumes: &wordpress-volumes
+      - web_egiakermanentzat_wordpress_data:/var/www/html
+      - ./wp-content/themes/kermanentzat-prototype:/var/www/html/wp-content/themes/kermanentzat-prototype
+      - ./wp-content/mu-plugins:/var/www/html/wp-content/mu-plugins
+      - ./wp-content/plugins/kermanentzat-editorial:/var/www/html/wp-content/plugins/kermanentzat-editorial
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost/wp-login.php >/dev/null || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+    logging: &service-logging
+      driver: json-file
+      options:
+        max-size: 10m
+        max-file: "3"
+
+  wpcli:
+    image: wordpress:cli-php8.4
+    user: "33:33"
+    depends_on:
+      db:
+        condition: service_healthy
+      wordpress:
+        condition: service_healthy
+    environment: *wordpress-environment
+    volumes: *wordpress-volumes
+    profiles: ["tools"]
+    entrypoint: ["wp"]
+
+  cron:
+    image: wordpress:cli-php8.4
+    container_name: web-egiakermanentzat-cron-staging
+    user: "33:33"
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      wordpress:
+        condition: service_healthy
+    environment: *wordpress-environment
+    volumes: *wordpress-volumes
+    entrypoint: ["/bin/sh", "-c"]
+    command: ["while true; do wp cron event run --due-now --quiet || true; sleep 300; done"]
+    logging: *service-logging
+
+volumes:
+  web_egiakermanentzat_db_data:
+  web_egiakermanentzat_wordpress_data:
