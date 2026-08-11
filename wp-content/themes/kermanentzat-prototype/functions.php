@@ -61,6 +61,9 @@ function kermanentzat_page_map(): array
             'home' => '/es/',
             'case' => '/es/resumen-del-caso/',
             'updates' => '/es/actualidad/',
+            'timeline' => '/es/cronologia/',
+            'press_archive' => '/es/hemeroteca/',
+            'subscription' => '/es/suscripcion/',
             'support' => '/es/ayuda-y-donaciones/',
             'contact' => '/es/contacto/',
             'legal' => '/es/aviso-legal/',
@@ -71,6 +74,9 @@ function kermanentzat_page_map(): array
             'home' => '/',
             'case' => '/kasuaren-laburpena/',
             'updates' => '/berriak/',
+            'timeline' => '/kronologia/',
+            'press_archive' => '/hemeroteka/',
+            'subscription' => '/harpidetza/',
             'support' => '/lagundu-eta-ekarpenak/',
             'contact' => '/kontaktua/',
             'legal' => '/lege-oharra/',
@@ -95,6 +101,18 @@ function kermanentzat_page_meta(): array
             'updates' => [
                 'title' => 'Actualidad',
                 'description' => 'Noticias, comunicados y cobertura periodística relacionada con Kerman y con el trabajo de Egia Kermanentzat Elkartea.',
+            ],
+            'timeline' => [
+                'title' => 'Cronología del caso',
+                'description' => 'Cronología actualizable de los principales hitos conocidos del caso de Kerman Villate Beitia.',
+            ],
+            'press_archive' => [
+                'title' => 'Hemeroteca',
+                'description' => 'Coberturas periodísticas externas sobre Kerman y Egia Kermanentzat, resumidas y atribuidas a sus fuentes.',
+            ],
+            'subscription' => [
+                'title' => 'Suscripción a novedades',
+                'description' => 'Alta voluntaria para recibir por email las publicaciones seleccionadas por Egia Kermanentzat.',
             ],
             'support' => [
                 'title' => 'Ayuda y donaciones',
@@ -130,6 +148,18 @@ function kermanentzat_page_meta(): array
                 'title' => 'Berriak',
                 'description' => 'Kermani eta Egia Kermanentzat Elkartearen lanari buruzko albisteak, komunikatuak eta kazetaritza-estaldura.',
             ],
+            'timeline' => [
+                'title' => 'Kasuaren kronologia',
+                'description' => 'Kerman Villate Beitiaren kasuaren mugarri ezagun nagusien kronologia eguneragarria.',
+            ],
+            'press_archive' => [
+                'title' => 'Hemeroteka',
+                'description' => 'Kermani eta Egia Kermanentzati buruzko kanpoko kazetaritza-estaldurak, iturriei egotzita eta laburtuta.',
+            ],
+            'subscription' => [
+                'title' => 'Berrien harpidetza',
+                'description' => 'Egia Kermanentzatek hautatutako argitalpenak posta elektronikoz jasotzeko borondatezko alta.',
+            ],
             'support' => [
                 'title' => 'Lagundu eta ekarpenak',
                 'description' => 'Ikusi nola lagundu Egia Kermanentzat, nola egin ekarpena eta zertarako erabiltzen diren funtsak modu orokorrean.',
@@ -156,6 +186,9 @@ function kermanentzat_page_meta(): array
 
 function kermanentzat_page_key(): string
 {
+    if (is_singular('kerman_update')) {
+        return 'updates';
+    }
     if (!is_page()) {
         return 'home';
     }
@@ -163,6 +196,9 @@ function kermanentzat_page_key(): string
     return match ($slug) {
         'resumen-del-caso', 'kasuaren-laburpena' => 'case',
         'actualidad', 'berriak' => 'updates',
+        'cronologia', 'kronologia' => 'timeline',
+        'hemeroteca', 'hemeroteka' => 'press_archive',
+        'suscripcion', 'harpidetza' => 'subscription',
         'ayuda-y-donaciones', 'lagundu-eta-ekarpenak' => 'support',
         'contacto', 'kontaktua' => 'contact',
         'aviso-legal', 'lege-oharra' => 'legal',
@@ -183,6 +219,18 @@ function kermanentzat_current_url(): string
 function kermanentzat_meta_for_current_page(): array
 {
     $language = kermanentzat_language();
+    if (is_singular('kerman_update')) {
+        $post = get_queried_object();
+        if ($post instanceof WP_Post) {
+            $description = has_excerpt($post)
+                ? get_the_excerpt($post)
+                : wp_trim_words(wp_strip_all_tags($post->post_content), 28);
+            return [
+                'title' => get_the_title($post),
+                'description' => $description,
+            ];
+        }
+    }
     $key = kermanentzat_page_key();
     $meta = kermanentzat_page_meta();
     return $meta[$language][$key] ?? $meta[$language]['home'];
@@ -217,6 +265,20 @@ function kermanentzat_social_image(): array
 {
     $language = kermanentzat_language();
 
+    if (is_singular('kerman_update') && has_post_thumbnail()) {
+        $attachment_id = get_post_thumbnail_id();
+        $image = wp_get_attachment_image_src($attachment_id, 'full');
+        if (is_array($image)) {
+            return [
+                'url' => $image[0],
+                'type' => get_post_mime_type($attachment_id) ?: 'image/jpeg',
+                'width' => (int) $image[1],
+                'height' => (int) $image[2],
+                'alt' => get_post_meta($attachment_id, '_wp_attachment_image_alt', true) ?: get_the_title(),
+            ];
+        }
+    }
+
     if (kermanentzat_is_home()) {
         return [
             'url' => get_theme_file_uri('assets/images/social-card-whatsapp-v2.png'),
@@ -242,6 +304,9 @@ function kermanentzat_social_image(): array
 
 function kermanentzat_twitter_image(): array
 {
+    if (is_singular('kerman_update') && has_post_thumbnail()) {
+        return kermanentzat_social_image();
+    }
     if (!kermanentzat_is_home()) {
         return kermanentzat_social_image();
     }
@@ -286,6 +351,9 @@ function kermanentzat_sitemap_routes(): array
             '/',
             '/kasuaren-laburpena/',
             '/berriak/',
+            '/kronologia/',
+            '/hemeroteka/',
+            '/harpidetza/',
             '/lagundu-eta-ekarpenak/',
             '/kontaktua/',
             '/lege-oharra/',
@@ -296,6 +364,9 @@ function kermanentzat_sitemap_routes(): array
             '/es/',
             '/es/resumen-del-caso/',
             '/es/actualidad/',
+            '/es/cronologia/',
+            '/es/hemeroteca/',
+            '/es/suscripcion/',
             '/es/ayuda-y-donaciones/',
             '/es/contacto/',
             '/es/aviso-legal/',
@@ -324,7 +395,7 @@ function kermanentzat_sitemap_entries(string $language): array
         ];
     }
 
-    return $entries;
+    return apply_filters('kermanentzat_sitemap_entries', $entries, $language);
 }
 
 function kermanentzat_render_sitemap(string $path): void
@@ -423,9 +494,20 @@ add_action('template_redirect', static function (): void {
 
 add_action('wp_head', static function (): void {
     $key = kermanentzat_page_key();
-    printf('<link rel="alternate" hreflang="eu" href="%s">', esc_url(kermanentzat_url('eu', $key)));
-    printf('<link rel="alternate" hreflang="es" href="%s">', esc_url(kermanentzat_url('es', $key)));
-    printf('<link rel="alternate" hreflang="x-default" href="%s">', esc_url(kermanentzat_url('eu', $key)));
+    $editorial_links = function_exists('Kermanentzat\\Editorial\\editorial_hreflang_links')
+        ? Kermanentzat\Editorial\editorial_hreflang_links()
+        : [];
+    if ($editorial_links !== []) {
+        foreach ($editorial_links as $language => $url) {
+            printf('<link rel="alternate" hreflang="%s" href="%s">', esc_attr($language), esc_url($url));
+        }
+        $default_url = $editorial_links['eu'] ?? reset($editorial_links);
+        printf('<link rel="alternate" hreflang="x-default" href="%s">', esc_url($default_url));
+    } else {
+        printf('<link rel="alternate" hreflang="eu" href="%s">', esc_url(kermanentzat_url('eu', $key)));
+        printf('<link rel="alternate" hreflang="es" href="%s">', esc_url(kermanentzat_url('es', $key)));
+        printf('<link rel="alternate" hreflang="x-default" href="%s">', esc_url(kermanentzat_url('eu', $key)));
+    }
     printf('<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>', esc_url(get_theme_file_uri('assets/fonts/anton-latin.woff2')));
     printf('<link rel="preload" href="%s" as="font" type="font/woff2" crossorigin>', esc_url(get_theme_file_uri('assets/fonts/public-sans-latin.woff2')));
 

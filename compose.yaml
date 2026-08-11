@@ -35,17 +35,21 @@ services:
       WORDPRESS_DB_PASSWORD: ${WP_DB_PASSWORD}
       KERMANENTZAT_GA_MEASUREMENT_ID: ${KERMANENTZAT_GA_MEASUREMENT_ID:-}
       KERMANENTZAT_GA_APPROVED: ${KERMANENTZAT_GA_APPROVED:-false}
+      KERMANENTZAT_SENDER_APPROVED: ${KERMANENTZAT_SENDER_APPROVED:-false}
+      KERMANENTZAT_SENDER_API_TOKEN: ${KERMANENTZAT_SENDER_API_TOKEN:-}
+      SENDER_API_TOK: ${SENDER_API_TOK:-}
       WORDPRESS_CONFIG_EXTRA: |
         define('WP_ENVIRONMENT_TYPE', 'local');
         define('KERMANENTZAT_LOCAL_INDEXING', true);
+        define('KERMANENTZAT_SENDER_APPROVED', filter_var(getenv('KERMANENTZAT_SENDER_APPROVED') ?: 'false', FILTER_VALIDATE_BOOLEAN));
+        define('KERMANENTZAT_SENDER_API_TOKEN', (string) (getenv('KERMANENTZAT_SENDER_API_TOKEN') ?: getenv('SENDER_API_TOK') ?: ''));
         define('DISALLOW_FILE_EDIT', true);
-        define('WP_HTTP_BLOCK_EXTERNAL', true);
-        define('WP_ACCESSIBLE_HOSTS', 'api.wordpress.org,downloads.wordpress.org');
         define('AUTOMATIC_UPDATER_DISABLED', true);
     volumes:
       - wordpress_data:/var/www/html
       - ./wp-content/themes/kermanentzat-prototype:/var/www/html/wp-content/themes/kermanentzat-prototype
       - ./wp-content/mu-plugins:/var/www/html/wp-content/mu-plugins
+      - ./wp-content/plugins/kermanentzat-editorial:/var/www/html/wp-content/plugins/kermanentzat-editorial
     healthcheck:
       test: ["CMD-SHELL", "curl -fsS http://localhost/wp-login.php >/dev/null || exit 1"]
       interval: 10s
@@ -65,10 +69,14 @@ services:
       WORDPRESS_DB_NAME: ${WP_DB_NAME}
       WORDPRESS_DB_USER: ${WP_DB_USER}
       WORDPRESS_DB_PASSWORD: ${WP_DB_PASSWORD}
+      KERMANENTZAT_SENDER_APPROVED: ${KERMANENTZAT_SENDER_APPROVED:-false}
+      KERMANENTZAT_SENDER_API_TOKEN: ${KERMANENTZAT_SENDER_API_TOKEN:-}
+      SENDER_API_TOK: ${SENDER_API_TOK:-}
     volumes:
       - wordpress_data:/var/www/html
       - ./wp-content/themes/kermanentzat-prototype:/var/www/html/wp-content/themes/kermanentzat-prototype
       - ./wp-content/mu-plugins:/var/www/html/wp-content/mu-plugins
+      - ./wp-content/plugins/kermanentzat-editorial:/var/www/html/wp-content/plugins/kermanentzat-editorial
     profiles: ["tools"]
     entrypoint: ["wp"]
 

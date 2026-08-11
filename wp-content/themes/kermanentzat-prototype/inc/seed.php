@@ -22,8 +22,17 @@ function kermanentzat_seed_page(string $title, string $slug, string $content, in
         $existing = $sameSlug[0] ?? null;
     }
 
+    // The seed is a bootstrap, not a synchronization mechanism. Once a page
+    // exists, WordPress is its source of truth and editorial changes survive
+    // future deployments and setup runs.
+    if ($existing instanceof WP_Post) {
+        if (class_exists('WP_CLI')) {
+            WP_CLI::log(sprintf('Conservada página existente: %s (#%d).', $path, $existing->ID));
+        }
+        return (int) $existing->ID;
+    }
+
     $id = wp_insert_post(wp_slash([
-        'ID' => $existing ? $existing->ID : 0,
         'post_type' => 'page',
         'post_status' => 'publish',
         'post_title' => $title,

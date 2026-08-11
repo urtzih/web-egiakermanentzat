@@ -9,8 +9,8 @@ defined('ABSPATH') || exit;
 function kermanentzat_legal_config(): array
 {
     return [
-        'version' => '2026.08.02',
-        'last_reviewed' => '02/08/2026',
+        'version' => '2026.08.11',
+        'last_reviewed' => '11/08/2026',
         'name' => 'Egia Kermanentzat Elkartea',
         'nif' => 'G93797744',
         'address' => 'Zubiegi kalea 16, Bitoriano, 01139 Zuia, Álava',
@@ -24,6 +24,10 @@ function kermanentzat_legal_config(): array
         'donation_tax_status' => null,
         'google_analytics_contractual_review' => null,
         'google_analytics_transfer_safeguards' => null,
+        'sender_processor_agreement' => null,
+        'sender_transfer_safeguards' => null,
+        'sender_retention_review' => null,
+        'sender_domain_authentication' => null,
     ];
 }
 
@@ -68,7 +72,7 @@ function kermanentzat_service_registry(): array
 {
     $analytics_enabled = kermanentzat_analytics_is_enabled();
     $registry = [
-        'version' => '2.0.0',
+        'version' => '3.2.0',
         'categories' => [
             'necessary' => ['active' => true, 'required' => true, 'configurable' => false],
             'analytics' => ['active' => $analytics_enabled, 'required' => false, 'configurable' => true],
@@ -101,6 +105,14 @@ function kermanentzat_service_registry(): array
     }
 
     $optional = apply_filters('kermanentzat_optional_services', $registry['optional_services']);
+    if (is_array($optional)) {
+        foreach ($optional as $service) {
+            $category = is_array($service) ? (string) ($service['category'] ?? '') : '';
+            if ($category !== 'necessary' && !empty($service['enabled']) && isset($registry['categories'][$category])) {
+                $registry['categories'][$category]['active'] = true;
+            }
+        }
+    }
     $registry['optional_services'] = is_array($optional)
         ? array_values(array_filter($optional, static function ($service) use ($registry): bool {
             if (!is_array($service) || empty($service['id']) || empty($service['category'])) {
@@ -124,12 +136,17 @@ function kermanentzat_has_optional_services(): bool
 
 function kermanentzat_has_optional_service(string $id): bool
 {
+    return kermanentzat_optional_service($id) !== null;
+}
+
+function kermanentzat_optional_service(string $id): ?array
+{
     foreach (kermanentzat_service_registry()['optional_services'] as $service) {
         if (($service['id'] ?? '') === $id) {
-            return true;
+            return $service;
         }
     }
-    return false;
+    return null;
 }
 
 function kermanentzat_consent_text(): array

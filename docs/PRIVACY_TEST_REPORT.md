@@ -1,5 +1,17 @@
 # Informe de pruebas de privacidad
 
+## Verificación editorial y suscripciones — 2026-08-11
+
+La batería local actualizada comprueba la versión `3.2.0`, los textos legales ES/EU, sitemaps dinámicos sin `localhost`, ausencia de cookies y recursos de Sender fuera de las rutas específicas de suscripción.
+
+Sender está activo localmente mediante `KERMANENTZAT_SENDER_APPROVED=true`. El código exige además token, grupo, remitente válido, ID público, ID de renderizado, hash del contenedor y un formulario bilingüe HTTPS antes de registrar el servicio o ampliar la CSP. WordPress no guarda emails. La prueba real con una dirección autorizada de alta, double opt-in y baja sigue pendiente.
+
+Las rutas bilingües de suscripción se enlazan desde la navegación, Actualidad/Berriak y Contacto/Kontaktua. El SDK y el iframe de Sender aparecen automáticamente solo en `/harpidetza/` y `/es/suscripcion/`; las páginas secundarias muestran llamadas locales compactas.
+
+Resultado local del 11-08-2026: **61 comprobaciones superadas, 0 fallos**. La revisión en escritorio y móvil de `/harpidetza/` y `/es/suscripcion/` no detectó desbordamiento horizontal. El formulario publicado se renderizó correctamente con `senderForms.render('epY1RX')` sobre el contenedor `msis6hs8epy1rx9k77d`, tanto en la página principal como desde Contacto. Berriak/Actualidad y Kontaktua/Contacto se comprobaron en ambos idiomas. No se enviaron datos personales durante esta verificación.
+
+Las secciones siguientes conservan los resultados históricos de la versión `2.0.0` anteriores a esta fase.
+
 ## Verificación del primer contacto de alta — 2026-08-02
 
 Se ejecutó la batería contra `https://egiakermanentzat.eus` con el servicio de

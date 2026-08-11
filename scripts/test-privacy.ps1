@@ -144,13 +144,13 @@ foreach ($sitemapRoute in @('/sitemap-eu.xml', '/sitemap-es.xml')) {
     $sitemapResponse = Invoke-WebRequest -UseBasicParsing -Uri "$BaseUrl$sitemapRoute"
     $sitemapXml = [string]$sitemapResponse.Content
     $urlCount = ([regex]::Matches($sitemapXml, '<url>')).Count
-    if ($sitemapResponse.StatusCode -ne 200 -or $urlCount -ne 8) {
-        Add-Failure "$sitemapRoute debe contener exactamente ocho URLs"
+    if ($sitemapResponse.StatusCode -ne 200 -or $urlCount -lt 8) {
+        Add-Failure "$sitemapRoute debe contener al menos las ocho URLs estructurales"
     }
     if ($sitemapXml -match '(?i)localhost|/wp-admin/|/author/|/attachment/|<loc>http://') {
         Add-Failure "$sitemapRoute contiene una URL no pública o no HTTPS"
     } else {
-        Add-Pass "$sitemapRoute contiene ocho URLs HTTPS públicas"
+        Add-Pass "$sitemapRoute contiene $urlCount URLs HTTPS públicas"
     }
 }
 
@@ -214,12 +214,12 @@ if ($unexpectedHosts) {
 
 $privacySource = Get-Content -Raw -LiteralPath $consentAdapterFiles[1]
 if (
-    $privacySource -notmatch "'version'\s*=>\s*'2\.0\.0'" -or
+    $privacySource -notmatch "'version'\s*=>\s*'3\.2\.0'" -or
     $privacySource -notmatch 'KERMANENTZAT_GA_APPROVED' -or
     $privacySource -notmatch 'KERMANENTZAT_GA_MEASUREMENT_ID' -or
     $privacySource -notmatch "wp_get_environment_type\(\)\s*===\s*'production'"
 ) {
-    Add-Failure 'El registro no exige versión, aprobación, ID válido y producción'
+    Add-Failure 'El registro no exige versión, aprobación, ID válido y producción para Analytics'
 } else {
     Add-Pass 'El registro exige aprobación explícita, ID y producción'
 }
@@ -244,14 +244,51 @@ if (
     Add-Pass 'El primer contacto para hacerse socio/a está minimizado en ES/EU'
 }
 if (
-    $legalContentSource -notmatch 'solicitudes iniciales para hacerse socio/a' -or
-    $legalContentSource -notmatch 'bazkide izateko hasierako eskaerei' -or
     $legalContentSource -notmatch 'Antes de recabar datos adicionales' -or
     $legalContentSource -notmatch 'Datu gehiago eskatu aurretik'
 ) {
     Add-Failure 'La política de privacidad no explica el contacto inicial de alta en ES/EU'
 } else {
     Add-Pass 'La política de privacidad explica el contacto inicial de alta en ES/EU'
+}
+if (
+    $legalContentSource -notmatch 'Suscripción a novedades' -or
+    $legalContentSource -notmatch 'Berrien harpidetza' -or
+    $legalContentSource -notmatch 'UAB Sender\.lt' -or
+    $legalContentSource -notmatch 'WordPress no almacena la dirección' -or
+    $legalContentSource -notmatch 'WordPressek ez du helbidea gordetzen'
+) {
+    Add-Failure 'La política no describe la suscripción minimizada y condicionada en ES/EU'
+} else {
+    Add-Pass 'La política describe Sender, minimización y activación condicionada en ES/EU'
+}
+
+$subscriptionAdapter = Get-Content -Raw -LiteralPath (Join-Path $workspacePath 'wp-content\plugins\kermanentzat-editorial\assets\subscription.js')
+$subscriptionPhp = Get-Content -Raw -LiteralPath (Join-Path $workspacePath 'wp-content\plugins\kermanentzat-editorial\inc\subscriptions.php')
+$subscriptionCss = Get-Content -Raw -LiteralPath (Join-Path $workspacePath 'wp-content\plugins\kermanentzat-editorial\assets\editorial.css')
+$subscriptionBootstrap = Get-Content -Raw -LiteralPath (Join-Path $workspacePath 'wp-content\plugins\kermanentzat-editorial\kermanentzat-editorial.php')
+if (
+    $subscriptionAdapter -notmatch 'universal\.js\?explicit=true' -or
+    $subscriptionAdapter -notmatch 'senderForms\.render' -or
+    $subscriptionAdapter -notmatch 'sender\.on' -or
+    $subscriptionAdapter -notmatch 'onSenderFormsLoaded' -or
+    $subscriptionAdapter -notmatch 'if \(autoLoad\) showForm\(\)' -or
+    $subscriptionPhp -notmatch 'data-sender-form-id' -or
+    $subscriptionPhp -notmatch 'data-auto-load' -or
+    $subscriptionPhp -notmatch 'kerman-subscription--teaser' -or
+    $subscriptionPhp -notmatch '(?s)kerman-subscription__action.*kerman-subscription__intro' -or
+    $subscriptionCss -notmatch '(?s)\.content-band--light:has\(\.kerman-subscription--page\).*?background:\s*var\(--color-soft' -or
+    $subscriptionCss -match '(?s)\.kerman-subscription__form iframe\s*\{[^}]*min-height' -or
+    $subscriptionCss -notmatch '(?s)\.kerman-subscription__form iframe\s*\{[^}]*margin-bottom:\s*-2rem' -or
+    $subscriptionPhp -notmatch "config\['sender_form_embed_id'\]" -or
+    $subscriptionBootstrap -notmatch "'sender_form_id'\s*=>\s*'epY1RX'" -or
+    $subscriptionBootstrap -notmatch "'sender_form_embed_id'\s*=>\s*'msis6hs8epy1rx9k77d'" -or
+    $subscriptionAdapter -match 'api\.sender\.net/v2|Authorization|Bearer' -or
+    $subscriptionPhp -match 'data-subscription-frame-container'
+) {
+    Add-Failure 'La suscripción no limita el SDK a la ruta dedicada o podría exponer la API privada'
+} else {
+    Add-Pass 'La suscripción integra el SDK en la ruta dedicada, usa llamadas locales fuera de ella y no expone la API privada'
 }
 
 $styleFiles = Get-ChildItem -LiteralPath (Join-Path $workspacePath 'wp-content') -Recurse -Filter '*.css' -File

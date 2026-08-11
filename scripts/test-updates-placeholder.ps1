@@ -28,22 +28,20 @@ $routes = @(
         Path = '/berriak/'
         MenuLabel = 'Berriak'
         Heading = 'Berriak'
-        StatusPattern = 'Atala eraikitzen'
-        SectionHeading = 'Hedabideetan'
-        Nature = 'Kazetaritza-estaldura'
-        Date = '2026ko abuztuaren 2a'
+        TypeLabel = 'Hemeroteka'
+        Date = '2/08/2026'
         SourceUrl = 'https://orain.eus/eu/aktualitatea/gizartea/2026/08/02/testigantza-berriek-agerian-utzi-dituzte-mitikako-atezainek-kerman-villate-hil-aurretik-behin-eta-berriz-egindako-erasoak/'
+        OtherLanguageTitle = 'Nuevos testimonios apuntan'
         Alternate = '/es/actualidad/'
     },
     @{
         Path = '/es/actualidad/'
         MenuLabel = 'Actualidad'
         Heading = 'Actualidad'
-        StatusPattern = 'Secci.n en construcci.n'
-        SectionHeading = 'En los medios'
-        Nature = 'Cobertura period.stica'
-        Date = '2 de agosto de 2026'
+        TypeLabel = 'Hemeroteca'
+        Date = '2/08/2026'
         SourceUrl = 'https://orain.eus/es/actualidad/sociedad/2026/08/02/nuevos-testimonios-apuntan-agresiones-reiteradas-porteros-mitika-antes-la-muerte-kerman-villate/'
+        OtherLanguageTitle = 'Testigantza berriek agerian'
         Alternate = '/berriak/'
     }
 )
@@ -61,15 +59,15 @@ foreach ($route in $routes) {
     else { Add-Failure "$($route.Path) devolvió HTTP $($response.StatusCode)" }
 
     $headingPattern = '<h1[^>]*>\s*' + [regex]::Escape($route.Heading) + '\s*</h1>'
-    if (($html -match $headingPattern) -and ($html -match [string]$route.StatusPattern)) {
-        Add-Pass "$($route.Path) mantiene el estado de construcción"
+    if (($html -match $headingPattern) -and ($html -match 'class=["'']kerman-updates["'']') -and ($html -notmatch '(?i)construcci.n|eraikitzen')) {
+        Add-Pass "$($route.Path) muestra el archivo dinámico"
     } else {
         Add-Failure "$($route.Path) no muestra el título o estado esperado"
     }
 
     if (
-        $html -match ('<h2[^>]*>\s*' + [regex]::Escape($route.SectionHeading) + '\s*</h2>') -and
-        $html -match [string]$route.Nature -and
+        $html -match 'kerman-card--press-archive' -and
+        $html -match ('<span>\s*' + [regex]::Escape($route.TypeLabel) + '\s*</span>') -and
         $html -match [regex]::Escape($route.Date) -and
         $html -match 'ORAIN\s*.\s*Radio Euskadi'
     ) {
@@ -83,6 +81,12 @@ foreach ($route in $routes) {
         Add-Pass "$($route.Path) enlaza la fuente lingüística de forma segura"
     } else {
         Add-Failure "$($route.Path) no enlaza la fuente esperada con atributos seguros"
+    }
+
+    if ($html -match [regex]::Escape($route.OtherLanguageTitle)) {
+        Add-Failure "$($route.Path) mezcla la publicación del otro idioma"
+    } else {
+        Add-Pass "$($route.Path) limita el archivo al idioma actual"
     }
 
     if ($html -match 'gaztea\.eus|eitb\.scene7\.com|20250225201739_discoteka-mitika') {

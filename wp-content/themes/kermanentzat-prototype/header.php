@@ -3,9 +3,12 @@ defined('ABSPATH') || exit;
 $language = kermanentzat_language();
 $other = $language === 'es' ? 'eu' : 'es';
 $key = kermanentzat_page_key();
+$editorialSwitch = function_exists('Kermanentzat\\Editorial\\editorial_language_switch_url')
+    ? Kermanentzat\Editorial\editorial_language_switch_url()
+    : '';
 $labels = $language === 'eu'
-    ? ['home' => 'Hasiera', 'case' => 'Kasua', 'updates' => 'Berriak', 'support' => 'Lagundu', 'contact' => 'Kontaktua']
-    : ['home' => 'Inicio', 'case' => 'El caso', 'updates' => 'Actualidad', 'support' => 'Ayuda', 'contact' => 'Contacto'];
+    ? ['home' => 'Hasiera', 'case' => 'Kasua', 'updates' => 'Berriak', 'subscription' => 'Harpidetza', 'support' => 'Lagundu', 'contact' => 'Kontaktua']
+    : ['home' => 'Inicio', 'case' => 'El caso', 'updates' => 'Actualidad', 'subscription' => 'Suscripción', 'support' => 'Ayuda', 'contact' => 'Contacto'];
 ?><!doctype html>
 <html lang="<?php echo esc_attr($language); ?>">
 <head>
@@ -37,7 +40,7 @@ $labels = $language === 'eu'
             <a href="<?php echo esc_url(kermanentzat_url($language, $navKey)); ?>" <?php echo $key === $navKey ? 'aria-current="page"' : ''; ?>><?php echo esc_html($label); ?></a>
         <?php endforeach; ?>
     </nav>
-    <a class="language-switch" href="<?php echo esc_url(kermanentzat_url($other, $key)); ?>" hreflang="<?php echo esc_attr($other); ?>">
+    <a class="language-switch" href="<?php echo esc_url($editorialSwitch ?: kermanentzat_url($other, $key)); ?>" hreflang="<?php echo esc_attr($other); ?>">
         <span class="language-muted"><?php echo strtoupper($language); ?></span><span aria-hidden="true">/</span><strong><?php echo strtoupper($other); ?></strong>
         <span class="screen-reader-text"><?php echo $language === 'eu' ? 'Gaztelaniaz ikusi' : 'Ikusi euskaraz'; ?></span>
     </a>

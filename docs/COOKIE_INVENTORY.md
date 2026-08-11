@@ -1,6 +1,6 @@
 # Inventario de cookies, almacenamiento y servicios
 
-Versión del registro: `2.0.0`. Revisión técnica: 2026-08-02.
+Versión del registro: `3.2.0`. Revisión técnica: 2026-08-11.
 
 ## Estados de la navegación pública
 
@@ -12,9 +12,9 @@ Versión del registro: `2.0.0`. Revisión técnica: 2026-08-02.
 | Analítica aceptada | `kermanentzat_consent`, `_ga`, `_ga_*` | Google Tag y Analytics | Se miden páginas, procedencia aproximada, interacción y dos eventos de copia |
 | Consentimiento retirado | `kermanentzat_consent` | Ninguna futura | Se bloquea Analytics, se borran `_ga`/`_ga_*` y se recarga la página |
 
-`kermanentzat_consent` contiene solo la versión `2.0.0`, un booleano para analítica y una fecha ISO. No contiene identificadores. Caduca lógicamente a los 183 días o al cambiar la versión.
+`kermanentzat_consent` contiene solo la versión `3.2.0`, un booleano para analítica y una fecha ISO. No contiene identificadores. Caduca lógicamente a los 183 días o al cambiar la versión. La suscripción no reutiliza esta elección: tiene consentimiento y confirmación propios.
 
-## Servicio opcional
+## Servicios opcionales
 
 | Campo | Google Analytics 4 |
 |---|---|
@@ -30,12 +30,27 @@ Versión del registro: `2.0.0`. Revisión técnica: 2026-08-02.
 | Publicidad | Google Signals, personalización, User-ID y Google Ads desactivados |
 | Transferencias | Activación operativa autorizada el 29-07-2026; conservar la evidencia de las condiciones y garantías de Google y completar su validación jurídica |
 
+| Campo | Sender |
+|---|---|
+| Categoría | `marketing`, independiente de Analytics |
+| Proveedor | UAB Sender.lt, Lvivo st. 25, Vilnius, Lituania |
+| Finalidad | Gestionar alta confirmada, baja y avisos de nuevas publicaciones |
+| Datos | Email y estados técnicos de confirmación, entrega y supresión gestionados por el proveedor |
+| Activación | Aprobación explícita + token/grupo/remitente + formulario bilingüe con double opt-in; el SDK se carga automáticamente solo en `/harpidetza/` y `/es/suscripcion/` |
+| Base jurídica | Consentimiento específico y double opt-in |
+| Conservación | Hasta la baja; criterio de supresión posterior pendiente de validar con contrato y obligaciones |
+| Retirada | Enlace de baja en cada mensaje o solicitud al responsable |
+| Transferencias | DPA, subencargados y garantías pendientes de revisión; el feature flag debe permanecer apagado hasta documentarlas |
+| Almacenamiento local | WordPress no guarda emails; solo estado técnico de campaña sin destinatarios |
+
 Dominios permitidos por CSP cuando el adaptador está activo:
 
 - `www.googletagmanager.com`, exclusivamente para descargar `gtag.js` tras aceptar.
 - `www.google-analytics.com` y `region1.google-analytics.com`, exclusivamente para recopilación de GA4 tras aceptar.
+- `cdn.sender.net`, para cargar en las rutas específicas de suscripción el SDK, la configuración pública y sus recursos del formulario.
+- `stats.sender.net`, para renderizar y enviar el formulario; `www.cloudflare.com`, para la comprobación técnica de red que realiza el SDK.
 
-No se usa Google Tag Manager, una CMP, píxeles publicitarios, iframes, fuentes remotas, vídeos embebidos, `sessionStorage`, IndexedDB ni `sendBeacon` propio.
+No se usa Google Tag Manager, una CMP, píxeles publicitarios, fuentes remotas, vídeos embebidos, `sessionStorage`, IndexedDB ni `sendBeacon` propio. Sender puede crear internamente un marco para el formulario. Sus recursos se cargan al visitar la ruta específica de suscripción, pero no en Actualidad/Berriak, Contacto/Kontaktua ni el resto del sitio.
 
 ## Administración restringida de WordPress
 
@@ -48,7 +63,7 @@ No se usa Google Tag Manager, una CMP, píxeles publicitarios, iframes, fuentes 
 
 ## Terceros enlazados
 
-Instagram, saretu.es y el correo siguen siendo enlaces iniciados por la persona visitante. No reciben datos durante la carga. La invitación para hacerse socio/a abre el mismo correo y pide únicamente expresar interés en el primer mensaje, sin DNI/NAN ni documentación sensible.
+Instagram, saretu.es y el correo siguen siendo enlaces iniciados por la persona visitante. No reciben datos durante la carga. Sender recibe solicitudes técnicas al abrir la página específica de suscripción; las llamadas mostradas en Actualidad/Berriak y Contacto/Kontaktua son enlaces locales y no contactan con Sender.
 
 ## Regla de cambio
 
@@ -59,6 +74,16 @@ condiciones de tratamiento, garantías de transferencia, propiedad
 institucional, retención de dos meses, accesos y configuración sin publicidad,
 además de completar la revisión jurídica.
 
-La revisión del 02-08-2026 añade una finalidad de contacto por correo, pero no
-incorpora servicios, cookies, almacenamiento ni eventos. Por eso no cambia la
-versión `2.0.0` del registro de consentimiento.
+La revisión del 11-08-2026 consolida un único formulario bilingüe y sustituye el
+iframe alojado por el SDK explícito de Sender. La integración directa en la
+página específica y las llamadas locales en páginas secundarias elevan el
+registro a `3.2.0`.
+No se puede activar `KERMANENTZAT_SENDER_APPROVED`
+hasta archivar la revisión contractual, transferencias, conservación, DNS,
+double opt-in y textos bilingües. Cambiar el flag a `false` retira el servicio
+del registro y bloquea formularios y nuevos envíos.
+
+Desde el 07-08-2026 las rutas `/harpidetza/` y `/es/suscripcion/` son públicas y
+se enlazan desde la navegación, Actualidad/Berriak y Contacto/Kontaktua. Mientras
+Sender siga desactivado muestran solo contenido local informativo: no cargan el
+SDK, no contactan con el proveedor y no recogen direcciones.

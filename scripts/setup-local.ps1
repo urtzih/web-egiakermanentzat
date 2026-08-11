@@ -50,6 +50,7 @@ try {
     }
 
     docker compose --profile tools run --rm wpcli theme activate kermanentzat-prototype
+    docker compose --profile tools run --rm wpcli plugin activate kermanentzat-editorial
     docker compose --profile tools run --rm wpcli rewrite structure '/%postname%/' --hard
     docker compose --profile tools run --rm wpcli eval-file wp-content/themes/kermanentzat-prototype/inc/seed.php
     docker compose --profile tools run --rm wpcli rewrite flush --hard

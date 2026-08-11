@@ -1,0 +1,5 @@
+email,consent_date,consent_source,consent_scope,status
+alpha@example.org,2026-07-01,Formulario firmado,Avisos de nuevas publicaciones,active
+not-an-email,2026-07-01,Formulario firmado,Avisos de nuevas publicaciones,active
+alpha@example.org,2026-07-01,Formulario firmado,Avisos de nuevas publicaciones,active
+beta@example.org,2026-07-02,Formulario web,Avisos de nuevas publicaciones,unsubscribed

@@ -23,3 +23,6 @@ docs/discovery/restricted/**
 !docs/discovery/restricted/**/chronology.csv
 .codex-remote-attachments/**
 dist/*
+tmp/*
+output/
+docs/restricted/
