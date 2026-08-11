@@ -19,6 +19,10 @@ function register_admin_hooks(): void
     add_filter('attachment_fields_to_edit', __NAMESPACE__ . '\attachment_editorial_fields', 10, 2);
     add_filter('attachment_fields_to_save', __NAMESPACE__ . '\save_attachment_editorial_fields', 10, 2);
     add_action('admin_enqueue_scripts', __NAMESPACE__ . '\enqueue_admin_assets');
+    foreach ([UPDATE_POST_TYPE, TIMELINE_POST_TYPE] as $post_type) {
+        add_filter('manage_' . $post_type . '_posts_columns', __NAMESPACE__ . '\editorial_list_columns');
+        add_action('manage_' . $post_type . '_posts_custom_column', __NAMESPACE__ . '\render_editorial_list_column', 10, 2);
+    }
 }
 
 function enqueue_admin_assets(string $hook): void
@@ -38,8 +42,8 @@ function render_editorial_notices(): void
     }
 
     if (!function_exists('pll_get_post_language')) {
-        echo '<div class="notice notice-warning"><p>';
-        echo esc_html__('Kermanentzat Editorial funciona, pero Polylang Free no está activo: las relaciones ES/EU y sus enlaces permanecerán deshabilitados.', 'kermanentzat-editorial');
+        echo '<div class="notice notice-info"><p>';
+        echo esc_html__('Polylang no está activo. El selector nativo de idioma y versión vinculada mantiene las relaciones EU/ES.', 'kermanentzat-editorial');
         echo '</p></div>';
     }
 
@@ -48,6 +52,14 @@ function render_editorial_notices(): void
         delete_transient('kermanentzat_sensitive_blocked_' . get_current_user_id());
         echo '<div class="notice notice-error"><p>';
         echo esc_html__('La publicación sensible quedó como borrador: completa atribución, minimización, derechos y referencia de aprobación externa.', 'kermanentzat-editorial');
+        echo '</p></div>';
+    }
+
+    $invalid_translation = get_transient('kermanentzat_translation_invalid_' . get_current_user_id());
+    if ($invalid_translation) {
+        delete_transient('kermanentzat_translation_invalid_' . get_current_user_id());
+        echo '<div class="notice notice-error"><p>';
+        echo esc_html__('No se pudo vincular la traducción: elige una versión del mismo tipo y del otro idioma.', 'kermanentzat-editorial');
         echo '</p></div>';
     }
 
@@ -91,6 +103,77 @@ function add_editorial_meta_boxes(): void
         'side',
         'high'
     );
+
+    add_meta_box(
+        'kermanentzat-editorial-language',
+        __('Idioma y traducción', 'kermanentzat-editorial'),
+        __NAMESPACE__ . '\render_editorial_language_box',
+        [UPDATE_POST_TYPE, TIMELINE_POST_TYPE],
+        'side',
+        'high'
+    );
+}
+
+function editorial_list_columns(array $columns): array
+{
+    $columns['kerman_language'] = __('Idioma', 'kermanentzat-editorial');
+    $columns['kerman_translation'] = __('Versión vinculada', 'kermanentzat-editorial');
+    return $columns;
+}
+
+function render_editorial_list_column(string $column, int $post_id): void
+{
+    if ($column === 'kerman_language') {
+        echo esc_html(strtoupper(editorial_language_for_post($post_id)));
+        return;
+    }
+    if ($column !== 'kerman_translation') {
+        return;
+    }
+    $language = editorial_language_for_post($post_id) === 'es' ? 'eu' : 'es';
+    $translation = linked_editorial_translation($post_id, $language, ['publish', 'future', 'draft', 'pending', 'private']);
+    if (!$translation) {
+        echo '<span aria-label="' . esc_attr__('Sin versión vinculada', 'kermanentzat-editorial') . '">—</span>';
+        return;
+    }
+    echo '<a href="' . esc_url(get_edit_post_link($translation)) . '">' . esc_html(strtoupper($language) . ' · ' . get_the_title($translation)) . '</a>';
+}
+
+function render_editorial_language_box(\WP_Post $post): void
+{
+    $language = editorial_language_for_post($post->ID);
+    $other_language = $language === 'es' ? 'eu' : 'es';
+    $linked = linked_editorial_translation($post->ID, $other_language, ['publish', 'future', 'draft', 'pending', 'private']);
+    $candidates = get_posts([
+        'post_type' => $post->post_type,
+        'post_status' => ['publish', 'future', 'draft', 'pending', 'private'],
+        'numberposts' => -1,
+        'orderby' => 'modified',
+        'order' => 'DESC',
+        'exclude' => [$post->ID],
+    ]);
+    ?>
+    <p>
+        <label for="_kerman_language"><strong><?php esc_html_e('Idioma de esta versión', 'kermanentzat-editorial'); ?></strong></label><br>
+        <select class="widefat" id="_kerman_language" name="_kerman_language">
+            <option value="eu" <?php selected($language, 'eu'); ?>>EU · Euskara</option>
+            <option value="es" <?php selected($language, 'es'); ?>>ES · Castellano</option>
+        </select>
+    </p>
+    <p>
+        <label for="kerman_translation_post_id"><strong><?php esc_html_e('Versión vinculada', 'kermanentzat-editorial'); ?></strong></label><br>
+        <select class="widefat" id="kerman_translation_post_id" name="kerman_translation_post_id">
+            <option value="0"><?php esc_html_e('Sin vincular todavía', 'kermanentzat-editorial'); ?></option>
+            <?php foreach ($candidates as $candidate) : ?>
+                <?php $candidate_language = editorial_language_for_post($candidate->ID); ?>
+                <option value="<?php echo esc_attr((string) $candidate->ID); ?>" data-kerman-language="<?php echo esc_attr($candidate_language); ?>" <?php selected($linked, $candidate->ID); ?>>
+                    <?php echo esc_html(strtoupper($candidate_language) . ' · ' . get_the_title($candidate) . ' [' . get_post_status($candidate) . ']'); ?>
+                </option>
+            <?php endforeach; ?>
+        </select>
+    </p>
+    <p class="description"><?php esc_html_e('Guarda primero una versión y selecciónala al crear la otra. Solo se enlazan EU y ES del mismo tipo de contenido.', 'kermanentzat-editorial'); ?></p>
+    <?php
 }
 
 function meta_value(int $post_id, string $key, $default = '')
@@ -269,7 +352,7 @@ function save_editorial_meta_boxes(int $post_id, \WP_Post $post): void
 
     $definitions = editorial_meta_definitions()[$post->post_type] ?? [];
     foreach ($definitions as $key => $args) {
-        if (in_array($key, ['_kerman_source_id'], true)) {
+        if (in_array($key, ['_kerman_source_id', '_kerman_translation_group'], true)) {
             continue;
         }
 
@@ -288,6 +371,18 @@ function save_editorial_meta_boxes(int $post_id, \WP_Post $post): void
             delete_post_meta($post_id, $key);
         } else {
             update_post_meta($post_id, $key, $value);
+        }
+    }
+
+    if (in_array($post->post_type, [UPDATE_POST_TYPE, TIMELINE_POST_TYPE], true)) {
+        if (function_exists('pll_set_post_language')) {
+            pll_set_post_language($post_id, editorial_language_for_post($post_id));
+        }
+        $translation_id = absint($_POST['kerman_translation_post_id'] ?? 0);
+        if ($translation_id === 0) {
+            unlink_editorial_translation_group($post_id);
+        } elseif (!current_user_can('edit_post', $translation_id) || !link_editorial_translations($post_id, $translation_id)) {
+            set_transient('kermanentzat_translation_invalid_' . get_current_user_id(), 1, MINUTE_IN_SECONDS);
         }
     }
 

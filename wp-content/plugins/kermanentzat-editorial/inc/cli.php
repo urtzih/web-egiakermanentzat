@@ -99,8 +99,11 @@ function verify_editorial_runtime(): void
     try {
         update_post_meta($first, '_kerman_language', 'eu');
         update_post_meta($second, '_kerman_language', 'es');
-        update_post_meta($first, '_kerman_translation_group', 'editorial-verification');
-        update_post_meta($second, '_kerman_translation_group', 'editorial-verification');
+        if (!link_editorial_translations($first, $second)
+            || linked_editorial_translation($first, 'es', ['draft']) !== $second
+            || linked_editorial_translation($second, 'eu', ['draft']) !== $first) {
+            \WP_CLI::error('El enlace editorial EU/ES no funciona sin dependencias externas.');
+        }
         if (campaign_identity_post_id($second) !== min($first, $second)) {
             \WP_CLI::error('La identidad traducida no es estable.');
         }

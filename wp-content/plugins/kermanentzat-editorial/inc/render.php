@@ -448,29 +448,7 @@ function editorial_template_include(string $template): string
 
 function translation_for_post(int $post_id, string $language): int
 {
-    if (function_exists('pll_get_post')) {
-        $translation = absint(pll_get_post($post_id, $language));
-        if ($translation) {
-            return $translation;
-        }
-    }
-    $group = (string) get_post_meta($post_id, '_kerman_translation_group', true);
-    if ($group === '') {
-        return 0;
-    }
-    $matches = get_posts([
-        'post_type' => UPDATE_POST_TYPE,
-        'post_status' => 'publish',
-        'numberposts' => -1,
-        'meta_key' => '_kerman_translation_group',
-        'meta_value' => $group,
-    ]);
-    foreach ($matches as $match) {
-        if (editorial_language_for_post($match->ID) === $language) {
-            return $match->ID;
-        }
-    }
-    return 0;
+    return linked_editorial_translation($post_id, $language, ['publish']);
 }
 
 function editorial_language_switch_url(): string

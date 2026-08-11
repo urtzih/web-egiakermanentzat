@@ -191,6 +191,8 @@ function editorial_meta_definitions(): array
 {
     return [
         UPDATE_POST_TYPE => [
+            '_kerman_language' => ['type' => 'string', 'sanitize_callback' => __NAMESPACE__ . '\sanitize_editorial_language'],
+            '_kerman_translation_group' => ['type' => 'string', 'sanitize_callback' => 'sanitize_key'],
             '_kerman_editorial_date' => ['type' => 'string', 'sanitize_callback' => __NAMESPACE__ . '\sanitize_date'],
             '_kerman_featured' => ['type' => 'boolean', 'sanitize_callback' => 'rest_sanitize_boolean'],
             '_kerman_event_start' => ['type' => 'string', 'sanitize_callback' => __NAMESPACE__ . '\sanitize_datetime'],
@@ -207,6 +209,8 @@ function editorial_meta_definitions(): array
             '_kerman_approval_ref' => ['type' => 'string', 'sanitize_callback' => 'sanitize_text_field'],
         ],
         TIMELINE_POST_TYPE => [
+            '_kerman_language' => ['type' => 'string', 'sanitize_callback' => __NAMESPACE__ . '\sanitize_editorial_language'],
+            '_kerman_translation_group' => ['type' => 'string', 'sanitize_callback' => 'sanitize_key'],
             '_kerman_timeline_start' => ['type' => 'string', 'sanitize_callback' => __NAMESPACE__ . '\sanitize_date'],
             '_kerman_timeline_end' => ['type' => 'string', 'sanitize_callback' => __NAMESPACE__ . '\sanitize_date'],
             '_kerman_timeline_precision' => ['type' => 'string', 'sanitize_callback' => __NAMESPACE__ . '\sanitize_date_precision'],
@@ -255,6 +259,11 @@ function sanitize_date($value): string
 {
     $value = sanitize_text_field((string) $value);
     return preg_match('/^\d{4}-\d{2}-\d{2}$/', $value) ? $value : '';
+}
+
+function sanitize_editorial_language($value): string
+{
+    return sanitize_key((string) $value) === 'es' ? 'es' : 'eu';
 }
 
 function sanitize_datetime($value): string
@@ -307,6 +316,95 @@ function editorial_language_for_post(int $post_id): string
 
     $stored = get_post_meta($post_id, '_kerman_language', true);
     return $stored === 'es' ? 'es' : 'eu';
+}
+
+/**
+ * Finds the linked version without requiring Polylang. Public callers should
+ * pass only published posts; the editor can include drafts and scheduled posts.
+ */
+function linked_editorial_translation(int $post_id, string $language, array $statuses = ['publish']): int
+{
+    $language = sanitize_editorial_language($language);
+    if (function_exists('pll_get_post')) {
+        $translation = absint(pll_get_post($post_id, $language));
+        if ($translation && in_array(get_post_status($translation), $statuses, true)) {
+            return $translation;
+        }
+    }
+
+    $group = sanitize_key((string) get_post_meta($post_id, '_kerman_translation_group', true));
+    $post_type = get_post_type($post_id);
+    if ($group === '' || !in_array($post_type, [UPDATE_POST_TYPE, TIMELINE_POST_TYPE], true)) {
+        return 0;
+    }
+
+    $matches = get_posts([
+        'post_type' => $post_type,
+        'post_status' => $statuses,
+        'numberposts' => -1,
+        'meta_key' => '_kerman_translation_group',
+        'meta_value' => $group,
+        'exclude' => [$post_id],
+    ]);
+    foreach ($matches as $match) {
+        if (editorial_language_for_post($match->ID) === $language) {
+            return $match->ID;
+        }
+    }
+    return 0;
+}
+
+function unlink_editorial_translation_group(int $post_id): void
+{
+    $group = sanitize_key((string) get_post_meta($post_id, '_kerman_translation_group', true));
+    $post_type = get_post_type($post_id);
+    if ($group === '' || !in_array($post_type, [UPDATE_POST_TYPE, TIMELINE_POST_TYPE], true)) {
+        return;
+    }
+
+    $members = get_posts([
+        'post_type' => $post_type,
+        'post_status' => ['publish', 'future', 'draft', 'pending', 'private', 'auto-draft'],
+        'numberposts' => -1,
+        'meta_key' => '_kerman_translation_group',
+        'meta_value' => $group,
+    ]);
+    foreach ($members as $member) {
+        delete_post_meta($member->ID, '_kerman_translation_group');
+    }
+}
+
+function link_editorial_translations(int $first_id, int $second_id): bool
+{
+    if (!$first_id || !$second_id || $first_id === $second_id) {
+        return false;
+    }
+    $post_type = get_post_type($first_id);
+    if ($post_type !== get_post_type($second_id) || !in_array($post_type, [UPDATE_POST_TYPE, TIMELINE_POST_TYPE], true)) {
+        return false;
+    }
+
+    $first_language = editorial_language_for_post($first_id);
+    $second_language = editorial_language_for_post($second_id);
+    if ($first_language === $second_language) {
+        return false;
+    }
+
+    unlink_editorial_translation_group($first_id);
+    unlink_editorial_translation_group($second_id);
+    $ids = [$first_id, $second_id];
+    sort($ids, SORT_NUMERIC);
+    $group = sanitize_key(sprintf('kerman-%s-%d-%d', $post_type, $ids[0], $ids[1]));
+    update_post_meta($first_id, '_kerman_translation_group', $group);
+    update_post_meta($second_id, '_kerman_translation_group', $group);
+
+    if (function_exists('pll_save_post_translations')) {
+        pll_save_post_translations([
+            $first_language => $first_id,
+            $second_language => $second_id,
+        ]);
+    }
+    return true;
 }
 
 function localized_update_permalink(string $permalink, \WP_Post $post): string
