@@ -15,12 +15,30 @@ function register_content_hooks(): void
     add_action('init', __NAMESPACE__ . '\register_editorial_meta', 20);
     add_action('init', __NAMESPACE__ . '\seed_update_types', 30);
     add_action('save_post_' . SOURCE_POST_TYPE, __NAMESPACE__ . '\ensure_source_identifier', 20, 3);
+    add_filter('map_meta_cap', __NAMESPACE__ . '\map_editorial_attachment_caps', 10, 4);
     add_filter('post_type_link', __NAMESPACE__ . '\localized_update_permalink', 10, 2);
     add_action('init', __NAMESPACE__ . '\register_localized_rewrite_rules', 40);
     add_filter('query_vars', static function (array $vars): array {
         $vars[] = 'kerman_language';
         return $vars;
     });
+}
+
+function map_editorial_attachment_caps(array $caps, string $cap, int $user_id, array $args): array
+{
+    if (!in_array($cap, ['edit_post', 'read_post', 'delete_post'], true) || empty($args[0])) {
+        return $caps;
+    }
+    $attachment = get_post(absint($args[0]));
+    $user = get_userdata($user_id);
+    if (!$attachment instanceof \WP_Post
+        || $attachment->post_type !== 'attachment'
+        || !$user instanceof \WP_User
+        || !in_array('kermanentzat_editor', $user->roles, true)
+        || (int) $attachment->post_author !== $user_id) {
+        return $caps;
+    }
+    return ['upload_files'];
 }
 
 function editorial_capabilities(): array

@@ -35,6 +35,34 @@ function verify_editorial_runtime(): void
             \WP_CLI::error('No se registró el metadato ' . $key . '.');
         }
     }
+
+    $media_user = wp_insert_user([
+        'user_login' => 'editorial-media-verification-' . wp_generate_password(8, false),
+        'user_pass' => wp_generate_password(32, true, true),
+        'user_email' => 'editorial-media-verification@example.invalid',
+        'role' => 'kermanentzat_editor',
+    ]);
+    if (is_wp_error($media_user)) {
+        \WP_CLI::error('No se pudo preparar la verificación de permisos de medios.');
+    }
+    $media_attachment = wp_insert_attachment([
+        'post_title' => 'Editorial media permission verification',
+        'post_status' => 'inherit',
+        'post_author' => $media_user,
+        'post_mime_type' => 'image/png',
+    ], '', 0, true);
+    if (is_wp_error($media_attachment)) {
+        wp_delete_user($media_user);
+        \WP_CLI::error('No se pudo crear el adjunto temporal.');
+    }
+    try {
+        if (map_editorial_attachment_caps(['edit_posts'], 'edit_post', $media_user, [$media_attachment]) !== ['upload_files']) {
+            \WP_CLI::error('La editora no puede completar los metadatos de sus propios medios.');
+        }
+    } finally {
+        wp_delete_attachment($media_attachment, true);
+        wp_delete_user($media_user);
+    }
     if (!sensitive_review_is_complete(['rights', 'attribution', 'minimization'], 'ACTA-TEST')
         || sensitive_review_is_complete(['rights', 'attribution'], 'ACTA-TEST')) {
         \WP_CLI::error('La validación de contenido sensible no es determinista.');
