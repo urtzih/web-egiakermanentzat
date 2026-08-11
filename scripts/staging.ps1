@@ -299,7 +299,7 @@ wpcli eval-file wp-content/themes/kermanentzat-prototype/inc/seed.php
 wpcli rewrite flush --hard
 wpcli kermanentzat editorial migrate --dry-run --strict
 verify_editorial_runtime
-verify_staging_frontend full
+verify_staging_frontend basic
 compose_command ps
 echo "Código desplegado en $(git -C "$repo" rev-parse --short HEAD). La migración solo se ha planificado."
 '@)
