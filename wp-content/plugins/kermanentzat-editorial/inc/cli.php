@@ -248,6 +248,9 @@ final class Editorial_Migrate_Command
             } elseif ((string) get_post_meta($existing->ID, '_kerman_external_url', true) !== $entry['url']) {
                 $operations[] = ['kind' => 'entry_source', 'id' => $existing->ID, 'entry' => $entry];
             }
+            if (initial_entry_source_needs_sync($entry)) {
+                $operations[] = ['kind' => 'entry_record_source', 'entry' => $entry];
+            }
         }
 
         if ($strict && $precondition_errors !== []) {
@@ -488,6 +491,7 @@ function initial_press_archive_entries(): array
             'date' => '2026-08-02',
             'outlet' => 'ORAIN · Radio Euskadi',
             'group' => 'orain-2026-08-02',
+            'checked_at' => '2026-08-11',
         ],
         [
             'language' => 'es',
@@ -498,6 +502,7 @@ function initial_press_archive_entries(): array
             'date' => '2026-08-02',
             'outlet' => 'ORAIN · Radio Euskadi',
             'group' => 'orain-2026-08-02',
+            'checked_at' => '2026-08-11',
         ],
         [
             'language' => 'eu',
@@ -508,6 +513,7 @@ function initial_press_archive_entries(): array
             'date' => '2026-08-07',
             'outlet' => 'GasteizBerri',
             'group' => 'gasteizberri-2026-08-07',
+            'checked_at' => '2026-08-11',
         ],
         [
             'language' => 'es',
@@ -518,8 +524,37 @@ function initial_press_archive_entries(): array
             'date' => '2026-08-07',
             'outlet' => 'GasteizBerri',
             'group' => 'gasteizberri-2026-08-07',
+            'checked_at' => '2026-08-11',
         ],
     ];
+}
+
+function initial_entry_source_slug(array $entry): string
+{
+    return 'source-' . sanitize_title((string) $entry['slug']);
+}
+
+function initial_entry_source_needs_sync(array $entry): bool
+{
+    $source = get_page_by_path(initial_entry_source_slug($entry), OBJECT, SOURCE_POST_TYPE);
+    $update = get_page_by_path((string) $entry['slug'], OBJECT, UPDATE_POST_TYPE);
+    if (!$source instanceof \WP_Post || !$update instanceof \WP_Post) {
+        return true;
+    }
+
+    $expected = [
+        '_kerman_source_entity' => (string) $entry['outlet'],
+        '_kerman_source_date' => (string) $entry['date'],
+        '_kerman_source_url' => (string) $entry['url'],
+        '_kerman_source_checked_at' => (string) $entry['checked_at'],
+    ];
+    foreach ($expected as $key => $value) {
+        if ((string) get_post_meta($source->ID, $key, true) !== $value) {
+            return true;
+        }
+    }
+
+    return !in_array($source->ID, sanitize_id_list(get_post_meta($update->ID, '_kerman_source_ids', true)), true);
 }
 
 function initial_entry_exists(string $slug): bool
@@ -535,6 +570,7 @@ function describe_migration_operation(array $operation): string
         'create_page' => 'Crear página ' . $operation['path'],
         'entry' => 'Crear hemeroteca ' . $operation['entry']['slug'],
         'entry_source' => 'Corregir fuente de hemeroteca ' . $operation['entry']['slug'],
+        'entry_record_source' => 'Registrar y vincular fuente ' . $operation['entry']['slug'],
         'timeline_entry' => 'Crear hito ' . $operation['entry']['slug'],
         default => 'Operación desconocida',
     };
@@ -608,6 +644,35 @@ function apply_migration_operation(array $operation): void
     }
     if ($operation['kind'] === 'entry_source') {
         update_post_meta((int) $operation['id'], '_kerman_external_url', esc_url_raw($operation['entry']['url']));
+        return;
+    }
+    if ($operation['kind'] === 'entry_record_source') {
+        $entry = $operation['entry'];
+        $source_slug = initial_entry_source_slug($entry);
+        $source = get_page_by_path($source_slug, OBJECT, SOURCE_POST_TYPE);
+        $source_id = $source instanceof \WP_Post ? $source->ID : wp_insert_post(wp_slash([
+            'post_type' => SOURCE_POST_TYPE,
+            'post_status' => 'private',
+            'post_title' => $entry['outlet'] . ' · ' . strtoupper($entry['language']) . ' · ' . $entry['date'],
+            'post_name' => $source_slug,
+            'post_excerpt' => $entry['title'],
+        ]), true);
+        if (is_wp_error($source_id)) {
+            throw new \RuntimeException($source_id->get_error_message());
+        }
+        $source_id = absint($source_id);
+        update_post_meta($source_id, '_kerman_source_entity', sanitize_text_field($entry['outlet']));
+        update_post_meta($source_id, '_kerman_source_date', sanitize_date($entry['date']));
+        update_post_meta($source_id, '_kerman_source_url', esc_url_raw($entry['url']));
+        update_post_meta($source_id, '_kerman_source_checked_at', sanitize_date($entry['checked_at']));
+
+        $update = get_page_by_path((string) $entry['slug'], OBJECT, UPDATE_POST_TYPE);
+        if (!$update instanceof \WP_Post) {
+            throw new \RuntimeException('No existe la entrada de hemeroteca que debe recibir la fuente.');
+        }
+        $source_ids = sanitize_id_list(get_post_meta($update->ID, '_kerman_source_ids', true));
+        $source_ids[] = $source_id;
+        update_post_meta($update->ID, '_kerman_source_ids', sanitize_id_list($source_ids));
         return;
     }
     if ($operation['kind'] === 'timeline_entry') {
