@@ -48,3 +48,5 @@
 - [ ] 6.4 Documentar e implementar el despliegue por fases en staging y producción, dejando explícitas las acciones externas de cuenta, DNS y revisión humana
 - [ ] 6.5 Crear el manual administrativo ilustrado con capturas sanitizadas, diagramas Mermaid y prueba guiada de una persona no técnica
 - [ ] 6.6 Realizar la aceptación editorial y operativa; sincronizar y archivar el cambio únicamente cuando ambas fases estén desplegadas y verificadas
+
+Evidencia parcial de staging: `docs/STAGING_EDITORIAL_ACCEPTANCE.md`. Las tareas 6.2–6.6 permanecen abiertas hasta completar las puertas de Sender, accesibilidad manual, prueba editorial guiada y producción que corresponden a cada una.

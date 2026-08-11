@@ -2,13 +2,13 @@
 
 ## Verificación editorial y suscripciones — 2026-08-11
 
-La batería local actualizada comprueba la versión `3.2.0`, los textos legales ES/EU, sitemaps dinámicos sin `localhost`, ausencia de cookies y recursos de Sender fuera de las rutas específicas de suscripción.
+La batería local actualizada comprueba la versión `3.2.0`, los textos legales ES/EU, sitemaps dinámicos sin `localhost`, ausencia de cookies y el bloqueo de los recursos de Sender cuando la integración no está aprobada.
 
-Sender está activo localmente mediante `KERMANENTZAT_SENDER_APPROVED=true`. El código exige además token, grupo, remitente válido, ID público, ID de renderizado, hash del contenedor y un formulario bilingüe HTTPS antes de registrar el servicio o ampliar la CSP. WordPress no guarda emails. La prueba real con una dirección autorizada de alta, double opt-in y baja sigue pendiente.
+El código de Sender está preparado, pero en staging permanece desactivado mediante `KERMANENTZAT_SENDER_APPROVED=false`. La activación exige además token, grupo, remitente válido, ID público, ID de renderizado, hash del contenedor, formulario bilingüe HTTPS y el expediente privado de aprobación. WordPress no guarda emails.
 
-Las rutas bilingües de suscripción se enlazan desde la navegación, Actualidad/Berriak y Contacto/Kontaktua. El SDK y el iframe de Sender aparecen automáticamente solo en `/harpidetza/` y `/es/suscripcion/`; las páginas secundarias muestran llamadas locales compactas.
+Mientras la aprobación está desactivada, las rutas `/harpidetza/` y `/es/suscripcion/` muestran el estado de espera local y no cargan SDK, iframe ni recursos externos. Las llamadas desde Actualidad/Berriak y Contacto/Kontaktua respetan el mismo bloqueo.
 
-Resultado local del 11-08-2026: **61 comprobaciones superadas, 0 fallos**. La revisión en escritorio y móvil de `/harpidetza/` y `/es/suscripcion/` no detectó desbordamiento horizontal. El formulario publicado se renderizó correctamente con `senderForms.render('epY1RX')` sobre el contenedor `msis6hs8epy1rx9k77d`, tanto en la página principal como desde Contacto. Berriak/Actualidad y Kontaktua/Contacto se comprobaron en ambos idiomas. No se enviaron datos personales durante esta verificación.
+Resultado local del 11-08-2026: **61 comprobaciones superadas, 0 fallos**. Las pruebas automatizadas pueden simular la configuración para validar las salvaguardas del código, pero no se llamó a la API real, no se envió ninguna campaña, no se utilizó el Excel real y no se procesaron direcciones personales. La prueba autorizada de alta, double opt-in y baja sigue pendiente.
 
 Las secciones siguientes conservan los resultados históricos de la versión `2.0.0` anteriores a esta fase.
 
