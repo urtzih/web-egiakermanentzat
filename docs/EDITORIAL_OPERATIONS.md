@@ -1,10 +1,12 @@
 # Operación editorial y suscripciones
 
+El uso cotidiano está explicado en el [manual editorial ilustrado](README-ADMIN-WORDPRESS.md). La validación técnica y los límites de aceptación actuales se registran en la [evidencia del despliegue editorial en staging](STAGING_EDITORIAL_ACCEPTANCE.md).
+
 ## Despliegue de la fase editorial
 
 1. Ejecutar `staging.ps1 deploy -ExpectedSha <sha>` para desplegar tema, plugin y montajes sin aplicar todavía la migración.
 2. Revisar el resultado estricto de `wp kermanentzat editorial migrate --dry-run --strict`.
-3. Activar `kermanentzat-editorial` y Polylang Free; ACF Free puede utilizarse para extender formularios, pero los campos esenciales permanecen registrados por código.
+3. Activar `kermanentzat-editorial`. El vínculo bilingüe nativo funciona sin Polylang; cualquier incorporación futura de Polylang o ACF debe evaluarse y probarse antes, porque los campos y relaciones esenciales ya están registrados por código.
 4. Ejecutar `staging.ps1 migrate -ExpectedSha <sha>`; el comando crea y restaura una copia aislada de base de datos y `wp-content/uploads` antes de escribir.
 5. Conservar el identificador de backup mostrado por el comando.
 6. Comparar las URLs actuales, contenido, canonical, `hreflang`, metadatos, sitemaps, accesibilidad y logs.

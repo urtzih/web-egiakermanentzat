@@ -24,6 +24,12 @@ powershell -ExecutionPolicy Bypass -File scripts/update-openspec-skills.ps1
 El procedimiento de SEO, rendimiento, accesibilidad y auditoría está en
 [`docs/quality/web-quality-runbook.md`](docs/quality/web-quality-runbook.md).
 
+## Gestión editorial
+
+- [Manual editorial ilustrado de WordPress](docs/README-ADMIN-WORDPRESS.md)
+- [Operación técnica editorial y suscripciones](docs/EDITORIAL_OPERATIONS.md)
+- [Evidencia y límites de aceptación del despliegue en staging](docs/STAGING_EDITORIAL_ACCEPTANCE.md)
+
 ## Entorno y publicación
 
 - La raíz representa `egiakermanentzat.eus` en euskera; el castellano vive bajo `/es/`.
