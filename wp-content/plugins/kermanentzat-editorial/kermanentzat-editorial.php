@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Kermanentzat Editorial
  * Description: Herramientas editoriales autoadministrables para Egia Kermanentzat.
- * Version: 0.2.2
+ * Version: 0.2.3
  * Requires at least: 6.7
  * Requires PHP: 8.2
  * Author: Egia Kermanentzat Elkartea
@@ -13,7 +13,7 @@ namespace Kermanentzat\Editorial;
 
 defined('ABSPATH') || exit;
 
-const VERSION = '0.2.2';
+const VERSION = '0.2.3';
 const SCHEMA_VERSION = '1';
 const OPTION_SCHEMA_VERSION = 'kermanentzat_editorial_schema_version';
 const OPTION_SETTINGS = 'kermanentzat_editorial_settings';
