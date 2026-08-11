@@ -204,21 +204,21 @@ create_backup() {
   case "$backup_dir" in "$backup_root"/*) ;; *) echo 'Ruta de backup no segura.' >&2; return 1 ;; esac
   mkdir -m 700 "$backup_dir"
 
-  compose_command exec -T db sh -c 'exec mariadb-dump --single-transaction --quick --lock-tables=false -u"$MARIADB_USER" -p"$MARIADB_PASSWORD" "$MARIADB_DATABASE"' | gzip -9 > "$backup_dir/database.sql.gz"
-  compose_command exec -T wordpress tar -C /var/www/html/wp-content -czf - uploads > "$backup_dir/uploads.tar.gz"
+  compose_command exec -T db sh -c 'exec mariadb-dump --single-transaction --quick --lock-tables=false -u"$MARIADB_USER" -p"$MARIADB_PASSWORD" "$MARIADB_DATABASE"' </dev/null | gzip -9 > "$backup_dir/database.sql.gz"
+  compose_command exec -T wordpress tar -C /var/www/html/wp-content -czf - uploads </dev/null > "$backup_dir/uploads.tar.gz"
   gzip -t "$backup_dir/database.sql.gz"
   tar -tzf "$backup_dir/uploads.tar.gz" >/dev/null
   test -s "$backup_dir/database.sql.gz"
   test -s "$backup_dir/uploads.tar.gz"
 
   restore_db="kerman_restore_$(date -u +%Y%m%d%H%M%S)_$$"
-  compose_command exec -T -e RESTORE_DB="$restore_db" db sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" -e "CREATE DATABASE ${RESTORE_DB} CHARACTER SET utf8mb4"'
+  compose_command exec -T -e RESTORE_DB="$restore_db" db sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" -e "CREATE DATABASE ${RESTORE_DB} CHARACTER SET utf8mb4"' </dev/null
   if ! gzip -dc "$backup_dir/database.sql.gz" | compose_command exec -T -e RESTORE_DB="$restore_db" db sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" "$RESTORE_DB"'; then
-    compose_command exec -T -e RESTORE_DB="$restore_db" db sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" -e "DROP DATABASE IF EXISTS ${RESTORE_DB}"' || true
+    compose_command exec -T -e RESTORE_DB="$restore_db" db sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" -e "DROP DATABASE IF EXISTS ${RESTORE_DB}"' </dev/null || true
     return 1
   fi
-  table_count=$(compose_command exec -T -e RESTORE_DB="$restore_db" db sh -c 'mariadb -N -uroot -p"$MARIADB_ROOT_PASSWORD" -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=\"${RESTORE_DB}\""')
-  compose_command exec -T -e RESTORE_DB="$restore_db" db sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" -e "DROP DATABASE ${RESTORE_DB}"'
+  table_count=$(compose_command exec -T -e RESTORE_DB="$restore_db" db sh -c 'mariadb -N -uroot -p"$MARIADB_ROOT_PASSWORD" -e "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema=\"${RESTORE_DB}\""' </dev/null)
+  compose_command exec -T -e RESTORE_DB="$restore_db" db sh -c 'mariadb -uroot -p"$MARIADB_ROOT_PASSWORD" -e "DROP DATABASE ${RESTORE_DB}"' </dev/null
   [ "$table_count" -gt 0 ] || { echo 'La restauración aislada no contiene tablas.' >&2; return 1; }
 
   sha256sum "$backup_dir/database.sql.gz" "$backup_dir/uploads.tar.gz" > "$backup_dir/SHA256SUMS"
@@ -369,7 +369,7 @@ if ! gzip -dc "$backup_dir/database.sql.gz" | compose_command exec -T db sh -c '
   wpcli maintenance-mode deactivate || true
   exit 31
 fi
-compose_command exec -T wordpress sh -c 'target=/var/www/html/wp-content/uploads; [ "$target" = /var/www/html/wp-content/uploads ] || exit 32; rm -rf -- "$target"; mkdir -p "$target"'
+compose_command exec -T wordpress sh -c 'target=/var/www/html/wp-content/uploads; [ "$target" = /var/www/html/wp-content/uploads ] || exit 32; rm -rf -- "$target"; mkdir -p "$target"' </dev/null
 gzip -dc "$backup_dir/uploads.tar.gz" | compose_command exec -T wordpress tar -C /var/www/html/wp-content -xzf -
 wpcli maintenance-mode deactivate || true
 wait_for_wordpress
