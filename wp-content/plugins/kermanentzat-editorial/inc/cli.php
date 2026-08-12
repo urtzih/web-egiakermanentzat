@@ -157,9 +157,19 @@ function verify_editorial_runtime(): void
         if (!maybe_queue_campaign($first) || maybe_queue_campaign($second)) {
             \WP_CLI::error('La cola no es idempotente.');
         }
+        $source_url = 'https://example.org/original-source';
+        update_post_meta($first, '_kerman_external_url', $source_url);
+        update_post_meta($second, '_kerman_external_url', $source_url);
+        update_post_meta($first, '_kerman_external_outlet', 'BERRIA');
+        update_post_meta($second, '_kerman_external_outlet', 'BERRIA');
         $html = campaign_html([get_post($first), get_post($second)]);
         if (substr_count($html, '{{unsubscribe_link}}') !== 1) {
             \WP_CLI::error('La plantilla no contiene una única baja de Sender.');
+        }
+        if (substr_count($html, $source_url) !== 2
+            || strpos($html, 'Jatorrizko iturria · BERRIA') === false
+            || strpos($html, 'Fuente original · BERRIA') === false) {
+            \WP_CLI::error('La plantilla bilingüe no enlaza la fuente original de cada versión.');
         }
     } finally {
         $identity = min($first, $second);

@@ -365,14 +365,27 @@ function campaign_html(array $posts): string
         $excerpt = has_excerpt($post) ? get_the_excerpt($post) : wp_trim_words(wp_strip_all_tags($post->post_content), 38);
         $type = update_type_label(update_type_for_post($post->ID), $language);
         $button = $language === 'eu' ? 'Irakurri argitalpena' : 'Leer la publicación';
+        $source_url = (string) get_post_meta($post->ID, '_kerman_external_url', true);
+        $source_link = '';
+        if ($source_url !== '') {
+            $source_label = $language === 'eu' ? 'Jatorrizko iturria' : 'Fuente original';
+            $source_media = trim((string) get_post_meta($post->ID, '_kerman_external_outlet', true));
+            $source_link = sprintf(
+                '<p style="margin:14px 0 0;font:14px Arial,sans-serif"><a href="%s" style="color:#090909;text-decoration:underline">%s%s</a></p>',
+                esc_url($source_url),
+                esc_html($source_label),
+                $source_media !== '' ? ' · ' . esc_html($source_media) : ''
+            );
+        }
         $sections .= sprintf(
-            '<section style="padding:24px 0;border-bottom:1px solid #d8d8d8"><p style="margin:0 0 8px;font:700 12px Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase">%s · %s</p><h1 style="margin:0 0 12px;font:700 28px Arial,sans-serif;line-height:1.15">%s</h1><p style="margin:0 0 20px;font:16px Arial,sans-serif;line-height:1.55">%s</p><p><a href="%s" style="display:inline-block;padding:12px 18px;background:#090909;color:#fff;text-decoration:none;font:700 15px Arial,sans-serif">%s</a></p></section>',
+            '<section style="padding:24px 0;border-bottom:1px solid #d8d8d8"><p style="margin:0 0 8px;font:700 12px Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase">%s · %s</p><h1 style="margin:0 0 12px;font:700 28px Arial,sans-serif;line-height:1.15">%s</h1><p style="margin:0 0 20px;font:16px Arial,sans-serif;line-height:1.55">%s</p><p><a href="%s" style="display:inline-block;padding:12px 18px;background:#090909;color:#fff;text-decoration:none;font:700 15px Arial,sans-serif">%s</a></p>%s</section>',
             esc_html(strtoupper($language)),
             esc_html($type),
             esc_html(get_the_title($post)),
             esc_html($excerpt),
             esc_url(get_permalink($post)),
-            esc_html($button)
+            esc_html($button),
+            $source_link
         );
     }
     return '<!doctype html><html><body style="margin:0;background:#f3f1eb;color:#090909"><div style="display:none;max-height:0;overflow:hidden">Egia Kermanentzat</div><main style="max-width:640px;margin:0 auto;padding:32px 24px;background:#fff">' . $environment_banner . '<p style="font:900 20px Arial,sans-serif">EGIA KERMANENTZAT</p>' . $sections . '<footer style="padding-top:24px;font:13px Arial,sans-serif;line-height:1.5"><p>Egia Kermanentzat Elkartea</p><p><a href="{{unsubscribe_link}}">{{unsubscribe_text}}</a></p><p>{{ account.address }}, {{ account.city }}, {{ account.country }}</p></footer></main></body></html>';
