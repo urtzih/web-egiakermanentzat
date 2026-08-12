@@ -4,7 +4,7 @@ namespace Kermanentzat\Editorial;
 
 defined('ABSPATH') || exit;
 
-const MIGRATION_OPTION = 'kermanentzat_editorial_migration_4';
+const MIGRATION_OPTION = 'kermanentzat_editorial_migration_5';
 
 function register_cli_commands(): void
 {
@@ -193,7 +193,7 @@ final class Editorial_Migrate_Command
         $force = \WP_CLI\Utils\get_flag_value($assoc_args, 'force', false);
         $strict = \WP_CLI\Utils\get_flag_value($assoc_args, 'strict', false);
         if (get_option(MIGRATION_OPTION) && !$force) {
-            \WP_CLI::success('La migración editorial 4 ya está registrada. No se ha modificado nada.');
+            \WP_CLI::success('La migración editorial 5 ya está registrada. No se ha modificado nada.');
             return;
         }
 
