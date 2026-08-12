@@ -36,6 +36,7 @@ services:
       WORDPRESS_DB_USER: ${WP_DB_USER}
       WORDPRESS_DB_PASSWORD: ${WP_DB_PASSWORD}
       WP_SITE_URL: ${WP_SITE_URL}
+      KERMANENTZAT_PUBLIC_URL: ${KERMANENTZAT_PUBLIC_URL}
       WP_ENVIRONMENT_TYPE: staging
       KERMANENTZAT_GA_MEASUREMENT_ID: ${KERMANENTZAT_GA_MEASUREMENT_ID:-}
       KERMANENTZAT_GA_APPROVED: ${KERMANENTZAT_GA_APPROVED:-false}
@@ -43,7 +44,7 @@ services:
       KERMANENTZAT_SENDER_API_TOKEN: ${KERMANENTZAT_SENDER_API_TOKEN:-}
       WORDPRESS_CONFIG_EXTRA: |
         define('WP_ENVIRONMENT_TYPE', 'staging');
-        $$kerman_fallback_url = '${WP_SITE_URL}';
+        $$kerman_fallback_url = '${KERMANENTZAT_PUBLIC_URL}';
         $$kerman_host = $$_SERVER['HTTP_X_FORWARDED_HOST'] ?? $$_SERVER['HTTP_HOST'] ?? '';
         $$kerman_forwarded_proto = $$_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '';
         $$kerman_https = (!empty($$_SERVER['HTTPS']) && $$_SERVER['HTTPS'] !== 'off') || $$kerman_forwarded_proto === 'https';
@@ -99,7 +100,7 @@ services:
     environment: *wordpress-environment
     volumes: *wordpress-volumes
     entrypoint: ["/bin/sh", "-c"]
-    command: ["while true; do wp --url=\"$${WP_SITE_URL}\" cron event run --due-now --quiet || true; sleep 300; done"]
+    command: ["while true; do wp --url=\"$${KERMANENTZAT_PUBLIC_URL}\" cron event run --due-now --quiet || true; sleep 300; done"]
     logging: *service-logging
 
 volumes:

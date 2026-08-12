@@ -126,7 +126,7 @@ compose_command() {
 }
 
 wpcli() {
-  compose_command --profile tools run --rm --interactive=false -T wpcli "$@"
+  compose_command --profile tools run --rm --interactive=false -T wpcli --url="$url" "$@"
 }
 
 assert_expected_sha() {
