@@ -283,6 +283,21 @@ function sender_create_campaign(int $identity)
     if ($posts === []) {
         return new \WP_Error('kermanentzat_campaign_empty', __('No hay contenido publicado para la campaña.', 'kermanentzat-editorial'));
     }
+    foreach ($posts as $post) {
+        if (!campaign_url_is_public_https((string) get_permalink($post))) {
+            return new \WP_Error(
+                'kermanentzat_campaign_url',
+                __('La URL pública de una publicación no es HTTPS o apunta a una red privada.', 'kermanentzat-editorial')
+            );
+        }
+        $source_url = (string) get_post_meta($post->ID, '_kerman_external_url', true);
+        if ($source_url !== '' && !campaign_url_is_public_https($source_url)) {
+            return new \WP_Error(
+                'kermanentzat_campaign_source_url',
+                __('La URL de la fuente original no es una dirección HTTPS pública.', 'kermanentzat-editorial')
+            );
+        }
+    }
     $config = settings();
     $primary = $posts[0];
     $language = editorial_language_for_post($primary->ID);
@@ -312,6 +327,25 @@ function sender_create_campaign(int $identity)
     }
     $campaign_id = sanitize_text_field((string) ($response['data']['id'] ?? ''));
     return $campaign_id !== '' ? $campaign_id : new \WP_Error('kermanentzat_sender_response', __('Sender no devolvió el identificador de campaña.', 'kermanentzat-editorial'));
+}
+
+function campaign_url_is_public_https(string $url): bool
+{
+    $parts = wp_parse_url($url);
+    if (!is_array($parts)
+        || strtolower((string) ($parts['scheme'] ?? '')) !== 'https'
+        || empty($parts['host'])) {
+        return false;
+    }
+    $host = trim((string) $parts['host'], '[]');
+    if (filter_var($host, FILTER_VALIDATE_IP) === false) {
+        return strtolower($host) !== 'localhost';
+    }
+    return filter_var(
+        $host,
+        FILTER_VALIDATE_IP,
+        FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+    ) !== false;
 }
 
 function campaign_posts(int $identity): array

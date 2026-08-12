@@ -171,6 +171,11 @@ function verify_editorial_runtime(): void
             || strpos($html, 'Fuente original · BERRIA') === false) {
             \WP_CLI::error('La plantilla bilingüe no enlaza la fuente original de cada versión.');
         }
+        if (!campaign_url_is_public_https('https://web-egiakermanentzat.stag.urtzi.fun/berriak/proba/')
+            || campaign_url_is_public_https('http://192.168.10.42/berriak/proba/')
+            || campaign_url_is_public_https('https://127.0.0.1/berriak/proba/')) {
+            \WP_CLI::error('La campaña no bloquea correctamente enlaces internos o sin HTTPS.');
+        }
     } finally {
         $identity = min($first, $second);
         wp_clear_scheduled_hook(CRON_HOOK, [$identity]);

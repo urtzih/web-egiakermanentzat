@@ -55,11 +55,14 @@ El archivo `.env.staging` debe contener las credenciales existentes y:
 ```dotenv
 KERMANENTZAT_GA_MEASUREMENT_ID=
 KERMANENTZAT_GA_APPROVED=false
+WP_SITE_URL=https://web-egiakermanentzat.stag.urtzi.fun
 KERMANENTZAT_SENDER_APPROVED=true
 KERMANENTZAT_SENDER_API_TOKEN=<secreto del gestor operativo>
 ```
 
 No usar el alias `SENDER_API_TOK` en configuraciones nuevas. La asociación confirmó el 12-08-2026 la revisión contractual, subencargados, transferencias, conservación/supresión, DNS, double opt-in y textos bilingües; la evidencia se conserva fuera de Git. Staging usa deliberadamente el grupo real `Suscriptores web`, por lo que una publicación de prueba con el aviso marcado puede enviar correos reales. Producción requiere una activación separada.
+
+`WP_SITE_URL` es también la URL que WP-CLI utiliza al ejecutar cron. Evita que los correos generados fuera de una petición web incorporen el host privado del contenedor. El plugin bloquea además la creación de una campaña si una publicación o su fuente no tienen una URL HTTPS pública.
 
 ## Verificación
 
