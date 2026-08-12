@@ -177,7 +177,8 @@ verify_staging_frontend() {
       case "$route" in
         /harpidetza/|/es/suscripcion/)
           if [ "$sender_enabled" = 'yes' ]; then
-            grep -Eqi 'https://cdn\.sender\.net' "$body" || { echo "$route no carga el formulario Sender configurado." >&2; rm -f "$headers" "$body"; return 1; }
+            grep -Fq 'data-sender-form-id=' "$body" || { echo "$route no contiene el formulario Sender configurado." >&2; rm -f "$headers" "$body"; return 1; }
+            grep -Fq 'kermanentzat-editorial/assets/subscription.js' "$body" || { echo "$route no carga el adaptador local de Sender." >&2; rm -f "$headers" "$body"; return 1; }
           elif grep -Eqi 'https://(cdn|stats)\.sender\.net' "$body"; then
             echo "$route carga Sender sin configuración completa." >&2
             rm -f "$headers" "$body"
