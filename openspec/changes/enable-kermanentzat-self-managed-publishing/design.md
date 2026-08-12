@@ -71,7 +71,7 @@ Sender se selecciona porque el plan gratuito vigente cubre el volumen previsto y
 
 El bloque de suscripción muestra inicialmente HTML local. El iframe del formulario alojado se crea solo tras una acción explícita; habrá un enlace alternativo al mismo formulario. WordPress no replica direcciones. Las URLs de formulario y el grupo son opciones administrativas; el token API se lee exclusivamente de `KERMANENTZAT_SENDER_API_TOKEN` o secreto equivalente del entorno.
 
-Una editora activa `notify_subscribers`, desmarcado por defecto. Al primer paso a `publish`, el plugin usa la identidad estable del grupo de traducción, persiste el estado y agenda un único evento. El evento crea una campaña HTML para el grupo y después solicita su envío. Se desactivan Google Analytics y auto-followup en la campaña.
+Cuando Sender está completamente configurado, `notify_subscribers` aparece marcado únicamente en publicaciones nuevas y la editora puede desmarcarlo antes de publicar. Las publicaciones existentes sin metadato permanecen desmarcadas. Al primer paso a `publish`, el plugin usa la identidad estable del grupo de traducción, persiste el estado y agenda un único evento. El evento crea una única campaña HTML, ordenada EU → ES, para el grupo y después solicita su envío. Guardar, corregir, traducir o reintentar una publicación ya enviada no crea una segunda campaña. Se desactivan Google Analytics y auto-followup en la campaña.
 
 Estados: `not_requested`, `queued`, `sending`, `sent`, `failed`, `cancelled`. Se guardan campaña, marcas temporales, intentos y error sanitizado; nunca email ni token. Un cron real invocará WP-Cron cada cinco minutos. Tras tres fallos no se reintenta sin acción administrativa.
 
@@ -79,7 +79,7 @@ Alternativas descartadas: `wp_mail`, por entregabilidad y gestión de bajas; Mai
 
 ### 8. Privacidad y seguridad como condición de activación
 
-Sender permanecerá desactivado hasta disponer de cuenta institucional, dominio remitente verificado, condiciones/DPA y transferencias revisadas, formularios double opt-in, texto bilingüe aprobado y configuración SPF/DKIM/DMARC. El registro central describirá proveedor, finalidad, datos, activación, base, conservación, baja y garantías.
+Sender permanecerá desactivado en cada entorno hasta disponer de cuenta institucional, dominio remitente verificado, condiciones/DPA, subencargados, transferencias y criterio de conservación/supresión revisados, formularios double opt-in, texto bilingüe aprobado y configuración SPF/DKIM/DMARC. Estas condiciones se confirmaron para staging el 12/08/2026 y su evidencia se conserva fuera de Git. Staging puede permanecer conectado al grupo real por decisión operativa expresa, con riesgo documentado de envíos accidentales; producción requiere una activación separada. El registro central describirá proveedor, finalidad, datos, activación, base, conservación, baja y garantías.
 
 El formulario no reutilizará el consentimiento de Analytics. Sender se registrará como servicio opcional independiente, pero no se añadirá un banner: la persona inicia la carga, acepta la información del formulario y confirma por email. La CSP solo permitirá como `frame-src` los orígenes HTTPS de los formularios cuando la integración esté aprobada y completamente configurada.
 

@@ -35,9 +35,9 @@ function register_sender_service(array $services): array
         'legal_basis' => 'consent',
         'trigger' => 'dedicated_subscription_page_load_and_confirmed_submit',
         'storage' => ['email en Sender', 'estado de confirmación, entrega y supresión en Sender'],
-        'retention' => 'Hasta la baja; supresión mínima posterior según obligaciones y contrato validados',
+        'retention' => 'Hasta la baja; después, supresión o conservación mínima conforme al contrato validado y las obligaciones aplicables',
         'withdrawal' => 'enlace de baja en cada mensaje o solicitud al responsable',
-        'safeguards' => 'Activación condicionada a DPA, transferencias, DNS y revisión humana documentados',
+        'safeguards' => 'DPA, subencargados, transferencias y criterio de conservación/supresión aprobados el 12/08/2026; evidencia archivada fuera de Git; dominio autenticado',
         'script_origins' => ['https://cdn.sender.net'],
         'style_origins' => ['https://cdn.sender.net'],
         'img_origins' => ['https://cdn.sender.net'],
@@ -85,12 +85,12 @@ function render_notification_controls(\WP_Post $post): void
     <p><strong><?php esc_html_e('Aviso por email', 'kermanentzat-editorial'); ?></strong></p>
     <p>
         <label>
-            <input type="checkbox" name="<?php echo esc_attr(META_NOTIFY); ?>" value="1" <?php checked((bool) meta_value($post->ID, META_NOTIFY, false)); ?> <?php disabled($state === 'sent' || !subscription_is_configured()); ?>>
+            <input type="checkbox" name="<?php echo esc_attr(META_NOTIFY); ?>" value="1" <?php checked(notification_should_be_checked($post)); ?> <?php disabled($state === 'sent' || !subscription_is_configured()); ?>>
             <?php esc_html_e('Enviar aviso al publicar', 'kermanentzat-editorial'); ?>
         </label>
     </p>
     <p class="description"><?php echo esc_html(subscription_is_configured()
-        ? __('Está desmarcado por defecto. Guardar o traducir no volverá a enviar.', 'kermanentzat-editorial')
+        ? __('En publicaciones nuevas aparece marcado. Puedes desmarcarlo antes de publicar; guardar, traducir o corregir después no volverá a enviar.', 'kermanentzat-editorial')
         : __('Se habilitará cuando Sender esté aprobado y completamente configurado.', 'kermanentzat-editorial')); ?></p>
     <dl class="kerman-campaign-status">
         <dt><?php esc_html_e('Estado', 'kermanentzat-editorial'); ?></dt><dd><?php echo esc_html(campaign_state_label($state)); ?></dd>
@@ -102,6 +102,18 @@ function render_notification_controls(\WP_Post $post): void
         <p><a class="button" href="<?php echo esc_url(wp_nonce_url(admin_url('admin-post.php?action=kermanentzat_retry_campaign&post_id=' . $identity), 'kermanentzat_retry_campaign_' . $identity)); ?>"><?php esc_html_e('Reintentar', 'kermanentzat-editorial'); ?></a></p>
     <?php endif; ?>
     <?php
+}
+
+function notification_should_be_checked(\WP_Post $post, ?bool $configured = null): bool
+{
+    $configured ??= subscription_is_configured();
+    if ($post->post_type !== UPDATE_POST_TYPE || !$configured) {
+        return false;
+    }
+    if (metadata_exists('post', $post->ID, META_NOTIFY)) {
+        return (bool) get_post_meta($post->ID, META_NOTIFY, true);
+    }
+    return in_array($post->post_status, ['auto-draft', 'draft', 'pending'], true);
 }
 
 function campaign_state_label(string $state): string
@@ -329,7 +341,12 @@ function campaign_posts(int $identity): array
             $posts[$post->ID] = $post;
         }
     }
-    uasort($posts, static fn(\WP_Post $a, \WP_Post $b): int => strcmp(editorial_language_for_post($a->ID), editorial_language_for_post($b->ID)));
+    $language_order = ['eu' => 0, 'es' => 1];
+    uasort($posts, static function (\WP_Post $a, \WP_Post $b) use ($language_order): int {
+        $a_order = $language_order[editorial_language_for_post($a->ID)] ?? 99;
+        $b_order = $language_order[editorial_language_for_post($b->ID)] ?? 99;
+        return $a_order <=> $b_order ?: $a->ID <=> $b->ID;
+    });
     return array_values($posts);
 }
 

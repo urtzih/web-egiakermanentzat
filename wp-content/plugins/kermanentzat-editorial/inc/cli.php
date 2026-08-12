@@ -127,13 +127,32 @@ function verify_editorial_runtime(): void
     try {
         update_post_meta($first, '_kerman_language', 'eu');
         update_post_meta($second, '_kerman_language', 'es');
+        if (!notification_should_be_checked(get_post($first), true)) {
+            \WP_CLI::error('Una publicación nueva no propone el aviso cuando Sender está configurado.');
+        }
+        update_post_meta($first, META_NOTIFY, false);
+        if (notification_should_be_checked(get_post($first), true)) {
+            \WP_CLI::error('Desmarcar el aviso no se conserva.');
+        }
+        delete_post_meta($first, META_NOTIFY);
+        wp_update_post(['ID' => $first, 'post_status' => 'publish']);
+        wp_update_post(['ID' => $second, 'post_status' => 'publish']);
+        if (notification_should_be_checked(get_post($first), true)) {
+            \WP_CLI::error('Una publicación existente sin metadato activa el aviso retrospectivamente.');
+        }
         if (!link_editorial_translations($first, $second)
-            || linked_editorial_translation($first, 'es', ['draft']) !== $second
-            || linked_editorial_translation($second, 'eu', ['draft']) !== $first) {
+            || linked_editorial_translation($first, 'es', ['publish']) !== $second
+            || linked_editorial_translation($second, 'eu', ['publish']) !== $first) {
             \WP_CLI::error('El enlace editorial EU/ES no funciona sin dependencias externas.');
         }
         if (campaign_identity_post_id($second) !== min($first, $second)) {
             \WP_CLI::error('La identidad traducida no es estable.');
+        }
+        $ordered = campaign_posts(min($first, $second));
+        if (count($ordered) !== 2
+            || editorial_language_for_post($ordered[0]->ID) !== 'eu'
+            || editorial_language_for_post($ordered[1]->ID) !== 'es') {
+            \WP_CLI::error('La campaña bilingüe no mantiene el orden EU → ES.');
         }
         if (!maybe_queue_campaign($first) || maybe_queue_campaign($second)) {
             \WP_CLI::error('La cola no es idempotente.');

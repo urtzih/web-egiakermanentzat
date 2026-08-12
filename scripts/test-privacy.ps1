@@ -214,7 +214,7 @@ if ($unexpectedHosts) {
 
 $privacySource = Get-Content -Raw -LiteralPath $consentAdapterFiles[1]
 if (
-    $privacySource -notmatch "'version'\s*=>\s*'3\.2\.0'" -or
+    $privacySource -notmatch "'version'\s*=>\s*'3\.3\.0'" -or
     $privacySource -notmatch 'KERMANENTZAT_GA_APPROVED' -or
     $privacySource -notmatch 'KERMANENTZAT_GA_MEASUREMENT_ID' -or
     $privacySource -notmatch "wp_get_environment_type\(\)\s*===\s*'production'"

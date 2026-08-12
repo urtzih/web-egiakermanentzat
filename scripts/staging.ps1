@@ -154,6 +154,7 @@ wait_for_wordpress() {
 
 verify_staging_frontend() {
   mode="${1:-full}"
+  sender_enabled=$(wpcli eval 'echo \Kermanentzat\Editorial\subscription_is_configured() ? "yes" : "no";')
   routes='/ /es/'
   if [ "$mode" = 'full' ]; then
     routes="$routes /kasuaren-laburpena/ /es/resumen-del-caso/ /berriak/ /es/actualidad/ /kronologia/ /es/cronologia/ /hemeroteka/ /es/hemeroteca/ /harpidetza/ /es/suscripcion/"
@@ -172,10 +173,25 @@ verify_staging_frontend() {
       rm -f "$headers" "$body"
       return 1
     fi
-    if [ "$mode" = 'full' ] && grep -Eqi 'https://(cdn|stats)\.sender\.net' "$body"; then
-      echo "$route carga Sender aunque el servicio debe seguir desactivado." >&2
-      rm -f "$headers" "$body"
-      return 1
+    if [ "$mode" = 'full' ]; then
+      case "$route" in
+        /harpidetza/|/es/suscripcion/)
+          if [ "$sender_enabled" = 'yes' ]; then
+            grep -Eqi 'https://cdn\.sender\.net' "$body" || { echo "$route no carga el formulario Sender configurado." >&2; rm -f "$headers" "$body"; return 1; }
+          elif grep -Eqi 'https://(cdn|stats)\.sender\.net' "$body"; then
+            echo "$route carga Sender sin configuración completa." >&2
+            rm -f "$headers" "$body"
+            return 1
+          fi
+          ;;
+        *)
+          if grep -Eqi 'https://(cdn|stats)\.sender\.net' "$body"; then
+            echo "$route carga directamente Sender fuera de las páginas de suscripción." >&2
+            rm -f "$headers" "$body"
+            return 1
+          fi
+          ;;
+      esac
     fi
     if [ "$route" = '/' ]; then
       grep -qi '^X-Robots-Tag:.*noindex' "$headers" || { echo 'Falta X-Robots-Tag noindex.' >&2; return 1; }
@@ -190,10 +206,17 @@ verify_staging_frontend() {
 verify_editorial_runtime() {
   wpcli plugin is-active kermanentzat-editorial
   wpcli kermanentzat editorial verify
-  sender_state=$(wpcli eval 'echo \Kermanentzat\Editorial\subscription_is_approved() ? "sender=on" : "sender=off";')
-  printf '%s' "$sender_state" | grep -Fq 'sender=off' || { echo 'Sender debe permanecer desactivado en staging.' >&2; return 1; }
+  sender_state=$(wpcli eval '
+    if (!\Kermanentzat\Editorial\subscription_is_approved()) { echo "sender=off"; return; }
+    if (!\Kermanentzat\Editorial\subscription_is_configured()) { WP_CLI::error("Sender está aprobado pero incompleto."); }
+    $group = (string) \Kermanentzat\Editorial\settings()["sender_group_id"];
+    $response = \Kermanentzat\Editorial\sender_request("/groups/" . rawurlencode($group));
+    if (is_wp_error($response)) { WP_CLI::error("Sender no superó la comprobación de conectividad."); }
+    echo "sender=on";
+  ')
+  printf '%s' "$sender_state" | grep -Eq 'sender=(on|off)' || { echo 'No se pudo determinar el estado seguro de Sender.' >&2; return 1; }
   compose_command ps --status running cron | grep -Fq 'cron' || { echo 'El servicio cron no está activo.' >&2; return 1; }
-  echo 'Plugin editorial, Sender apagado y cron verificados.'
+  echo "Plugin editorial, $sender_state y cron verificados."
 }
 
 create_backup() {

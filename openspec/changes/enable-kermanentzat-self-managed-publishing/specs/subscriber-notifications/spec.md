@@ -26,11 +26,23 @@ Una importación MUST aceptar únicamente contactos con evidencia individualizab
 - **THEN** la simulación la rechaza y no se incorpora a la lista activa
 
 ### Requirement: Envío elegido por publicación
-Cada novedad MUST ofrecer una opción desmarcada por defecto para solicitar un aviso al publicarse; un borrador, una actualización posterior o una publicación sin esa opción MUST NOT crear una campaña.
+Cada novedad nueva MUST ofrecer, cuando Sender esté completamente configurado, una opción marcada por defecto para solicitar un aviso al publicarse y MUST permitir desmarcarla antes de publicar. Una publicación existente sin metadato, un borrador, una actualización posterior o una publicación con la opción desmarcada MUST NOT crear una campaña.
+
+#### Scenario: Novedad nueva con Sender configurado
+- **WHEN** la editora crea una novedad todavía no publicada
+- **THEN** la opción de aviso aparece marcada y puede desmarcarse antes de publicar
+
+#### Scenario: Publicación existente sin metadato
+- **WHEN** la editora abre una publicación existente que nunca guardó la opción de aviso
+- **THEN** la opción permanece desmarcada y no se activa retrospectivamente
 
 #### Scenario: Noticia marcada
 - **WHEN** una noticia pasa por primera vez a publicada con el aviso solicitado
 - **THEN** el sistema encola una campaña para la lista confirmada
+
+#### Scenario: Corrección o traducción posterior
+- **WHEN** una publicación ya enviada se guarda, corrige o recibe una traducción
+- **THEN** el sistema conserva el envío previo y no crea ni reenvía otra campaña
 
 ### Requirement: Campaña idempotente por contenido traducido
 El sistema MUST crear como máximo una campaña por identidad editorial, incluso ante guardados repetidos, reintentos o versiones traducidas vinculadas.

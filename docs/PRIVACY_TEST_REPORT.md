@@ -1,12 +1,12 @@
 # Informe de pruebas de privacidad
 
-## Verificación editorial y suscripciones — 2026-08-11
+## Verificación editorial y suscripciones — 2026-08-12
 
-La batería local actualizada comprueba la versión `3.2.0`, los textos legales ES/EU, sitemaps dinámicos sin `localhost`, ausencia de cookies y el bloqueo de los recursos de Sender cuando la integración no está aprobada.
+La batería local actualizada comprueba la versión `3.3.0`, los textos legales ES/EU, sitemaps dinámicos sin `localhost`, ausencia de cookies y que Sender solo pueda cargarse en las rutas de suscripción cuando esté completamente configurado.
 
-El código de Sender está preparado, pero en staging permanece desactivado mediante `KERMANENTZAT_SENDER_APPROVED=false`. La activación exige además token, grupo, remitente válido, ID público, ID de renderizado, hash del contenedor, formulario bilingüe HTTPS y el expediente privado de aprobación. WordPress no guarda emails.
+Sender queda habilitado en staging mediante el secreto canónico existente y `KERMANENTZAT_SENDER_APPROVED=true`, con el grupo real `Suscriptores web`. La prueba exige además remitente válido, ID público, ID de renderizado, hash del contenedor y formulario bilingüe HTTPS. WordPress no guarda emails y las comprobaciones no imprimen token, direcciones ni destinatarios.
 
-Mientras la aprobación está desactivada, las rutas `/harpidetza/` y `/es/suscripcion/` muestran el estado de espera local y no cargan SDK, iframe ni recursos externos. Las llamadas desde Actualidad/Berriak y Contacto/Kontaktua respetan el mismo bloqueo.
+Las rutas `/harpidetza/` y `/es/suscripcion/` pueden cargar el SDK y formulario cuando la configuración está completa. Actualidad/Berriak, Contacto/Kontaktua y el resto del sitio no cargan directamente el proveedor.
 
 Resultado local del 11-08-2026: **61 comprobaciones superadas, 0 fallos**. Las pruebas automatizadas pueden simular la configuración para validar las salvaguardas del código, pero no se llamó a la API real, no se envió ninguna campaña, no se utilizó el Excel real y no se procesaron direcciones personales. La prueba autorizada de alta, double opt-in y baja sigue pendiente.
 

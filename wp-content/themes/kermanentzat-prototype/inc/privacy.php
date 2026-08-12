@@ -9,8 +9,8 @@ defined('ABSPATH') || exit;
 function kermanentzat_legal_config(): array
 {
     return [
-        'version' => '2026.08.11',
-        'last_reviewed' => '11/08/2026',
+        'version' => '2026.08.12',
+        'last_reviewed' => '12/08/2026',
         'name' => 'Egia Kermanentzat Elkartea',
         'nif' => 'G93797744',
         'address' => 'Zubiegi kalea 16, Bitoriano, 01139 Zuia, Álava',
@@ -24,10 +24,10 @@ function kermanentzat_legal_config(): array
         'donation_tax_status' => null,
         'google_analytics_contractual_review' => null,
         'google_analytics_transfer_safeguards' => null,
-        'sender_processor_agreement' => null,
-        'sender_transfer_safeguards' => null,
-        'sender_retention_review' => null,
-        'sender_domain_authentication' => null,
+        'sender_processor_agreement' => 'approved_2026-08-12_evidence_archived_outside_git',
+        'sender_transfer_safeguards' => 'approved_2026-08-12_evidence_archived_outside_git',
+        'sender_retention_review' => 'approved_2026-08-12_evidence_archived_outside_git',
+        'sender_domain_authentication' => 'verified_2026-08-12',
     ];
 }
 
@@ -72,7 +72,7 @@ function kermanentzat_service_registry(): array
 {
     $analytics_enabled = kermanentzat_analytics_is_enabled();
     $registry = [
-        'version' => '3.2.0',
+        'version' => '3.3.0',
         'categories' => [
             'necessary' => ['active' => true, 'required' => true, 'configurable' => false],
             'analytics' => ['active' => $analytics_enabled, 'required' => false, 'configurable' => true],

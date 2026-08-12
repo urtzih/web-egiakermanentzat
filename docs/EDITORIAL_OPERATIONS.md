@@ -17,10 +17,10 @@ El rollback restaura la base de datos, los medios y la versión previa del códi
 
 ## Cuenta y activación de Sender
 
-Sender permanece desactivado salvo que se cumplan todas estas condiciones:
+Sender solo se activa en un entorno cuando se cumplen todas estas condiciones. El 12/08/2026 la asociación confirmó y archivó fuera de Git la revisión de DPA, subencargados, transferencias y conservación/supresión; esta confirmación no equivale a una declaración de cumplimiento jurídico integral:
 
 - cuenta institucional y dominio remitente verificado;
-- revisión de condiciones, DPA, transferencias y conservación;
+- revisión de condiciones, DPA, subencargados, transferencias y conservación/supresión;
 - dirección física de la asociación configurada en el proveedor;
 - SPF, DKIM y DMARC comprobados;
 - un formulario bilingüe publicado, conectado al grupo `Suscriptores web` y con double opt-in;
@@ -30,6 +30,8 @@ Sender permanece desactivado salvo que se cumplan todas estas condiciones:
 - ID público de cuenta, ID SDK, grupo, URL alternativa y remitente configurados en Ajustes → Kermanentzat Editorial.
 
 El hosting debe ejecutar WP-Cron cada cinco minutos. Desactivar `KERMANENTZAT_SENDER_APPROVED` detiene formularios y nuevos envíos sin borrar la lista externa.
+
+Staging permanece conectado al grupo real `Suscriptores web`. Esto permite una prueba extremo a extremo, pero también implica riesgo de envíos accidentales a personas reales: no publiques contenido de prueba con el aviso activo. Producción conserva su aprobación separada y no se modifica desde staging.
 
 ## Importación consentida
 
@@ -46,7 +48,10 @@ El informe no contiene emails. El CSV de salida sí contiene datos personales: n
 
 ## Envíos y fallos
 
-- La casilla “Enviar aviso al publicar” está desmarcada por defecto.
+- En una publicación nueva y con Sender configurado, la casilla “Enviar aviso al publicar” aparece marcada; desmárcala antes de publicar si no procede un aviso.
+- Las publicaciones existentes sin metadato permanecen desmarcadas y no se activan retrospectivamente.
+- Guardar, corregir o añadir una traducción después de un envío no genera otro correo.
+- El correo bilingüe presenta euskera primero y castellano después.
 - Una pareja traducida genera como máximo una campaña.
 - Sender exige `{{unsubscribe_link}}` en campañas HTML; no debe retirarse del template.
 - Tras tres fallos el estado queda en “Fallido”. Corregir configuración o conectividad antes de usar “Reintentar”.

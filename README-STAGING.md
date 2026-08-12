@@ -55,11 +55,11 @@ El archivo `.env.staging` debe contener las credenciales existentes y:
 ```dotenv
 KERMANENTZAT_GA_MEASUREMENT_ID=
 KERMANENTZAT_GA_APPROVED=false
-KERMANENTZAT_SENDER_APPROVED=false
+KERMANENTZAT_SENDER_APPROVED=true
 KERMANENTZAT_SENDER_API_TOKEN=<secreto del gestor operativo>
 ```
 
-No usar el alias `SENDER_API_TOK` en configuraciones nuevas. Sender debe permanecer apagado hasta archivar el expediente contractual, transferencias, conservación, DNS, double opt-in y revisión bilingüe.
+No usar el alias `SENDER_API_TOK` en configuraciones nuevas. La asociación confirmó el 12-08-2026 la revisión contractual, subencargados, transferencias, conservación/supresión, DNS, double opt-in y textos bilingües; la evidencia se conserva fuera de Git. Staging usa deliberadamente el grupo real `Suscriptores web`, por lo que una publicación de prueba con el aviso marcado puede enviar correos reales. Producción requiere una activación separada.
 
 ## Verificación
 
@@ -68,10 +68,10 @@ El script exige:
 - checkout limpio, rama `main` y SHA esperado;
 - WordPress, MariaDB y cron saludables;
 - plugin editorial activo y su comando de verificación correcto;
-- Sender desactivado;
+- Sender completamente configurado cuando esté aprobado y conectividad de lectura con su API;
 - rutas estructurales ES/EU con HTTP 200;
 - `noindex`, CSP, HTTPS y ausencia de `Set-Cookie` anónimo;
-- ausencia de recursos Sender en el HTML mientras el servicio esté apagado.
+- recursos Sender solo en `/harpidetza/` y `/es/suscripcion/`; Contacto y Berriak no deben cargar directamente al proveedor.
 
 Después se realiza la revisión manual indicada en `docs/EDITORIAL_OPERATIONS.md` y en el manual administrativo.
 

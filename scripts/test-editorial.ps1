@@ -38,7 +38,7 @@ try {
         throw 'Las páginas informativas de suscripción deben estar publicadas aunque Sender siga desactivado.'
     }
     $registry = docker compose --progress quiet --profile tools run --rm wpcli eval 'echo wp_json_encode(kermanentzat_service_registry());' 2>$null | Out-String
-    if ($registry -notmatch '"version":"3\.2\.0"') {
+    if ($registry -notmatch '"version":"3\.3\.0"') {
         throw 'El registro de servicios no mantiene la versión esperada.'
     }
     $disabledRegistry = docker compose --progress quiet --profile tools run --rm -e KERMANENTZAT_SENDER_APPROVED=false wpcli eval 'echo wp_json_encode(kermanentzat_service_registry());' 2>$null | Out-String

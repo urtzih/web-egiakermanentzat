@@ -34,7 +34,7 @@
 
 - [x] 5.1 Implementar configuración segura de Sender, comprobación de disponibilidad y estados desactivados sin token o aprobación
 - [x] 5.2 Crear módulo de suscripción EU/ES con carga del proveedor tras interacción, enlace alternativo, consentimiento y double opt-in documentado
-- [x] 5.3 Añadir la solicitud de aviso desmarcada por defecto y la máquina de estados sin almacenar direcciones
+- [x] 5.3 Marcar el aviso únicamente en publicaciones nuevas cuando Sender esté configurado, permitir cancelarlo antes de publicar y mantener la máquina de estados sin almacenar direcciones
 - [x] 5.4 Implementar cola idempotente por grupo de traducción, cron, límite de tres reintentos y avisos administrativos
 - [x] 5.5 Implementar cliente de campañas ordinarias de Sender, plantilla accesible EU/ES, envío al grupo y persistencia segura del resultado
 - [x] 5.6 Implementar una herramienta de simulación/importación de Excel o CSV que valide evidencia, duplicados y supresiones sin versionar datos personales

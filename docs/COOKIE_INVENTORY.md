@@ -1,6 +1,6 @@
 # Inventario de cookies, almacenamiento y servicios
 
-Versión del registro: `3.2.0`. Revisión técnica: 2026-08-11.
+Versión del registro: `3.3.0`. Revisión técnica: 2026-08-12.
 
 ## Estados de la navegación pública
 
@@ -12,7 +12,7 @@ Versión del registro: `3.2.0`. Revisión técnica: 2026-08-11.
 | Analítica aceptada | `kermanentzat_consent`, `_ga`, `_ga_*` | Google Tag y Analytics | Se miden páginas, procedencia aproximada, interacción y dos eventos de copia |
 | Consentimiento retirado | `kermanentzat_consent` | Ninguna futura | Se bloquea Analytics, se borran `_ga`/`_ga_*` y se recarga la página |
 
-`kermanentzat_consent` contiene solo la versión `3.2.0`, un booleano para analítica y una fecha ISO. No contiene identificadores. Caduca lógicamente a los 183 días o al cambiar la versión. La suscripción no reutiliza esta elección: tiene consentimiento y confirmación propios.
+`kermanentzat_consent` contiene solo la versión `3.3.0`, un booleano para analítica y una fecha ISO. No contiene identificadores. Caduca lógicamente a los 183 días o al cambiar la versión. La suscripción no reutiliza esta elección: tiene consentimiento y confirmación propios.
 
 ## Servicios opcionales
 
@@ -38,9 +38,9 @@ Versión del registro: `3.2.0`. Revisión técnica: 2026-08-11.
 | Datos | Email y estados técnicos de confirmación, entrega y supresión gestionados por el proveedor |
 | Activación | Aprobación explícita + token/grupo/remitente + formulario bilingüe con double opt-in; el SDK se carga automáticamente solo en `/harpidetza/` y `/es/suscripcion/` |
 | Base jurídica | Consentimiento específico y double opt-in |
-| Conservación | Hasta la baja; criterio de supresión posterior pendiente de validar con contrato y obligaciones |
+| Conservación | Hasta la baja; después, supresión o conservación mínima conforme al contrato validado y las obligaciones aplicables |
 | Retirada | Enlace de baja en cada mensaje o solicitud al responsable |
-| Transferencias | DPA, subencargados y garantías pendientes de revisión; el feature flag debe permanecer apagado hasta documentarlas |
+| Transferencias | DPA, subencargados, transferencias y criterio de conservación/supresión aprobados el 12-08-2026; evidencia archivada fuera de Git |
 | Almacenamiento local | WordPress no guarda emails; solo estado técnico de campaña sin destinatarios |
 
 Dominios permitidos por CSP cuando el adaptador está activo:
@@ -74,16 +74,16 @@ condiciones de tratamiento, garantías de transferencia, propiedad
 institucional, retención de dos meses, accesos y configuración sin publicidad,
 además de completar la revisión jurídica.
 
-La revisión del 11-08-2026 consolida un único formulario bilingüe y sustituye el
+La revisión del 12-08-2026 consolida un único formulario bilingüe y sustituye el
 iframe alojado por el SDK explícito de Sender. La integración directa en la
 página específica y las llamadas locales en páginas secundarias elevan el
-registro a `3.2.0`.
-No se puede activar `KERMANENTZAT_SENDER_APPROVED`
-hasta archivar la revisión contractual, transferencias, conservación, DNS,
-double opt-in y textos bilingües. Cambiar el flag a `false` retira el servicio
+registro a `3.3.0`. La asociación confirmó el 12-08-2026 la revisión contractual,
+subencargados, transferencias, conservación/supresión, DNS, double opt-in y
+textos bilingües; la evidencia se conserva fuera de Git. Cambiar el flag a `false` retira el servicio
 del registro y bloquea formularios y nuevos envíos.
 
 Desde el 07-08-2026 las rutas `/harpidetza/` y `/es/suscripcion/` son públicas y
-se enlazan desde la navegación, Actualidad/Berriak y Contacto/Kontaktua. Mientras
-Sender siga desactivado muestran solo contenido local informativo: no cargan el
-SDK, no contactan con el proveedor y no recogen direcciones.
+se enlazan desde la navegación, Actualidad/Berriak y Contacto/Kontaktua. Cuando
+Sender está configurado, cargan su SDK y formulario; las demás rutas no contactan
+con el proveedor. Staging usa expresamente el grupo real, mientras producción
+requiere una activación separada.

@@ -26,7 +26,7 @@ El rol editorial muestra Medios, Páginas, Berriak / Actualidad, Cronología y F
 | Hemeroteka / Hemeroteca | Dinámica | Publicaciones de tipo Hemeroteca, con enlace y atribución | No copiar artículos o imágenes de terceros |
 | Fuentes | Editable y privada | Fuentes → ficha interna vinculable | No subir expedientes ni datos sensibles |
 | Imágenes | Editable y validada | Medios → alt, crédito, derechos y permiso | No publicar una imagen sin derechos comprobados |
-| Suscripción | Dinámica y condicionada | Sender, cola y WP-Cron cuando exista aprobación | No activar Sender, pegar tokens ni importar Excel por cuenta propia |
+| Suscripción | Dinámica y condicionada | Sender, cola y WP-Cron cuando exista aprobación | No cambiar configuración, pegar tokens ni importar Excel por cuenta propia |
 | Cabecera, pie, estilos, plantillas y código | Estática/versionada | Tema, plugin y despliegue técnico | No tocar |
 | Páginas legales | Editable solo con aprobación | Páginas legales ES/EU | No improvisar cambios jurídicos |
 
@@ -66,7 +66,7 @@ Checklist antes de publicar:
 - Si el contenido es sensible, las tres comprobaciones y la referencia de aprobación están completas.
 - La fecha editorial es correcta.
 - La versión vinculada apunta al contenido del otro idioma.
-- **Enviar aviso al publicar** solo se marca cuando Sender está aprobado y se desea realmente un único aviso.
+- **Enviar aviso al publicar** aparece marcado en contenido nuevo cuando Sender está configurado; desmárcalo antes de publicar si no deseas un único aviso real.
 
 ## 4. Crear una noticia, nota, comunicado, actividad o hemeroteca
 
@@ -88,7 +88,7 @@ Checklist antes de publicar:
 
 ![Formulario de una publicación real con tipo, fecha y controles de WordPress](assets/admin-guide/admin-formulario-noticia.png)
 
-![Datos específicos de una referencia de hemeroteca y estado de Sender desactivado](assets/admin-guide/admin-datos-noticia.png)
+![Datos específicos de una referencia de hemeroteca y control de Sender](assets/admin-guide/admin-datos-noticia.png)
 
 ### Campos adicionales de una actividad
 
@@ -246,12 +246,14 @@ Abre la entrada y busca **Revisiones** o la indicación de última edición. Com
 
 ## 11. Sender, suscripciones y avisos
 
-En este momento Sender permanece desactivado hasta completar la revisión documental, contractual, DNS y humana. Por eso la casilla **Enviar aviso al publicar** aparece deshabilitada. Es el comportamiento correcto.
+Sender está habilitado permanentemente en staging y conectado al grupo real **Suscriptores web**. Producción es un entorno separado y no queda activado por esta configuración. Una publicación de prueba en staging puede enviar un correo real: revisa siempre la casilla antes de publicar.
 
-Cuando soporte confirme por escrito la activación:
+Cuando Sender esté completamente configurado en el entorno:
 
-- la casilla seguirá desmarcada por defecto;
-- marcarla solicitará un único aviso para la pareja EU/ES;
+- en una publicación nueva, la casilla aparecerá marcada por defecto;
+- desmarcarla antes de publicar cancela el aviso;
+- una publicación existente sin ese dato permanece desmarcada;
+- mantenerla marcada solicitará un único aviso para la pareja EU/ES, con euskera primero y castellano después;
 - guardar, corregir o traducir no volverá a enviar;
 - WP-Cron procesará la cola;
 - los estados serán No solicitado, En cola, Enviando, Enviado, Fallido o Cancelado;
@@ -320,7 +322,7 @@ Corrige fecha inicial, fecha final y precisión. No dupliques el hito.
 
 ### Campaña en cola o fallida
 
-No desmarques, vuelvas a marcar ni republiques. Si Sender está desactivado, no debe salir ningún aviso. Si está aprobado, pide soporte para revisar cron, conectividad y el error antes de usar Reintentar.
+No desmarques, vuelvas a marcar ni republiques una pieza que ya entró en cola. Si Sender está desactivado, no debe salir ningún aviso. Si está aprobado, pide soporte para revisar cron, conectividad y el error antes de usar Reintentar. Un correo iniciado no puede recuperarse con rollback.
 
 ### Diseño roto
 
