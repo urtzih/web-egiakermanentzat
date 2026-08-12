@@ -171,6 +171,13 @@ function verify_editorial_runtime(): void
             || strpos($html, 'Fuente original · BERRIA') === false) {
             \WP_CLI::error('La plantilla bilingüe no enlaza la fuente original de cada versión.');
         }
+        if (strpos($html, 'EGIA <span style="color:#ff3131">KERMANENTZAT</span>') === false
+            || strpos($html, 'BERRIAK / ACTUALIDAD') === false
+            || strpos($html, 'background:#f1f1f1') === false
+            || substr_count($html, 'bgcolor="#d71920"') !== 2
+            || substr_count($html, 'role="presentation"') < 6) {
+            \WP_CLI::error('La plantilla no conserva el sistema visual y la estructura compatible con email.');
+        }
         if (!campaign_url_is_public_https('https://web-egiakermanentzat.stag.urtzi.fun/berriak/proba/')
             || campaign_url_is_public_https('http://192.168.10.42/berriak/proba/')
             || campaign_url_is_public_https('https://127.0.0.1/berriak/proba/')) {

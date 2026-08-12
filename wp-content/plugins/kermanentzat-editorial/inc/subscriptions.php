@@ -302,7 +302,7 @@ function sender_create_campaign(int $identity)
     $primary = $posts[0];
     $language = editorial_language_for_post($primary->ID);
     $subject = count($posts) > 1
-        ? 'Egia Kermanentzat · ' . get_the_title($primary)
+        ? 'Egia Kermanentzat · Berriak / Actualidad'
         : get_the_title($primary);
     $environment = wp_get_environment_type();
     if ($environment !== 'production') {
@@ -313,7 +313,9 @@ function sender_create_campaign(int $identity)
         'subject' => $subject,
         'from' => (string) $config['sender_from_name'],
         'reply_to' => (string) $config['sender_reply_to'],
-        'preheader' => $language === 'eu' ? 'Egia Kermanentzaten argitalpen berria' : 'Nueva publicación de Egia Kermanentzat',
+        'preheader' => count($posts) > 1
+            ? 'Argitalpen berria · Nueva publicación'
+            : ($language === 'eu' ? 'Egia Kermanentzaten argitalpen berria' : 'Nueva publicación de Egia Kermanentzat'),
         'content_type' => 'html',
         'google_analytics' => 0,
         'auto_followup_active' => false,
@@ -389,32 +391,34 @@ function campaign_html(array $posts): string
     $environment = wp_get_environment_type();
     $environment_banner = $environment !== 'production'
         ? sprintf(
-            '<p style="margin:0 0 24px;padding:12px;background:#ffeb3b;color:#090909;font:700 14px Arial,sans-serif;text-align:center">[%s] ENTORNO DE PRUEBAS · PROBA INGURUNEA</p>',
+            '<tr><td bgcolor="#ff3131" style="padding:11px 24px;color:#090909;font-family:Public Sans,Helvetica Neue,Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;line-height:18px;text-align:center">[%s] PROBA INGURUNEA · ENTORNO DE PRUEBAS</td></tr>',
             esc_html(strtoupper($environment))
         )
         : '';
     $sections = '';
-    foreach ($posts as $post) {
+    foreach ($posts as $index => $post) {
         $language = editorial_language_for_post($post->ID);
         $excerpt = has_excerpt($post) ? get_the_excerpt($post) : wp_trim_words(wp_strip_all_tags($post->post_content), 38);
         $type = update_type_label(update_type_for_post($post->ID), $language);
         $button = $language === 'eu' ? 'Irakurri argitalpena' : 'Leer la publicación';
+        $background = $index % 2 === 0 ? '#ffffff' : '#f1f1f1';
         $source_url = (string) get_post_meta($post->ID, '_kerman_external_url', true);
         $source_link = '';
         if ($source_url !== '') {
             $source_label = $language === 'eu' ? 'Jatorrizko iturria' : 'Fuente original';
             $source_media = trim((string) get_post_meta($post->ID, '_kerman_external_outlet', true));
             $source_link = sprintf(
-                '<p style="margin:14px 0 0;font:14px Arial,sans-serif"><a href="%s" style="color:#090909;text-decoration:underline">%s%s</a></p>',
+                '<p style="margin:18px 0 0;color:#565656;font-family:Public Sans,Helvetica Neue,Helvetica,Arial,sans-serif;font-size:14px;line-height:21px"><a href="%s" style="color:#090909;font-weight:700;text-decoration:underline">%s%s&nbsp;&rarr;</a></p>',
                 esc_url($source_url),
                 esc_html($source_label),
                 $source_media !== '' ? ' · ' . esc_html($source_media) : ''
             );
         }
         $sections .= sprintf(
-            '<section style="padding:24px 0;border-bottom:1px solid #d8d8d8"><p style="margin:0 0 8px;font:700 12px Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase">%s · %s</p><h1 style="margin:0 0 12px;font:700 28px Arial,sans-serif;line-height:1.15">%s</h1><p style="margin:0 0 20px;font:16px Arial,sans-serif;line-height:1.55">%s</p><p><a href="%s" style="display:inline-block;padding:12px 18px;background:#090909;color:#fff;text-decoration:none;font:700 15px Arial,sans-serif">%s</a></p>%s</section>',
+            '<tr><td class="email-pad" bgcolor="%s" style="padding:34px 40px 38px;border-top:1px solid #c9c9c9"><table role="presentation" width="100%%" cellpadding="0" cellspacing="0" border="0"><tr><td><span style="display:inline-block;padding:5px 8px;background:#090909;color:#ffffff;font-family:Public Sans,Helvetica Neue,Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;line-height:16px">%s</span><span style="color:#565656;font-family:Public Sans,Helvetica Neue,Helvetica,Arial,sans-serif;font-size:12px;font-weight:700;line-height:16px"> &nbsp;%s</span><h2 class="story-title" style="margin:18px 0 14px;color:#090909;font-family:Public Sans,Helvetica Neue,Helvetica,Arial,sans-serif;font-size:27px;font-weight:900;line-height:1.16;letter-spacing:-0.02em">%s</h2><p style="margin:0;color:#090909;font-family:Public Sans,Helvetica Neue,Helvetica,Arial,sans-serif;font-size:16px;line-height:25px">%s</p><table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:24px"><tr><td bgcolor="#d71920" style="border-radius:2px"><a href="%s" style="display:inline-block;padding:13px 19px;color:#ffffff;font-family:Public Sans,Helvetica Neue,Helvetica,Arial,sans-serif;font-size:15px;font-weight:700;line-height:18px;text-decoration:none">%s&nbsp;&nbsp;&rarr;</a></td></tr></table>%s</td></tr></table></td></tr>',
+            esc_attr($background),
             esc_html(strtoupper($language)),
-            esc_html($type),
+            esc_html(strtoupper($type)),
             esc_html(get_the_title($post)),
             esc_html($excerpt),
             esc_url(get_permalink($post)),
@@ -422,7 +426,7 @@ function campaign_html(array $posts): string
             $source_link
         );
     }
-    return '<!doctype html><html><body style="margin:0;background:#f3f1eb;color:#090909"><div style="display:none;max-height:0;overflow:hidden">Egia Kermanentzat</div><main style="max-width:640px;margin:0 auto;padding:32px 24px;background:#fff">' . $environment_banner . '<p style="font:900 20px Arial,sans-serif">EGIA KERMANENTZAT</p>' . $sections . '<footer style="padding-top:24px;font:13px Arial,sans-serif;line-height:1.5"><p>Egia Kermanentzat Elkartea</p><p><a href="{{unsubscribe_link}}">{{unsubscribe_text}}</a></p><p>{{ account.address }}, {{ account.city }}, {{ account.country }}</p></footer></main></body></html>';
+    return '<!doctype html><html lang="eu"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><style>@media only screen and (max-width:660px){.email-shell{width:100%!important}.email-pad{padding:28px 24px 32px!important}.story-title{font-size:23px!important;line-height:1.2!important}.brand-title{font-size:26px!important}}</style></head><body bgcolor="#f1f1f1" style="margin:0;padding:0;background:#f1f1f1;color:#090909"><div style="display:none;max-height:0;overflow:hidden;opacity:0">Argitalpen berria · Nueva publicación</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#f1f1f1"><tr><td align="center" style="padding:24px 12px"><table role="presentation" class="email-shell" width="640" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff" style="width:640px;max-width:640px">' . $environment_banner . '<tr><td bgcolor="#090909" style="padding:28px 40px 26px"><p class="brand-title" style="margin:0;color:#ffffff;font-family:Impact,Arial Narrow,Arial,sans-serif;font-size:30px;font-weight:900;line-height:34px;letter-spacing:-0.02em">EGIA <span style="color:#ff3131">KERMANENTZAT</span></p><p style="margin:7px 0 0;color:#ffffff;font-family:Public Sans,Helvetica Neue,Helvetica,Arial,sans-serif;font-size:13px;font-weight:700;line-height:18px">JUSTIZIA KERMANENTZAT · JUSTICIA PARA KERMAN</p></td></tr><tr><td height="7" bgcolor="#ff3131" style="height:7px;font-size:0;line-height:0">&nbsp;</td></tr><tr><td class="email-pad" bgcolor="#ffffff" style="padding:34px 40px 20px"><h1 style="margin:0;color:#090909;font-family:Impact,Arial Narrow,Arial,sans-serif;font-size:34px;font-weight:900;line-height:1.05;letter-spacing:-0.025em">BERRIAK / ACTUALIDAD</h1><p style="margin:12px 0 0;color:#565656;font-family:Public Sans,Helvetica Neue,Helvetica,Arial,sans-serif;font-size:15px;line-height:23px">Elkartearen azken argitalpenak · Últimas publicaciones de la asociación</p></td></tr>' . $sections . '<tr><td bgcolor="#090909" style="padding:30px 40px;color:#ffffff;font-family:Public Sans,Helvetica Neue,Helvetica,Arial,sans-serif"><p style="margin:0 0 7px;font-size:15px;font-weight:700;line-height:21px">Egia Kermanentzat Elkartea</p><p style="margin:0 0 18px;color:#ffffff;font-size:13px;line-height:20px">Albisteen abisuak bakarrik · Solo avisos de nuevas publicaciones</p><p style="margin:0 0 10px;font-size:13px;line-height:20px"><a href="{{unsubscribe_link}}" style="color:#ffffff;text-decoration:underline">Harpidetza utzi / Darse de baja</a></p><p style="margin:0;color:#c9c9c9;font-size:12px;line-height:18px">{{ account.address }}, {{ account.city }}, {{ account.country }}</p></td></tr></table></td></tr></table></body></html>';
 }
 
 function sender_request(string $path, string $method = 'GET', ?array $payload = null)

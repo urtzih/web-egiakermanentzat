@@ -6,7 +6,7 @@ Entorno: staging no indexable, Sender habilitado de forma permanente y WP-Cron c
 
 ## Resultado ejecutivo
 
-El plugin editorial `0.2.5`, la migración 5, el formulario bilingüe y la publicación EU/ES están desplegados. La migración fue idempotente y Sender sigue conectado, por decisión operativa expresa, al grupo real `Suscriptores web`.
+El plugin editorial `0.2.6`, la migración 5, el formulario bilingüe y la publicación EU/ES están desplegados. La migración fue idempotente y Sender sigue conectado, por decisión operativa expresa, al grupo real `Suscriptores web`.
 
 Se creó y envió una sola campaña de staging. Sender informa `SENT`, tres destinatarios procesados y cero rebotes. La aceptación del correo no se cierra: los botones del mensaje enviado usaron el host HTTP privado del contenedor y el mensaje no incluyó la fuente BERRIA. Conforme a la regla de no duplicar ni republish, no se creó una segunda campaña.
 
