@@ -8,7 +8,9 @@ Sender queda habilitado en staging mediante el secreto canónico existente y `KE
 
 Las rutas `/harpidetza/` y `/es/suscripcion/` pueden cargar el SDK y formulario cuando la configuración está completa. Actualidad/Berriak, Contacto/Kontaktua y el resto del sitio no cargan directamente el proveedor.
 
-Resultado local del 11-08-2026: **61 comprobaciones superadas, 0 fallos**. Las pruebas automatizadas pueden simular la configuración para validar las salvaguardas del código, pero no se llamó a la API real, no se envió ninguna campaña, no se utilizó el Excel real y no se procesaron direcciones personales. La prueba autorizada de alta, double opt-in y baja sigue pendiente.
+Resultado local del 12-08-2026: **61 comprobaciones superadas, 0 fallos**. Staging validó la configuración y el grupo mediante la API real sin imprimir token ni destinatarios. Se envió una única campaña `[STAGING]` a los tres activos del grupo `bq589r`: Sender informa tres envíos, cero rebotes y cero quejas de spam.
+
+La campaña no supera la aceptación completa: los enlaces enviados usaron el host HTTP privado del contenedor y no incluyeron la fuente BERRIA. No se reenvió. El origen público de cron, los enlaces de fuente y una barrera que rechaza URLs no públicas quedaron implementados y verificados sin generar otra campaña. La prueba autorizada de alta, double opt-in y baja sigue pendiente, al igual que la comprobación humana de bandeja y spam.
 
 Las secciones siguientes conservan los resultados históricos de la versión `2.0.0` anteriores a esta fase.
 
