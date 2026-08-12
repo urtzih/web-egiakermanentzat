@@ -283,6 +283,9 @@ if (
     $subscriptionPhp -notmatch "config\['sender_form_embed_id'\]" -or
     $subscriptionBootstrap -notmatch "'sender_form_id'\s*=>\s*'epY1RX'" -or
     $subscriptionBootstrap -notmatch "'sender_form_embed_id'\s*=>\s*'msis6hs8epy1rx9k77d'" -or
+    $subscriptionBootstrap -notmatch '\$form_host' -or
+    $subscriptionBootstrap -notmatch "'stats\.sender\.net'" -or
+    $subscriptionBootstrap -notmatch "'newsletter\.egiakermanentzat\.eus'" -or
     $subscriptionAdapter -match 'api\.sender\.net/v2|Authorization|Bearer' -or
     $subscriptionPhp -match 'data-subscription-frame-container'
 ) {

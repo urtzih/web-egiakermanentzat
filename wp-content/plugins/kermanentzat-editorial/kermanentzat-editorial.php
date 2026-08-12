@@ -147,6 +147,8 @@ function sender_api_token(): string
 function subscription_is_configured(): bool
 {
     $config = settings();
+    $form_url = (string) $config['sender_form_url'];
+    $form_host = strtolower((string) wp_parse_url($form_url, PHP_URL_HOST));
     return subscription_is_approved()
         && sender_api_token() !== ''
         && trim((string) $config['sender_group_id']) !== ''
@@ -154,6 +156,7 @@ function subscription_is_configured(): bool
         && preg_match('/^[a-z0-9]{6,}$/i', (string) $config['sender_form_id']) === 1
         && preg_match('/^[a-z0-9]{8,}$/i', (string) $config['sender_form_embed_id']) === 1
         && is_email((string) $config['sender_reply_to'])
-        && wp_http_validate_url((string) $config['sender_form_url'])
-        && strtolower((string) wp_parse_url((string) $config['sender_form_url'], PHP_URL_SCHEME)) === 'https';
+        && filter_var($form_url, FILTER_VALIDATE_URL) !== false
+        && strtolower((string) wp_parse_url($form_url, PHP_URL_SCHEME)) === 'https'
+        && in_array($form_host, ['stats.sender.net', 'newsletter.egiakermanentzat.eus'], true);
 }
