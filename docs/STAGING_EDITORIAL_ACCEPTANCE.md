@@ -15,7 +15,7 @@ El defecto queda corregido para futuras campañas: cron usa un origen público H
 ## Despliegue, copia y migración
 
 - Rama remota: `main`.
-- SHA funcional desplegado tras la corrección: `0d16915`.
+- SHA funcional desplegado tras la corrección y la plantilla visual: `b2157c6`.
 - Backup restaurable conservado: `20260812T121552Z-85143a04d84d`.
 - Backup válido del primer intento detenido por la salvaguarda: `20260812T121316Z-17433beaa4de`.
 - SQL restaurado en una base temporal y `uploads` comprobados antes de escribir.
@@ -62,6 +62,8 @@ Resultado de la única campaña asociada a WordPress #238:
 El mensaje real contiene asunto y banda `[STAGING]`, orden EU → ES y una sola baja de Sender. Sin embargo, sus dos botones contienen URLs `http://192.168.10.42/...` y no hay enlace a BERRIA. Este es un fallo de aceptación, aunque Sender haya procesado los tres envíos sin rebotes. La ubicación en bandeja o spam requiere comprobación humana.
 
 Tras el hallazgo se verificó, sin reenviar, la plantilla corregida en el contexto actual de cron: dos enlaces al HTTPS público de staging, dos enlaces HTTPS a BERRIA, EU antes de ES, una sola baja y banda `[STAGING]`. `KERMANENTZAT_PUBLIC_URL` coincide con el origen público y el comando del contenedor cron la usa expresamente.
+
+La versión `0.2.6` adapta además el correo al sistema visual de la web mediante una cabecera negra de marca, franja roja, bandas blanca/gris, botones rojos, anchura de lectura de 640 px y ajuste móvil. Se mantiene HTML basado en tablas y estilos inline para compatibilidad con clientes de correo; no se cargan tipografías, scripts ni imágenes remotas. La comprobación estructural confirmó seis tablas de presentación, dos acciones, dos enlaces públicos, dos fuentes, una baja y cero URLs inseguras. No se envió una campaña adicional para probar este rediseño.
 
 ## Formularios, privacidad y registros
 
