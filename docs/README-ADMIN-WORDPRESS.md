@@ -308,6 +308,76 @@ sequenceDiagram
     W-->>E: Enviado, En cola o Fallido
 ~~~
 
+### Qué correos enviamos
+
+La asociación usa Sender únicamente para avisar de noticias o publicaciones nuevas de la web. No se utiliza esta lista para publicidad comercial, promociones ni mensajes ajenos a la actividad informativa de Egia Kermanentzat.
+
+Cada aviso automático incluye:
+
+- una sola campaña para la pareja EU/ES;
+- euskera primero y castellano después;
+- título y resumen breve de ambas versiones;
+- botones que abren la publicación correspondiente en la web;
+- remitente **Egia Kermanentzat Elkartea**;
+- dirección física y enlace obligatorio para darse de baja;
+- una banda amarilla **[STAGING]** cuando el envío procede del entorno de pruebas. Esa banda no debe aparecer en producción.
+
+![Ejemplo completo del aviso bilingüe recibido desde staging](assets/admin-guide/sender-email-recibido.png)
+
+La captura es un ejemplo histórico de prueba. Los títulos y cifras cambian en cada campaña. Antes de enviar, comprueba que ambos botones usan HTTPS, que abren las publicaciones correctas y que el enlace de baja está presente. No envíes el artículo completo por email: el objetivo es llevar a la persona suscrita a la noticia publicada en la web.
+
+### Dónde están los suscriptores
+
+En Sender abre **Suscriptores**. En esta pantalla puedes buscar una dirección, filtrar por estado y seleccionar el grupo **Suscriptores web**. Ese grupo es la lista operativa que recibe los avisos creados desde WordPress.
+
+![Filtros y cabecera del listado de suscriptores en Sender, sin datos personales](assets/admin-guide/sender-suscriptores.png)
+
+Comprueba siempre:
+
+- **Estado del correo electrónico:** usa suscriptores activos para los envíos normales;
+- **Grupos:** selecciona **Suscriptores web**, no el grupo de pruebas;
+- **Total mostrado:** es el número de registros que cumplen el filtro actual, no necesariamente el total de personas activas;
+- **Bajas, rechazados o bloqueados:** no los reactives ni los vuelvas a importar manualmente;
+- **Datos personales:** no exportes, fotografíes ni compartas el listado salvo que soporte lo haya autorizado para una tarea concreta.
+
+El número de suscriptores cambia con cada alta, confirmación, baja o rebote. Para saber cuántos recibirán el próximo aviso, filtra **Suscriptores web + correo activo** justo antes de revisar la campaña.
+
+### Dónde están los emails enviados
+
+Abre **Campañas de correo electrónico**. Cada fila muestra el nombre de la campaña, el grupo destinatario, la fecha y sus indicadores principales. La campaña creada por WordPress debe figurar una sola vez; no hagas una copia ni la vuelvas a enviar para corregir una errata.
+
+![Listado histórico de campañas con entregas, aperturas y clics](assets/admin-guide/sender-campanas.png)
+
+En el ejemplo histórico se entregaron **2 correos** y la apertura terminó en **50 %**, es decir, Sender registró una apertura única entre dos entregas. Estas cifras pertenecen a una prueba y no describen el estado actual. El porcentaje de apertura se consulta siempre en la fila de la campaña concreta.
+
+### Cómo leer el informe de una campaña
+
+Pulsa el icono de informe situado en la columna **Acciones**. En **Resumen** aparecen el asunto, el remitente, el contenido enviado, el progreso y las estadísticas. Los datos pueden cambiar mientras el envío está en curso y durante las horas posteriores.
+
+![Resumen histórico de una campaña durante el envío y sus estadísticas](assets/admin-guide/sender-informe-campana.png)
+
+| Indicador | Qué significa | Qué revisar |
+|---|---|---|
+| Enviados | Intentos de envío iniciados por Sender | Debe coincidir con el público seleccionado, descontando exclusiones aplicadas por Sender |
+| Entregados | Mensajes aceptados por el servidor de destino | Una diferencia con enviados exige revisar rechazados y rebotes |
+| Abiertos | Aperturas que Sender puede registrar | Es orientativo: algunos clientes bloquean el seguimiento y otros pueden precargarlo |
+| Clics únicos | Personas que han pulsado al menos un enlace medido | Revisa también el informe de clics para confirmar qué enlace recibió actividad |
+| Rechazados | Mensajes que el proveedor no aceptó | No reintentes manualmente sin revisar la causa |
+| Soft bounced | Fallos temporales de entrega | Observa si Sender los resuelve o termina bloqueando la dirección |
+| Dados de baja | Personas que solicitaron dejar de recibir avisos | No las vuelvas a añadir ni importar |
+| Spam reports | Personas que marcaron el mensaje como spam | Detén nuevos envíos si aparece un patrón y revisa consentimiento, contenido y frecuencia |
+
+La tasa de apertura se calcula sobre los correos entregados: **aperturas únicas ÷ entregados × 100**. No es una prueba exacta de lectura. Para valorar el resultado, mira conjuntamente entregas, aperturas, clics, bajas, rechazos y spam.
+
+### Revisión práctica después de cada aviso
+
+1. Confirma que WordPress muestra **Enviado** y que solo existe una campaña para la pareja EU/ES.
+2. En Sender, abre la campaña y verifica asunto, grupo **Suscriptores web**, remitente y estado final.
+3. Comprueba que enviados y entregados tienen sentido para el número de suscriptores activos.
+4. Abre el email recibido y prueba los dos botones, el enlace del medio original si existe y la baja.
+5. Revisa entregas, rechazos y spam al finalizar; vuelve a mirar aperturas y clics pasadas 24-48 horas.
+6. Si hay un fallo, conserva el ID de campaña y pide soporte. No republiques la noticia ni crees una segunda campaña.
+
 No pegues tokens en WordPress. No importes el Excel real desde el administrador. La preparación e importación se realiza con soporte técnico después de revisar consentimiento, duplicados, bajas y supresiones. Nunca se reintroduce una dirección dada de baja.
 
 ## 12. Checklist después de publicar

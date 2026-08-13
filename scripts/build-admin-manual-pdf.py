@@ -118,7 +118,8 @@ def build() -> None:
             image_path = (SOURCE.parent / image_match.group(2)).resolve()
             if image_path.is_file():
                 image = Image(str(image_path))
-                max_w, max_h = 170 * mm, 105 * mm
+                max_w = 170 * mm
+                max_h = 150 * mm if image_path.name.startswith("sender-") else 105 * mm
                 scale = min(max_w / image.imageWidth, max_h / image.imageHeight, 1)
                 image.drawWidth = image.imageWidth * scale
                 image.drawHeight = image.imageHeight * scale
