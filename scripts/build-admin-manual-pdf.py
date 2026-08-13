@@ -15,6 +15,7 @@ from reportlab.lib.units import mm
 from reportlab.platypus import (
     HRFlowable,
     Image,
+    KeepTogether,
     ListFlowable,
     ListItem,
     PageBreak,
@@ -28,6 +29,7 @@ from reportlab.platypus import (
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "docs" / "README-ADMIN-WORDPRESS.md"
 OUTPUT = ROOT / "output" / "pdf" / "manual-editorial-wordpress.pdf"
+DIAGRAM_DIR = ROOT / "docs" / "assets" / "admin-guide" / "diagrams"
 
 
 def inline(text: str) -> str:
@@ -50,82 +52,27 @@ def page_footer(canvas, doc) -> None:
     canvas.restoreState()
 
 
-def _diagram_node_map(lines: list[str]) -> dict[str, str]:
-    nodes: dict[str, str] = {}
-    for raw in lines:
-        for match in re.finditer(r'\b([A-Z][A-Z0-9_]*)\s*(?:\["([^"]+)"\]|\{"([^"]+)"\})', raw):
-            nodes[match.group(1)] = match.group(2) or match.group(3)
-    return nodes
+def diagram_block(number: int, lines: list[str], styles, width: float) -> KeepTogether:
+    path = DIAGRAM_DIR / f"manual-diagram-{number:02d}.png"
+    if not path.is_file():
+        raise RuntimeError(
+            f"Missing rendered Mermaid diagram: {path}. "
+            "Run scripts/render-admin-manual-diagrams.py first."
+        )
 
-
-def _diagram_cell(text: str, styles, *, strong: bool = False) -> Paragraph:
-    content = f"<b>{inline(text)}</b>" if strong else inline(text)
-    return Paragraph(content, styles["DiagramCell"])
-
-
-def diagram_block(lines: list[str], styles, width: float) -> list:
-    stripped = [line.strip() for line in lines if line.strip()]
-    is_sequence = bool(stripped and stripped[0].startswith("sequenceDiagram"))
-    nodes = _diagram_node_map(stripped)
-    rows: list[list[Paragraph]] = []
-
-    if is_sequence:
-        participants: dict[str, str] = {}
-        for raw in stripped:
-            match = re.match(r'participant\s+([A-Z][A-Z0-9_]*)\s+as\s+"?([^"]+)"?$', raw)
-            if match:
-                participants[match.group(1)] = match.group(2).strip()
-                continue
-            message = re.match(r'([A-Z][A-Z0-9_]*)\s*-+>>?\s*([A-Z][A-Z0-9_]*)\s*:\s*(.+)$', raw)
-            if message:
-                source, target, label = message.groups()
-                rows.append([
-                    _diagram_cell(participants.get(source, source), styles, strong=True),
-                    _diagram_cell(f"{label}  ->", styles),
-                    _diagram_cell(participants.get(target, target), styles, strong=True),
-                ])
-        title = "SECUENCIA DEL AVISO POR EMAIL"
-        col_widths = [width * 0.22, width * 0.56, width * 0.22]
-    else:
-        for raw in stripped:
-            if raw.startswith("flowchart"):
-                continue
-            edge = re.match(
-                r'^([A-Z][A-Z0-9_]*)(?:\["[^"]+"\]|\{"[^"]+"\})?\s*'
-                r'(?:--\s*(.*?)\s*-->|-->)\s*'
-                r'([A-Z][A-Z0-9_]*)(?:\["[^"]+"\]|\{"[^"]+"\})?$',
-                raw,
-            )
-            if not edge:
-                continue
-            source, condition, target = edge.groups()
-            arrow = f"{condition.strip()}  ->" if condition else "->"
-            rows.append([
-                _diagram_cell(nodes.get(source, source), styles, strong=True),
-                _diagram_cell(arrow, styles),
-                _diagram_cell(nodes.get(target, target), styles, strong=True),
-            ])
-        title = "DIAGRAMA DE FLUJO"
-        col_widths = [width * 0.42, width * 0.16, width * 0.42]
-
-    if not rows:
-        rows = [[_diagram_cell("Flujo editorial", styles, strong=True), _diagram_cell("->", styles), _diagram_cell("Resultado", styles, strong=True)]]
-
-    table = Table(rows, colWidths=col_widths, repeatRows=0, hAlign="LEFT", splitByRow=1)
-    table.setStyle(TableStyle([
-        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#f3f1eb")),
-        ("BACKGROUND", (1, 0), (1, -1), colors.HexColor("#ffffff")),
-        ("TEXTCOLOR", (1, 0), (1, -1), colors.HexColor("#b5121b")),
-        ("ALIGN", (1, 0), (1, -1), "CENTER"),
-        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
-        ("BOX", (0, 0), (-1, -1), 0.75, colors.HexColor("#090909")),
-        ("INNERGRID", (0, 0), (-1, -1), 0.35, colors.HexColor("#b8b8b8")),
-        ("LEFTPADDING", (0, 0), (-1, -1), 7),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 7),
-        ("TOPPADDING", (0, 0), (-1, -1), 6),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
-    ]))
-    return [Paragraph(title, styles["DiagramTitle"]), table, Spacer(1, 4 * mm)]
+    title = "SECUENCIA DEL AVISO POR EMAIL" if any(line.strip().startswith("sequenceDiagram") for line in lines) else "DIAGRAMA DE FLUJO"
+    image = Image(str(path))
+    max_height = 120 * mm if number == 5 else 150 * mm
+    scale = min(width / image.imageWidth, max_height / image.imageHeight, 1)
+    image.drawWidth = image.imageWidth * scale
+    image.drawHeight = image.imageHeight * scale
+    image.hAlign = "CENTER"
+    return KeepTogether([
+        Paragraph(title, styles["DiagramTitle"]),
+        Spacer(1, 2 * mm),
+        image,
+        Spacer(1, 4 * mm),
+    ])
 
 
 def build() -> None:
@@ -139,7 +86,6 @@ def build() -> None:
     styles.add(ParagraphStyle(name="BodyManual", parent=styles["BodyText"], fontName="Helvetica", fontSize=9.4, leading=13.2, textColor=colors.HexColor("#1a1a1a"), spaceAfter=2.7 * mm))
     styles.add(ParagraphStyle(name="TableHeader", parent=styles["BodyManual"], fontName="Helvetica-Bold", fontSize=8.6, leading=10.5, textColor=colors.white, spaceAfter=0))
     styles.add(ParagraphStyle(name="TableCell", parent=styles["BodyManual"], fontSize=8.7, leading=11.2, spaceAfter=0))
-    styles.add(ParagraphStyle(name="DiagramCell", parent=styles["BodyManual"], fontSize=8.4, leading=10.7, spaceAfter=0, alignment=TA_CENTER))
     styles.add(ParagraphStyle(name="BulletManual", parent=styles["BodyManual"], leftIndent=4 * mm, firstLineIndent=0, spaceAfter=1.2 * mm))
     styles.add(ParagraphStyle(name="Caption", parent=styles["BodyText"], alignment=TA_CENTER, fontSize=8, leading=10, textColor=colors.HexColor("#555555"), spaceAfter=4 * mm))
     styles.add(ParagraphStyle(name="DiagramTitle", parent=styles["BodyText"], fontName="Helvetica-Bold", fontSize=8, textColor=colors.white, backColor=colors.HexColor("#b5121b"), borderPadding=4))
@@ -151,6 +97,7 @@ def build() -> None:
     lines = SOURCE.read_text(encoding="utf-8").splitlines()
     index = 0
     section_count = 0
+    diagram_count = 0
     while index < len(lines):
         line = lines[index].rstrip()
         if not line:
@@ -162,7 +109,8 @@ def build() -> None:
             while index < len(lines) and not lines[index].startswith("~~~"):
                 block.append(lines[index])
                 index += 1
-            story.extend(diagram_block(block, styles, doc.width))
+            diagram_count += 1
+            story.append(diagram_block(diagram_count, block, styles, doc.width))
             index += 1
             continue
         image_match = re.fullmatch(r"!\[([^]]*)\]\(([^)]+)\)", line)

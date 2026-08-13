@@ -82,7 +82,7 @@ flowchart LR
 No publiques directamente una primera versión. Trabaja en borrador, revisa el contenido y completa la pareja EU/ES.
 
 ~~~mermaid
-flowchart LR
+flowchart TD
     B["Borrador"] --> R["Revisión de hechos, privacidad y derechos"]
     R --> T["Crear y vincular traducción EU/ES"]
     T --> V["Previsualizar ambas versiones"]
@@ -296,10 +296,10 @@ Cuando Sender esté completamente configurado en el entorno:
 
 ~~~mermaid
 sequenceDiagram
-    participant E as "Editora"
-    participant W as "WordPress"
-    participant C as "WP-Cron"
-    participant S as "Sender"
+    participant E as Editora
+    participant W as WordPress
+    participant C as WP-Cron
+    participant S as Sender
     E->>W: Programa o publica EU/ES con aviso marcado
     W->>W: Crea una identidad única para la pareja
     C->>W: Procesa la cola cada 5 minutos
