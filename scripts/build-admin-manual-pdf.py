@@ -46,7 +46,7 @@ def page_footer(canvas, doc) -> None:
     canvas.line(18 * mm, 14 * mm, 192 * mm, 14 * mm)
     canvas.setFont("Helvetica", 8)
     canvas.setFillColor(colors.HexColor("#555555"))
-    canvas.drawString(18 * mm, 9 * mm, "Egia Kermanentzat · Manual editorial WordPress · 12/08/2026")
+    canvas.drawString(18 * mm, 9 * mm, "Egia Kermanentzat · Manual editorial WordPress · 13/08/2026")
     canvas.drawRightString(192 * mm, 9 * mm, str(doc.page))
     canvas.restoreState()
 
@@ -85,7 +85,7 @@ def build() -> None:
     styles.add(ParagraphStyle(name="Diagram", parent=styles["BodyManual"], fontSize=8.5, leading=12, backColor=colors.HexColor("#f3f1eb"), borderColor=colors.HexColor("#090909"), borderWidth=0.5, borderPadding=7, spaceAfter=2 * mm))
 
     doc = SimpleDocTemplate(str(OUTPUT), pagesize=A4, rightMargin=18 * mm, leftMargin=18 * mm, topMargin=18 * mm, bottomMargin=20 * mm, title="Manual editorial WordPress", author="Egia Kermanentzat Elkartea", subject="Operación editorial bilingüe y avisos Sender", invariant=1)
-    story = [Spacer(1, 22 * mm), Paragraph("MANUAL EDITORIAL<br/>WORDPRESS", styles["CoverTitle"]), HRFlowable(width="100%", thickness=5, color=colors.HexColor("#e31b23")), Spacer(1, 8 * mm), Paragraph("Egia Kermanentzat Elkartea", styles["CoverSub"]), Paragraph("Publicación bilingüe, hemeroteca, fuentes, imágenes, programación y avisos por email.", styles["CoverSub"]), Spacer(1, 65 * mm), Paragraph("Versión 12/08/2026 · Plugin editorial 0.2.5", styles["CoverSub"]), PageBreak()]
+    story = [Spacer(1, 22 * mm), Paragraph("MANUAL EDITORIAL<br/>WORDPRESS", styles["CoverTitle"]), HRFlowable(width="100%", thickness=5, color=colors.HexColor("#e31b23")), Spacer(1, 8 * mm), Paragraph("Egia Kermanentzat Elkartea", styles["CoverSub"]), Paragraph("Acceso seguro a staging, publicación bilingüe, hemeroteca, fuentes, imágenes, programación y avisos por email.", styles["CoverSub"]), Spacer(1, 65 * mm), Paragraph("Versión 13/08/2026 · Plugin editorial 0.2.6", styles["CoverSub"]), PageBreak()]
 
     lines = SOURCE.read_text(encoding="utf-8").splitlines()
     index = 0

@@ -6,11 +6,45 @@ Este manual cubre publicaciones, cronología, hemeroteca, fuentes, imágenes, tr
 
 ## 1. Acceso seguro
 
-1. Abre la dirección de administración facilitada por soporte y comprueba que empieza por HTTPS.
-2. Inicia sesión con tu cuenta personal de rol **Editora Kermanentzat**. No compartas cuentas ni contraseñas.
-3. Activa MFA en cuanto la administración técnica habilite el segundo factor. Si MFA todavía no aparece en el perfil, pide su activación; WordPress no lo incorpora por sí solo.
-4. No aceptes guardar la contraseña en un ordenador compartido.
-5. Al terminar, abre el menú superior derecho y pulsa **Cerrar sesión / Saioa itxi**.
+### Backend de staging
+
+- **Dirección:** [https://web-egiakermanentzat.stag.urtzi.fun/wp-admin/](https://web-egiakermanentzat.stag.urtzi.fun/wp-admin/)
+- **Entorno:** pruebas con datos separados de producción, pero conectado al grupo real de Sender. Publicar con el aviso marcado puede enviar emails reales.
+- **Credenciales:** consulta la entrada **WordPress - Egia Kermanentzat - staging** en el gestor de contraseñas de la asociación. Este manual y el repositorio no contienen usuarios nominales ni contraseñas.
+
+Staging puede solicitar dos accesos consecutivos:
+
+| Paso | Usuario que debes usar | Secreto | Finalidad |
+|---|---|---|---|
+| Protección de staging del navegador | Cuenta compartida de acceso perimetral indicada en el gestor | Contraseña perimetral | Impide visitas externas al entorno de pruebas |
+| Inicio de sesión de WordPress | Tu cuenta personal asignada | Contraseña personal de WordPress y MFA cuando esté disponible | Identifica quién edita y aplica su rol |
+
+No intercambies ambas credenciales. La primera abre el entorno; la segunda identifica a la persona que trabaja dentro de WordPress.
+
+### Usuarios y roles
+
+| Cuenta | Rol | Uso permitido | No permite |
+|---|---|---|---|
+| Cuenta personal de cada integrante del equipo editorial | **Editora Kermanentzat** | Páginas, Berriak / Actualidad, Cronología, Fuentes, Medios, traducciones, borradores, programación y publicación | Usuarios, plugins, tema, ajustes, copias, migraciones o secretos |
+| Cuenta personal del soporte responsable | **Administrador técnico** | Altas y bajas de usuarios, permisos, recuperación, configuración, despliegues, copias e incidencias | Aprobar por sí sola contenido sensible o cambios editoriales |
+
+No se utiliza una cuenta editorial genérica. Cada persona debe entrar con su usuario individual para conservar trazabilidad. Los nombres de inicio de sesión y las contraseñas se entregan de forma privada y se actualizan en el gestor, no en este documento.
+
+### Pasos para entrar
+
+1. Abre la dirección de administración de staging y comprueba que empieza por `https://` y termina en `/wp-admin/`.
+2. Si aparece la protección previa del navegador, utiliza el acceso perimetral guardado en el gestor de contraseñas.
+3. En WordPress, inicia sesión con tu cuenta personal de rol **Editora Kermanentzat**. No compartas cuentas ni contraseñas.
+4. Activa MFA en cuanto la administración técnica habilite el segundo factor. Si MFA todavía no aparece en el perfil, pide su activación; WordPress no lo incorpora por sí solo.
+5. No aceptes guardar la contraseña en un ordenador compartido.
+6. Al terminar, abre el menú superior derecho y pulsa **Cerrar sesión / Saioa itxi**.
+
+### Si no puedes acceder
+
+- No pruebes contraseñas repetidamente ni envíes capturas donde se vea una credencial.
+- Comprueba que estás usando la entrada de **staging**, no la de producción.
+- Solicita al soporte responsable una recuperación o rotación; nunca pidas que te envíen la contraseña por email o mensajería sin cifrar.
+- Si una persona deja el equipo, el administrador técnico debe desactivar su cuenta individual y revisar sus sesiones.
 
 El rol editorial muestra Medios, Páginas, Berriak / Actualidad, Cronología y Fuentes. No muestra Plugins, Apariencia, Ajustes ni Usuarios. Si aparecen esas opciones, detente y comunica que la cuenta tiene más permisos de los necesarios.
 
