@@ -15,7 +15,6 @@ from reportlab.lib.units import mm
 from reportlab.platypus import (
     HRFlowable,
     Image,
-    KeepTogether,
     ListFlowable,
     ListItem,
     PageBreak,
@@ -51,23 +50,82 @@ def page_footer(canvas, doc) -> None:
     canvas.restoreState()
 
 
-def diagram_block(lines: list[str], styles) -> KeepTogether:
-    labels = []
+def _diagram_node_map(lines: list[str]) -> dict[str, str]:
+    nodes: dict[str, str] = {}
     for raw in lines:
-        stripped = raw.strip()
-        if not stripped or stripped.startswith(("flowchart", "sequenceDiagram", "participant")):
-            continue
-        cleaned = re.sub(r"^[A-Z0-9_]+(?:--?>>?|\s*--[^-]+-->)", "", stripped)
-        cleaned = re.sub(r"^[A-Z0-9_]+\[|\]$|^[A-Z0-9_]+\{|\}$", "", cleaned)
-        cleaned = cleaned.replace('"', "")
-        if cleaned:
-            labels.append(cleaned)
-    body = "<br/>".join(f"• {inline(label)}" for label in labels[:12]) or "Flujo editorial"
-    return KeepTogether([
-        Paragraph("DIAGRAMA DE FLUJO", styles["DiagramTitle"]),
-        Paragraph(body, styles["Diagram"]),
-        Spacer(1, 3 * mm),
-    ])
+        for match in re.finditer(r'\b([A-Z][A-Z0-9_]*)\s*(?:\["([^"]+)"\]|\{"([^"]+)"\})', raw):
+            nodes[match.group(1)] = match.group(2) or match.group(3)
+    return nodes
+
+
+def _diagram_cell(text: str, styles, *, strong: bool = False) -> Paragraph:
+    content = f"<b>{inline(text)}</b>" if strong else inline(text)
+    return Paragraph(content, styles["DiagramCell"])
+
+
+def diagram_block(lines: list[str], styles, width: float) -> list:
+    stripped = [line.strip() for line in lines if line.strip()]
+    is_sequence = bool(stripped and stripped[0].startswith("sequenceDiagram"))
+    nodes = _diagram_node_map(stripped)
+    rows: list[list[Paragraph]] = []
+
+    if is_sequence:
+        participants: dict[str, str] = {}
+        for raw in stripped:
+            match = re.match(r'participant\s+([A-Z][A-Z0-9_]*)\s+as\s+"?([^"]+)"?$', raw)
+            if match:
+                participants[match.group(1)] = match.group(2).strip()
+                continue
+            message = re.match(r'([A-Z][A-Z0-9_]*)\s*-+>>?\s*([A-Z][A-Z0-9_]*)\s*:\s*(.+)$', raw)
+            if message:
+                source, target, label = message.groups()
+                rows.append([
+                    _diagram_cell(participants.get(source, source), styles, strong=True),
+                    _diagram_cell(f"{label}  ->", styles),
+                    _diagram_cell(participants.get(target, target), styles, strong=True),
+                ])
+        title = "SECUENCIA DEL AVISO POR EMAIL"
+        col_widths = [width * 0.22, width * 0.56, width * 0.22]
+    else:
+        for raw in stripped:
+            if raw.startswith("flowchart"):
+                continue
+            edge = re.match(
+                r'^([A-Z][A-Z0-9_]*)(?:\["[^"]+"\]|\{"[^"]+"\})?\s*'
+                r'(?:--\s*(.*?)\s*-->|-->)\s*'
+                r'([A-Z][A-Z0-9_]*)(?:\["[^"]+"\]|\{"[^"]+"\})?$',
+                raw,
+            )
+            if not edge:
+                continue
+            source, condition, target = edge.groups()
+            arrow = f"{condition.strip()}  ->" if condition else "->"
+            rows.append([
+                _diagram_cell(nodes.get(source, source), styles, strong=True),
+                _diagram_cell(arrow, styles),
+                _diagram_cell(nodes.get(target, target), styles, strong=True),
+            ])
+        title = "DIAGRAMA DE FLUJO"
+        col_widths = [width * 0.42, width * 0.16, width * 0.42]
+
+    if not rows:
+        rows = [[_diagram_cell("Flujo editorial", styles, strong=True), _diagram_cell("->", styles), _diagram_cell("Resultado", styles, strong=True)]]
+
+    table = Table(rows, colWidths=col_widths, repeatRows=0, hAlign="LEFT", splitByRow=1)
+    table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#f3f1eb")),
+        ("BACKGROUND", (1, 0), (1, -1), colors.HexColor("#ffffff")),
+        ("TEXTCOLOR", (1, 0), (1, -1), colors.HexColor("#b5121b")),
+        ("ALIGN", (1, 0), (1, -1), "CENTER"),
+        ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+        ("BOX", (0, 0), (-1, -1), 0.75, colors.HexColor("#090909")),
+        ("INNERGRID", (0, 0), (-1, -1), 0.35, colors.HexColor("#b8b8b8")),
+        ("LEFTPADDING", (0, 0), (-1, -1), 7),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 7),
+        ("TOPPADDING", (0, 0), (-1, -1), 6),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+    ]))
+    return [Paragraph(title, styles["DiagramTitle"]), table, Spacer(1, 4 * mm)]
 
 
 def build() -> None:
@@ -79,6 +137,9 @@ def build() -> None:
     styles.add(ParagraphStyle(name="H2Manual", parent=styles["Heading2"], fontName="Helvetica-Bold", fontSize=14, leading=18, textColor=colors.HexColor("#b5121b"), spaceBefore=5 * mm, spaceAfter=2.5 * mm, keepWithNext=True))
     styles.add(ParagraphStyle(name="H3Manual", parent=styles["Heading3"], fontName="Helvetica-Bold", fontSize=11, leading=14, spaceBefore=3.5 * mm, spaceAfter=2 * mm, keepWithNext=True))
     styles.add(ParagraphStyle(name="BodyManual", parent=styles["BodyText"], fontName="Helvetica", fontSize=9.4, leading=13.2, textColor=colors.HexColor("#1a1a1a"), spaceAfter=2.7 * mm))
+    styles.add(ParagraphStyle(name="TableHeader", parent=styles["BodyManual"], fontName="Helvetica-Bold", fontSize=8.6, leading=10.5, textColor=colors.white, spaceAfter=0))
+    styles.add(ParagraphStyle(name="TableCell", parent=styles["BodyManual"], fontSize=8.7, leading=11.2, spaceAfter=0))
+    styles.add(ParagraphStyle(name="DiagramCell", parent=styles["BodyManual"], fontSize=8.4, leading=10.7, spaceAfter=0, alignment=TA_CENTER))
     styles.add(ParagraphStyle(name="BulletManual", parent=styles["BodyManual"], leftIndent=4 * mm, firstLineIndent=0, spaceAfter=1.2 * mm))
     styles.add(ParagraphStyle(name="Caption", parent=styles["BodyText"], alignment=TA_CENTER, fontSize=8, leading=10, textColor=colors.HexColor("#555555"), spaceAfter=4 * mm))
     styles.add(ParagraphStyle(name="DiagramTitle", parent=styles["BodyText"], fontName="Helvetica-Bold", fontSize=8, textColor=colors.white, backColor=colors.HexColor("#b5121b"), borderPadding=4))
@@ -101,7 +162,7 @@ def build() -> None:
             while index < len(lines) and not lines[index].startswith("~~~"):
                 block.append(lines[index])
                 index += 1
-            story.append(diagram_block(block, styles))
+            story.extend(diagram_block(block, styles, doc.width))
             index += 1
             continue
         image_match = re.fullmatch(r"!\[([^]]*)\]\(([^)]+)\)", line)
@@ -140,7 +201,8 @@ def build() -> None:
             rows = []
             while index < len(lines) and lines[index].startswith("|"):
                 if not re.match(r"^\|[-: |]+\|$", lines[index]):
-                    rows.append([Paragraph(inline(cell.strip()), styles["BodyManual"]) for cell in lines[index].strip("|").split("|")])
+                    row_style = styles["TableHeader"] if not rows else styles["TableCell"]
+                    rows.append([Paragraph(inline(cell.strip()), row_style) for cell in lines[index].strip("|").split("|")])
                 index += 1
             widths = [doc.width / len(rows[0])] * len(rows[0])
             table = Table(rows, colWidths=widths, repeatRows=1, hAlign="LEFT")
