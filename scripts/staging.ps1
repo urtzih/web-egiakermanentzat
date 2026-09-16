@@ -82,6 +82,7 @@ function Assert-SafeConfigValue {
 function Invoke-RemoteScript {
     param([Parameter(Mandatory)][string]$Script)
 
+    $Script = $Script -replace "`r`n", "`n"
     $payload = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($Script))
     & ssh `
         -o BatchMode=yes `
