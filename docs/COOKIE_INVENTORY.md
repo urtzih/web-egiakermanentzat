@@ -52,6 +52,12 @@ Dominios permitidos por CSP cuando el adaptador está activo:
 
 No se usa Google Tag Manager, una CMP, píxeles publicitarios, fuentes remotas, vídeos embebidos, `sessionStorage`, IndexedDB ni `sendBeacon` propio. Sender puede crear internamente un marco para el formulario. Sus recursos se cargan al visitar la ruta específica de suscripción, pero no en Actualidad/Berriak, Contacto/Kontaktua ni el resto del sitio.
 
+Los videos y el PDF publicados en el resumen del caso se sirven desde
+`wp-content/uploads/kermanentzat-case-media/` en el propio dominio. Los
+reproductores usan controles nativos y `preload="none"`; no incorporan iframes,
+CDN de video, proveedores externos, cookies ni almacenamiento del navegador.
+Esta publicacion no modifica la version del registro.
+
 ## Administración restringida de WordPress
 
 | Patrón | Propósito | Alcance | Duración/categoría |

@@ -24,6 +24,7 @@ Las rutas `/harpidetza/` y `/es/suscripcion/` integran directamente el formulari
 - El registro cambia a `3.3.0` porque documenta la aprobación externa de Sender, mantiene el formulario único bilingüe solo en la ruta específica y conserva llamadas locales sin SDK en las páginas secundarias.
 - La página de ayuda ofrece el correo público existente para comunicar posibles agresiones relacionadas con el entorno de Mitika, y la página de contacto incluye una referencia breve que enlaza directamente a esa orientación en el idioma correspondiente. No se incorporan formularios ni nuevos destinatarios y se advierte que la documentación sensible debe compartirse solo después de acordar un canal adecuado; no se publica una garantía absoluta de confidencialidad que el correo ordinario no pueda acreditar.
 - La invitación para hacerse socio/a se limita a un primer correo que expresa interés. No pide nombre, apellidos, DNI/NAN, teléfono ni documentación; ese flujo no añade por sí mismo proveedores ni almacenamiento. La versión `3.3.0` responde a la arquitectura de suscripción condicionada a Sender, no al alta de socios.
+- El resumen del caso incorpora ocho MP4 y un PDF descargable aportados por la familia a solicitud expresa del responsable del proyecto. Se sirven desde el propio dominio con reproductores nativos y `preload="none"`, sin iframes ni proveedores externos. La correspondencia editorial y las comprobaciones especificas quedan documentadas en `docs/CASE_MEDIA_PUBLICATION.md`.
 
 ## Tratamientos
 

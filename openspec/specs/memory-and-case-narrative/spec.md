@@ -28,11 +28,15 @@ El resumen MUST usar redacción neutral para fechas, resoluciones y actuaciones 
 - **THEN** la valoración aparece en primera persona plural o con una atribución inequívoca y no como hecho oficial
 
 ### Requirement: Exclusión de material restringido
-La interfaz pública MUST NOT servir CCTV, documentos internos, certificados bancarios ni hipótesis no acreditadas como contenido del caso.
+La interfaz pública MUST NOT servir CCTV, documentos internos, certificados bancarios ni hipótesis no acreditadas como contenido del caso, salvo una publicación concreta aprobada por la familia o la persona responsable del proyecto y documentada con correspondencia editorial, atribución, minimización, copias de restauración y verificación de privacidad.
 
 #### Scenario: Adaptación de una fuente familiar restringida
 - **WHEN** el resumen usa información procedente de un documento restringido
 - **THEN** publica únicamente texto minimizado y aprobado, sin exponer el original ni sus fotogramas
+
+#### Scenario: Publicación excepcional aprobada
+- **WHEN** la persona responsable solicita publicar recursos concretos aportados para ampliar el resumen del caso
+- **THEN** el sitio puede servir esos archivos desde el propio dominio si documenta la correspondencia, mantiene las hipótesis atribuidas, no añade terceros ni almacenamiento, conserva copias de restauración y verifica ambos idiomas
 
 ### Requirement: Movimiento no esencial
 Los efectos tipográficos y revelados MUST conservar todo el contenido visible y operable sin JavaScript y con `prefers-reduced-motion`.
