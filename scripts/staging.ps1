@@ -135,6 +135,9 @@ if (Test-Path -LiteralPath $sharedEnvFile -PathType Leaf) {
     }
 }
 if ($config.ContainsKey('STAGING_URL') -and $config['STAGING_URL']) {
+    if ($config['STAGING_URL'] -notmatch '^https?://') {
+        $config['STAGING_URL'] = 'https://' + $config['STAGING_URL']
+    }
     $stagingUri = [Uri]$config['STAGING_URL']
     $config['STAGING_HEALTH_HOST'] = $stagingUri.Host
 }
