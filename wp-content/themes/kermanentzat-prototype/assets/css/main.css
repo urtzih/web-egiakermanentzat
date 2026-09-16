@@ -1136,6 +1136,11 @@ body.admin-bar .mobile-nav[open] nav { top: calc(4.5rem + 32px); }
   .campaign-heading { font-size: clamp(4.75rem, 6.7vw, 6rem); }
   .campaign-grid { grid-template-columns: minmax(16rem, .7fr) minmax(24rem, 1.3fr); }
   .split-grid { grid-template-columns: minmax(18rem, .8fr) minmax(24rem, 1.2fr); }
+  .split-grid > :has(> .section-heading) {
+    position: sticky;
+    top: calc(var(--header-height, 4.5rem) + clamp(1.25rem, 4vw, 3rem));
+    align-self: start;
+  }
   .support-grid { grid-template-columns: minmax(16rem, .75fr) minmax(24rem, 1.25fr); }
   .contact-grid { grid-template-columns: minmax(16rem, .75fr) minmax(22rem, 1.25fr); }
   .evidence-row { grid-template-columns: minmax(10rem, .35fr) 1fr; }
