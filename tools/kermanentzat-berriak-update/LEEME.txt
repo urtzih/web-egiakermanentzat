@@ -1,0 +1,58 @@
+EGIA KERMANENTZAT — ACTUALIZACIÓN DE NOTICIAS, 16/09/2026
+
+INSTALACIÓN Y PUBLICACIÓN
+1. En el WordPress de producción, abre Plugins > Añadir nuevo > Subir plugin.
+2. Selecciona kermanentzat-berriak-update.zip, pulsa Instalar ahora y Activar.
+   La activación no modifica ninguna página.
+3. Abre Herramientas > Actualizar noticias.
+4. Despliega las vistas previas de Berriak y Actualidad. En el estado público
+   revisado hay 34 incorporaciones y 35 tarjetas finales en cada idioma.
+5. Pulsa Descargar copia de seguridad y guarda el JSON en tu equipo.
+6. Pulsa Aplicar noticias. La herramienta guarda también una copia automática
+   en WordPress antes de la primera escritura.
+7. Comprueba /berriak/ y /es/actualidad/ sin iniciar sesión. La pantalla debe
+   mostrar 0 referencias pendientes. Una segunda aplicación no duplica nada.
+8. Desactiva y elimina este plugin temporal. Las noticias permanecen publicadas.
+
+CONTENIDO
+Las 39 referencias de Berriak.odt se convierten en 35 piezas por idioma:
+- tres parejas EU/ES de EITB se muestran una vez por idioma;
+- la referencia «Especial informativo» de elDiario.es repite exactamente otra
+  URL del documento y no se duplica;
+- se corrige la «a» final del enlace del homenaje de EITB, que devolvía 404;
+- la noticia de ORAIN ya publicada conserva íntegramente su tarjeta;
+- títulos editoriales breves y resúmenes propios en euskera y castellano;
+- las declaraciones y acusaciones se atribuyen al medio o a sus autores;
+- fechas históricas del artículo, orden descendente, sin imágenes ni embeds.
+Las páginas externas conservan el idioma del medio, excepto las parejas de EITB
+para las que el documento aporta ambas versiones.
+
+ALCANCE
+Solo se cambia el listado HTML de las páginas publicadas /berriak/ y
+/es/actualidad/. Se preservan cabeceras, URL, títulos de página, metadatos,
+tarjetas ya existentes y otras páginas. No se activa el módulo editorial ni
+Sender, ni se crean campañas de correo. No hace falta acceso FTP ni a OVH.
+Si producción usa un listado diferente, la herramienta se detiene sin escribir.
+
+RECUPERACIÓN
+Antes de eliminar el plugin puedes pulsar Restaurar contenido anterior.
+La copia original no se reemplaza al volver a aplicar. Si una actualización
+se interrumpe entre páginas, permite completar o restaurar desde esa copia.
+Si alguien edita después cualquiera de las dos páginas, la herramienta bloquea
+la sobrescritura y conserva la copia descargable para recuperación manual.
+Tras eliminar el plugin, puedes reinstalar ESTE MISMO ZIP para acceder a la
+copia, que permanece en la opción kermanentzat_berriak_backup_20260916_v1.
+El JSON contiene los IDs, las rutas y el HTML anterior y posterior; no es un
+dump de base de datos ni un XML importable mediante Herramientas > Importar.
+
+MANTENIMIENTO
+La antigua sincronización general del tema regenera las páginas desde el seed.
+No la ejecutes después para publicar estas noticias: podría reemplazarlas por
+el contenido antiguo. En un futuro despliegue o migración editorial deben
+preservarse/importarse estas páginas y su copia de seguridad.
+
+COMPROBACIÓN
+La consulta directa de Noticias de Álava está bloqueada por su protección web.
+Dos artículos se contrastaron en el buscador; el anuncio del 2/08/2026 conserva
+el enlace y los datos aportados en el documento, sin afirmar una comprobación
+completa de acceso. El resto se contrastó en el medio o en su copia indexada.
