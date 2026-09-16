@@ -52,18 +52,48 @@ try {
         $portLine = Get-Content -LiteralPath $envPath | Where-Object { $_ -match '^WP_PORT=' } | Select-Object -First 1
         if ($portLine) { $port = ($portLine -split '=', 2)[1].Trim() }
     }
-    foreach ($route in @('/berriak/', '/es/actualidad/', '/harpidetza/', '/es/suscripcion/', '/kronologia/', '/es/cronologia/', '/hemeroteka/', '/es/hemeroteca/', '/kasuaren-laburpena/', '/es/resumen-del-caso/')) {
+    $subscriptionPublic = $false
+    if (Test-Path -LiteralPath $envPath) {
+        $flagLine = Get-Content -LiteralPath $envPath | Where-Object { $_ -match '^KERMANENTZAT_SUBSCRIPTION_PUBLIC=' } | Select-Object -First 1
+        if ($flagLine) { $subscriptionPublic = (($flagLine -split '=', 2)[1].Trim() -match '^(?i:true|1|yes|on)$') }
+    }
+
+    foreach ($route in @('/berriak/', '/es/actualidad/', '/kronologia/', '/es/cronologia/', '/hemeroteka/', '/es/hemeroteca/', '/kasuaren-laburpena/', '/es/resumen-del-caso/')) {
         $response = Invoke-WebRequest -UseBasicParsing -Uri "http://localhost:$port$route" -MaximumRedirection 5
         if ($response.StatusCode -ne 200) { throw "$route no devuelve HTTP 200." }
     }
     foreach ($route in @('/harpidetza/', '/es/suscripcion/')) {
-        $subscriptionHtml = [string](Invoke-WebRequest -UseBasicParsing -Uri "http://localhost:$port$route").Content
-        if ($subscriptionHtml -notmatch 'page-hero--subscription' -or
-            $subscriptionHtml -notmatch 'subscription-wordmark' -or
-            ([regex]::Matches($subscriptionHtml, '<h1')).Count -ne 1) {
-            throw "$route no conserva el page-hero de suscripción o duplica el encabezado principal."
+        if ($subscriptionPublic) {
+            $subscriptionHtml = [string](Invoke-WebRequest -UseBasicParsing -Uri "http://localhost:$port$route").Content
+            if ($subscriptionHtml -notmatch 'page-hero--subscription' -or
+                $subscriptionHtml -notmatch 'subscription-wordmark' -or
+                ([regex]::Matches($subscriptionHtml, '<h1')).Count -ne 1) {
+                throw "$route no conserva el page-hero de suscripción o duplica el encabezado principal."
+            }
+        } else {
+            try {
+                Invoke-WebRequest -UseBasicParsing -Uri "http://localhost:$port$route" -MaximumRedirection 0 -ErrorAction Stop | Out-Null
+                throw "$route debe quedar oculta cuando KERMANENTZAT_SUBSCRIPTION_PUBLIC=false."
+            } catch {
+                $status = $_.Exception.Response.StatusCode.value__
+                if ($status -ne 404) { throw "$route devuelve HTTP $status; se esperaba 404 con la suscripción oculta." }
+            }
         }
     }
+    $homeEu = [string](Invoke-WebRequest -UseBasicParsing -Uri "http://localhost:$port/").Content
+    $homeEs = [string](Invoke-WebRequest -UseBasicParsing -Uri "http://localhost:$port/es/").Content
+    $sitemapEu = [string](Invoke-WebRequest -UseBasicParsing -Uri "http://localhost:$port/sitemap-eu.xml").Content
+    $sitemapEs = [string](Invoke-WebRequest -UseBasicParsing -Uri "http://localhost:$port/sitemap-es.xml").Content
+    if ($subscriptionPublic) {
+        if ($homeEu -notmatch '/harpidetza/' -or $homeEs -notmatch '/es/suscripcion/' -or $sitemapEu -notmatch '/harpidetza/' -or $sitemapEs -notmatch '/es/suscripcion/') {
+            throw 'La suscripción pública no aparece en navegación o sitemap.'
+        }
+    } else {
+        if ($homeEu -match '/harpidetza/' -or $homeEs -match '/es/suscripcion/' -or $sitemapEu -match '/harpidetza/' -or $sitemapEs -match '/es/suscripcion/') {
+            throw 'La suscripción oculta sigue enlazada en navegación o sitemap.'
+        }
+    }
+
     $updatesEu = [string](Invoke-WebRequest -UseBasicParsing -Uri "http://localhost:$port/berriak/").Content
     $updatesEs = [string](Invoke-WebRequest -UseBasicParsing -Uri "http://localhost:$port/es/actualidad/").Content
     foreach ($updatesPage in @(

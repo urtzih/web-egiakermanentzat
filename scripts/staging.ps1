@@ -30,6 +30,7 @@ if ($Command -eq 'restore') {
 
 $projectRoot = Split-Path -Parent $PSScriptRoot
 $envFile = Join-Path $projectRoot '.env.staging.local'
+$sharedEnvFile = Join-Path $projectRoot '.env'
 $requiredKeys = @(
     'STAGING_SSH_HOST',
     'STAGING_REPOSITORY_PATH',
@@ -38,7 +39,9 @@ $requiredKeys = @(
     'STAGING_BRANCH',
     'STAGING_URL',
     'STAGING_HEALTH_URL',
-    'STAGING_HEALTH_HOST'
+    'STAGING_HEALTH_HOST',
+    'STAGING_FRONT_USER',
+    'STAGING_FRONT_PASSWORD'
 )
 
 function Read-EnvFile {
@@ -92,12 +95,57 @@ function Invoke-RemoteScript {
     }
 }
 
+function Test-StagingPublicFrontend {
+    param(
+        [ValidateSet('basic', 'full')]
+        [string]$Mode = 'basic'
+    )
+
+    $token = [Convert]::ToBase64String([Text.Encoding]::UTF8.GetBytes($config.STAGING_FRONT_USER + ':' + $config.STAGING_FRONT_PASSWORD))
+    $headers = @{ Authorization = 'Basic ' + $token }
+    $routes = @('/', '/es/')
+    if ($Mode -eq 'full') {
+        $routes += @('/kasuaren-laburpena/', '/es/resumen-del-caso/', '/berriak/', '/es/actualidad/', '/harpidetza/', '/es/suscripcion/')
+    }
+
+    foreach ($route in $routes) {
+        $uri = $config.STAGING_URL.TrimEnd('/') + $route
+        try {
+            $response = Invoke-WebRequest -UseBasicParsing -Uri $uri -Headers $headers -MaximumRedirection 5 -TimeoutSec 30
+        } catch {
+            throw "El frontal protegido de staging no responde en $route`: $($_.Exception.Message)"
+        }
+        if ($response.StatusCode -ne 200) {
+            throw "El frontal protegido de staging devolvió HTTP $($response.StatusCode) en $route."
+        }
+        if ($response.Headers['Set-Cookie']) {
+            throw "El frontal protegido de staging envía Set-Cookie a una visita anónima en $route."
+        }
+    }
+
+    Write-Host "Frontal protegido verificado en $($config.STAGING_URL) ($Mode)."
+}
+
 $config = Read-EnvFile -Path $envFile
+if (Test-Path -LiteralPath $sharedEnvFile -PathType Leaf) {
+    $sharedConfig = Read-EnvFile -Path $sharedEnvFile
+    foreach ($key in @('STAGING_URL', 'STAGING_FRONT_USER', 'STAGING_FRONT_PASSWORD')) {
+        if ($sharedConfig.ContainsKey($key) -and $sharedConfig[$key]) {
+            $config[$key] = $sharedConfig[$key]
+        }
+    }
+}
+if ($config.ContainsKey('STAGING_URL') -and $config['STAGING_URL']) {
+    $stagingUri = [Uri]$config['STAGING_URL']
+    $config['STAGING_HEALTH_HOST'] = $stagingUri.Host
+}
 foreach ($key in $requiredKeys) {
     if (-not $config.ContainsKey($key) -or -not $config[$key]) {
-        throw "Falta $key en $envFile."
+        throw "Falta $key en $envFile o $sharedEnvFile."
     }
-    Assert-SafeConfigValue -Name $key -Value $config[$key]
+    if ($key -notin @('STAGING_FRONT_USER', 'STAGING_FRONT_PASSWORD')) {
+        Assert-SafeConfigValue -Name $key -Value $config[$key]
+    }
 }
 
 $expected = if ($ExpectedSha) { $ExpectedSha.ToLowerInvariant() } else { '' }
@@ -297,6 +345,7 @@ assert_compose_ready
 compose_command ps
 verify_staging_frontend basic
 '@)
+        Test-StagingPublicFrontend basic
     }
     'pull' {
         Invoke-RemoteScript -Script ($remotePrelude + "`n" + $cleanCheckoutGuard + @'
@@ -327,6 +376,7 @@ verify_staging_frontend basic
 compose_command ps
 echo "Código desplegado en $(git -C "$repo" rev-parse --short HEAD). La migración solo se ha planificado."
 '@)
+        Test-StagingPublicFrontend basic
     }
     'migrate' {
         Invoke-RemoteScript -Script ($remotePrelude + "`n" + $cleanCheckoutGuard + @'
@@ -347,6 +397,7 @@ verify_staging_frontend full
 trap - ERR
 echo "Migración completada. Backup: $created_backup_id"
 '@)
+        Test-StagingPublicFrontend full
     }
     'verify' {
         Invoke-RemoteScript -Script ($remotePrelude + "`n" + $cleanCheckoutGuard + @'
@@ -358,6 +409,7 @@ verify_editorial_runtime
 verify_staging_frontend full
 compose_command ps
 '@)
+        Test-StagingPublicFrontend full
     }
     'logs' {
         $followFlag = if ($Follow) { '-f' } else { '' }
@@ -376,6 +428,7 @@ wait_for_wordpress
 verify_staging_frontend basic
 compose_command ps wordpress cron
 '@)
+        Test-StagingPublicFrontend basic
     }
     'restore' {
         $restoreScript = @'

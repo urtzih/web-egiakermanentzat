@@ -64,6 +64,11 @@ function kermanentzat_analytics_is_enabled(): bool
         && kermanentzat_ga_measurement_id() !== '';
 }
 
+function kermanentzat_subscription_is_public(): bool
+{
+    return kermanentzat_environment_flag('KERMANENTZAT_SUBSCRIPTION_PUBLIC');
+}
+
 /**
  * Consent/service registry. Optional services are absent until their adapter is
  * explicitly approved and configured in production.

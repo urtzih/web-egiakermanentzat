@@ -2,7 +2,7 @@
 
 Staging reproduce el WordPress editorial sin reemplazar su base de datos ni sus medios.
 
-- URL pública: <https://web-egiakermanentzat.stag.urtzi.fun/>
+- URL pública: <https://web-egiakermanentzat-stag.urtzi.fun/>
 - URL LAN: <http://192.168.10.42:18081/>
 - Host SSH: `lxc-apps-staging`
 - Repositorio: `/opt/staging/projects/web-egiakermanentzat/repository`
@@ -17,7 +17,7 @@ Staging reproduce el WordPress editorial sin reemplazar su base de datos ni sus 
 Copy-Item .env.staging.example .env.staging.local
 ```
 
-`.env.staging.local` solo contiene host, rutas, URL y rama. Las credenciales de WordPress, MariaDB y Sender permanecen en el archivo remoto con permisos restringidos.
+`.env.staging.local` solo contiene host, rutas internas y rama. La URL pública protegida y sus credenciales HTTP básicas se leen desde `.env` (`STAGING_URL`, `STAGING_FRONT_USER`, `STAGING_FRONT_PASSWORD`) para poder comprobar el frontal real de Cloudflare sin versionar secretos. Las credenciales de WordPress, MariaDB y Sender permanecen en el archivo remoto con permisos restringidos.
 
 El Compose usa explícitamente `name: web-egiakermanentzat`; cambiar ese nombre crearía otros volúmenes y dejaría de utilizar los datos actuales.
 
@@ -55,9 +55,10 @@ El archivo `.env.staging` debe contener las credenciales existentes y:
 ```dotenv
 KERMANENTZAT_GA_MEASUREMENT_ID=
 KERMANENTZAT_GA_APPROVED=false
-WP_SITE_URL=https://web-egiakermanentzat.stag.urtzi.fun
-KERMANENTZAT_PUBLIC_URL=https://web-egiakermanentzat.stag.urtzi.fun
+WP_SITE_URL=https://web-egiakermanentzat-stag.urtzi.fun
+KERMANENTZAT_PUBLIC_URL=https://web-egiakermanentzat-stag.urtzi.fun
 KERMANENTZAT_SENDER_APPROVED=true
+KERMANENTZAT_SUBSCRIPTION_PUBLIC=true
 KERMANENTZAT_SENDER_API_TOKEN=<secreto del gestor operativo>
 ```
 
@@ -74,6 +75,7 @@ El script exige:
 - plugin editorial activo y su comando de verificación correcto;
 - Sender completamente configurado cuando esté aprobado y conectividad de lectura con su API;
 - rutas estructurales ES/EU con HTTP 200;
+- frontal público protegido con las credenciales locales de staging;
 - `noindex`, CSP, HTTPS y ausencia de `Set-Cookie` anónimo;
 - recursos Sender solo en `/harpidetza/` y `/es/suscripcion/`; Contacto y Berriak no deben cargar directamente al proveedor.
 

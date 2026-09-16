@@ -346,14 +346,13 @@ function kermanentzat_public_origin(): string
 
 function kermanentzat_sitemap_routes(): array
 {
-    return [
+    $routes = [
         'eu' => [
             '/',
             '/kasuaren-laburpena/',
             '/berriak/',
             '/kronologia/',
             '/hemeroteka/',
-            '/harpidetza/',
             '/lagundu-eta-ekarpenak/',
             '/kontaktua/',
             '/lege-oharra/',
@@ -366,7 +365,6 @@ function kermanentzat_sitemap_routes(): array
             '/es/actualidad/',
             '/es/cronologia/',
             '/es/hemeroteca/',
-            '/es/suscripcion/',
             '/es/ayuda-y-donaciones/',
             '/es/contacto/',
             '/es/aviso-legal/',
@@ -374,6 +372,13 @@ function kermanentzat_sitemap_routes(): array
             '/es/politica-de-cookies/',
         ],
     ];
+
+    if (kermanentzat_subscription_is_public()) {
+        array_splice($routes['eu'], 5, 0, ['/harpidetza/']);
+        array_splice($routes['es'], 5, 0, ['/es/suscripcion/']);
+    }
+
+    return $routes;
 }
 
 function kermanentzat_sitemap_entries(string $language): array
@@ -460,6 +465,31 @@ function kermanentzat_is_home(): bool
 {
     return is_front_page() || is_page('es');
 }
+
+add_action('template_redirect', static function (): void {
+    if (kermanentzat_subscription_is_public() || is_admin()) {
+        return;
+    }
+
+    if (!is_page(['harpidetza', 'suscripcion'])) {
+        return;
+    }
+
+    global $wp_query;
+    $wp_query->set_404();
+    status_header(404);
+    nocache_headers();
+
+    $template = get_query_template('404');
+    if ($template !== '') {
+        include $template;
+    } else {
+        get_header();
+        echo '<main class="content-band content-band--light"><div class="content-wrap"><h1>' . esc_html__('Page not found', 'kermanentzat-prototype') . '</h1></div></main>';
+        get_footer();
+    }
+    exit;
+}, 1);
 
 add_filter('body_class', static function (array $classes): array {
     $classes[] = 'kermanentzat-site';

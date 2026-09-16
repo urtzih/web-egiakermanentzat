@@ -125,6 +125,15 @@ function subscription_is_approved(): bool
     return is_truthy_constant('KERMANENTZAT_SENDER_APPROVED');
 }
 
+function subscription_is_public(): bool
+{
+    if (function_exists('kermanentzat_subscription_is_public')) {
+        return \kermanentzat_subscription_is_public();
+    }
+
+    return is_truthy_constant('KERMANENTZAT_SUBSCRIPTION_PUBLIC');
+}
+
 function sender_api_token(): string
 {
     if (defined('KERMANENTZAT_SENDER_API_TOKEN')) {
@@ -149,7 +158,8 @@ function subscription_is_configured(): bool
     $config = settings();
     $form_url = (string) $config['sender_form_url'];
     $form_host = strtolower((string) wp_parse_url($form_url, PHP_URL_HOST));
-    return subscription_is_approved()
+    return subscription_is_public()
+        && subscription_is_approved()
         && sender_api_token() !== ''
         && trim((string) $config['sender_group_id']) !== ''
         && preg_match('/^acc[a-z0-9]{8,}$/i', (string) $config['sender_account_public_id']) === 1

@@ -9,6 +9,9 @@ $editorialSwitch = function_exists('Kermanentzat\\Editorial\\editorial_language_
 $labels = $language === 'eu'
     ? ['home' => 'Hasiera', 'case' => 'Kasua', 'updates' => 'Berriak', 'subscription' => 'Harpidetza', 'support' => 'Lagundu', 'contact' => 'Kontaktua']
     : ['home' => 'Inicio', 'case' => 'El caso', 'updates' => 'Actualidad', 'subscription' => 'Suscripción', 'support' => 'Ayuda', 'contact' => 'Contacto'];
+if (!kermanentzat_subscription_is_public()) {
+    unset($labels['subscription']);
+}
 ?><!doctype html>
 <html lang="<?php echo esc_attr($language); ?>">
 <head>

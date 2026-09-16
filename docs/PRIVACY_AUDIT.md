@@ -8,14 +8,14 @@ Google Analytics 4 queda preparado como servicio opcional, desactivado por defec
 
 El rechazo conserva únicamente una preferencia versionada durante seis meses. La retirada deshabilita Analytics, elimina las cookies `_ga`/`_ga_*` y recarga la página para impedir solicitudes posteriores. Aceptar y rechazar tienen la misma jerarquía visual; el control permanente del pie permite revisar la elección.
 
-Sender está activado en local y staging mediante aprobación explícita, secreto, grupo, remitente y formulario bilingüe con double opt-in. El SDK y el formulario se cargan automáticamente solo en las rutas específicas de suscripción; WordPress no conserva emails. El 12/08/2026 se confirmó la aprobación de DPA, subencargados, transferencias y conservación/supresión, con evidencia archivada fuera de Git. Producción requiere una decisión y validación separadas.
+Sender está activado en staging mediante `KERMANENTZAT_SUBSCRIPTION_PUBLIC=true`, aprobación explícita, secreto, grupo, remitente y formulario bilingüe con double opt-in. Producción y local quedan por defecto con `KERMANENTZAT_SUBSCRIPTION_PUBLIC=false`: no enlazan la suscripción, no la incluyen en sitemaps y no sirven la ruta dedicada. El SDK y el formulario se cargan automáticamente solo en las rutas específicas de suscripción cuando ese flag está activo y Sender está configurado; WordPress no conserva emails. El 12/08/2026 se confirmó la aprobación de DPA, subencargados, transferencias y conservación/supresión, con evidencia archivada fuera de Git. Producción requiere una decisión y validación separadas.
 
-Las rutas `/harpidetza/` y `/es/suscripcion/` integran directamente el formulario cuando Sender está configurado. Actualidad/Berriak y Contacto/Kontaktua muestran llamadas compactas hacia esas rutas y no cargan recursos del proveedor. Con Sender desactivado, todas mantienen una salida local informativa.
+Las rutas `/harpidetza/` y `/es/suscripcion/` integran directamente el formulario cuando la suscripción pública está activada y Sender está configurado. Actualidad/Berriak y Contacto/Kontaktua muestran llamadas compactas hacia esas rutas solo en ese modo y no cargan recursos del proveedor. Con el flag público desactivado, la suscripción queda oculta y Sender queda fuera del registro de servicios.
 
 ## Arquitectura
 
 - `kermanentzat_legal_config()` mantiene identidad y pendientes documentales.
-- `kermanentzat_service_registry()` usa la versión `3.3.0`; registra GA4 solo con sus tres condiciones y Sender solo cuando el adaptador está aprobado y completamente configurado.
+- `kermanentzat_service_registry()` usa la versión `3.3.0`; registra GA4 solo con sus tres condiciones y Sender solo cuando la suscripción pública está activada y el adaptador está aprobado y completamente configurado.
 - `assets/js/consent.js` es el único adaptador autorizado para almacenamiento, cookies y carga de Google.
 - Consent Mode v2 parte de analítica y publicidad denegadas. Google Signals y personalización publicitaria permanecen desactivados.
 - La CSP solo amplía `script-src`, `img-src` y `connect-src` cuando el servicio está activo.
@@ -46,7 +46,7 @@ No hay formulario general de contacto, cuentas públicas, CAPTCHA, pasarela, per
 
 ## Indexación
 
-`/sitemap.xml` enlaza `/sitemap-eu.xml` y `/sitemap-es.xml`. Cada hijo contiene ocho páginas publicadas con origen fijo `https://egiakermanentzat.eus`, HTTPS y `lastmod`, incluidas las rutas de actualidad desde que contienen cobertura real; no incluye autores, adjuntos, búsquedas ni administración. `robots.txt` declara el índice y conserva el bloqueo administrativo.
+`/sitemap.xml` enlaza `/sitemap-eu.xml` y `/sitemap-es.xml`. Cada hijo contiene las páginas públicas con origen fijo `https://egiakermanentzat.eus`, HTTPS y `lastmod`, incluidas las rutas de actualidad desde que contienen cobertura real. Las rutas de suscripción solo aparecen cuando `KERMANENTZAT_SUBSCRIPTION_PUBLIC=true`; no se incluyen autores, adjuntos, búsquedas ni administración. `robots.txt` declara el índice y conserva el bloqueo administrativo.
 
 ## Riesgos y validaciones pendientes
 

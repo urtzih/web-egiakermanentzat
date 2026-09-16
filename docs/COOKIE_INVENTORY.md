@@ -36,7 +36,7 @@ Versión del registro: `3.3.0`. Revisión técnica: 2026-08-12.
 | Proveedor | UAB Sender.lt, Lvivo st. 25, Vilnius, Lituania |
 | Finalidad | Gestionar alta confirmada, baja y avisos de nuevas publicaciones |
 | Datos | Email y estados técnicos de confirmación, entrega y supresión gestionados por el proveedor |
-| Activación | Aprobación explícita + token/grupo/remitente + formulario bilingüe con double opt-in; el SDK se carga automáticamente solo en `/harpidetza/` y `/es/suscripcion/` |
+| Activación | `KERMANENTZAT_SUBSCRIPTION_PUBLIC=true` + aprobación explícita + token/grupo/remitente + formulario bilingüe con double opt-in; el SDK se carga automáticamente solo en `/harpidetza/` y `/es/suscripcion/` |
 | Base jurídica | Consentimiento específico y double opt-in |
 | Conservación | Hasta la baja; después, supresión o conservación mínima conforme al contrato validado y las obligaciones aplicables |
 | Retirada | Enlace de baja en cada mensaje o solicitud al responsable |
@@ -88,8 +88,11 @@ subencargados, transferencias, conservación/supresión, DNS, double opt-in y
 textos bilingües; la evidencia se conserva fuera de Git. Cambiar el flag a `false` retira el servicio
 del registro y bloquea formularios y nuevos envíos.
 
-Desde el 07-08-2026 las rutas `/harpidetza/` y `/es/suscripcion/` son públicas y
-se enlazan desde la navegación, Actualidad/Berriak y Contacto/Kontaktua. Cuando
-Sender está configurado, cargan su SDK y formulario; las demás rutas no contactan
-con el proveedor. Staging usa expresamente el grupo real, mientras producción
-requiere una activación separada.
+Desde el 16-09-2026 las rutas `/harpidetza/` y `/es/suscripcion/` quedan
+condicionadas por `KERMANENTZAT_SUBSCRIPTION_PUBLIC`. Con el flag en `false`, se
+retiran de navegación y sitemaps, las llamadas secundarias no se renderizan y la
+ruta dedicada queda oculta. Con el flag en `true`, las rutas vuelven a enlazarse
+y, cuando Sender está configurado, cargan su SDK y formulario; las demás rutas no
+contactan con el proveedor. Staging usa expresamente el grupo real y el flag
+activo para revisión, mientras producción permanece con el flag apagado hasta
+una activación separada.

@@ -29,6 +29,7 @@ El procedimiento de SEO, rendimiento, accesibilidad y auditoría está en
 - [Manual editorial ilustrado de WordPress](docs/README-ADMIN-WORDPRESS.md)
 - [Operación técnica editorial y suscripciones](docs/EDITORIAL_OPERATIONS.md)
 - [Evidencia y límites de aceptación del despliegue en staging](docs/STAGING_EDITORIAL_ACCEPTANCE.md)
+- [Publicación de noticias del 16/09/2026](docs/BERRIAK_20260916_PUBLICATION.md)
 
 ## Entorno y publicación
 

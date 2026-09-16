@@ -475,6 +475,9 @@ function render_subscription_shortcode($attributes): string
     $form_embed_id = sanitize_text_field((string) $config['sender_form_embed_id']);
     $is_subscription_page = is_page(['harpidetza', 'suscripcion']);
     $is_updates_page = is_page(['berriak', 'actualidad']);
+    if (!subscription_is_public() && !$is_subscription_page) {
+        return '';
+    }
     if (!subscription_is_configured() || $url === '') {
         $title = $language === 'eu' ? 'Jaso berriak posta elektronikoz' : 'Recibe las novedades por email';
         $description = $language === 'eu'

@@ -295,18 +295,20 @@ final class Editorial_Migrate_Command
             }
         }
 
-        foreach (['kontaktua', 'es/contacto'] as $path) {
-            $page = get_page_by_path($path);
-            if (!$page instanceof \WP_Post) {
-                \WP_CLI::warning('No existe la página de contacto ' . $path . '.');
-                $precondition_errors[] = 'Falta la página de contacto ' . $path . '.';
-            } elseif (!str_contains($page->post_content, 'kermanentzat_subscription')) {
-                $operations[] = [
-                    'kind' => 'page',
-                    'id' => $page->ID,
-                    'path' => $path,
-                    'content' => rtrim($page->post_content) . "\n\n<!-- wp:shortcode -->[kermanentzat_subscription]<!-- /wp:shortcode -->",
-                ];
+        if (subscription_is_public()) {
+            foreach (['kontaktua', 'es/contacto'] as $path) {
+                $page = get_page_by_path($path);
+                if (!$page instanceof \WP_Post) {
+                    \WP_CLI::warning('No existe la página de contacto ' . $path . '.');
+                    $precondition_errors[] = 'Falta la página de contacto ' . $path . '.';
+                } elseif (!str_contains($page->post_content, 'kermanentzat_subscription')) {
+                    $operations[] = [
+                        'kind' => 'page',
+                        'id' => $page->ID,
+                        'path' => $path,
+                        'content' => rtrim($page->post_content) . "\n\n<!-- wp:shortcode -->[kermanentzat_subscription]<!-- /wp:shortcode -->",
+                    ];
+                }
             }
         }
 
@@ -436,8 +438,11 @@ function initial_timeline_entries(string $language, string $content): array
 
 function initial_archive_pages(): array
 {
-    $eu_updates = updates_archive_page_blocks('eu', "[kermanentzat_updates]\n\n[kermanentzat_subscription]");
-    $es_updates = updates_archive_page_blocks('es', "[kermanentzat_updates]\n\n[kermanentzat_subscription]");
+    $updates_shortcodes = subscription_is_public()
+        ? "[kermanentzat_updates]\n\n[kermanentzat_subscription]"
+        : '[kermanentzat_updates]';
+    $eu_updates = updates_archive_page_blocks('eu', $updates_shortcodes);
+    $es_updates = updates_archive_page_blocks('es', $updates_shortcodes);
     return [
         'berriak' => ['title' => 'Berriak', 'slug' => 'berriak', 'parent' => 0, 'marker' => 'kermanentzat_updates', 'layout_marker' => 'kermanentzat-updates-hero-v2', 'language' => 'eu', 'content' => $eu_updates],
         'es/actualidad' => ['title' => 'Actualidad', 'slug' => 'actualidad', 'parent_path' => 'es', 'marker' => 'kermanentzat_updates', 'layout_marker' => 'kermanentzat-updates-hero-v2', 'language' => 'es', 'content' => $es_updates],
