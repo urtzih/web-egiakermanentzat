@@ -39,7 +39,6 @@ $requiredKeys = @(
     'STAGING_BRANCH',
     'STAGING_URL',
     'STAGING_HEALTH_URL',
-    'STAGING_HEALTH_HOST',
     'STAGING_FRONT_USER',
     'STAGING_FRONT_PASSWORD'
 )
@@ -139,6 +138,7 @@ if ($config.ContainsKey('STAGING_URL') -and $config['STAGING_URL']) {
     $stagingUri = [Uri]$config['STAGING_URL']
     $config['STAGING_HEALTH_HOST'] = $stagingUri.Host
 }
+$requiredKeys += 'STAGING_HEALTH_HOST'
 foreach ($key in $requiredKeys) {
     if (-not $config.ContainsKey($key) -or -not $config[$key]) {
         throw "Falta $key en $envFile o $sharedEnvFile."
