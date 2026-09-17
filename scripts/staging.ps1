@@ -134,18 +134,33 @@ function Test-StagingPublicFrontend {
             throw "El resumen del caso contiene $($videoUrls.Count) vídeos; se esperaban 8."
         }
 
-        $mediaHeaders = $headers.Clone()
-        $mediaHeaders['Range'] = 'bytes=0-1023'
-        foreach ($videoUrl in $videoUrls) {
-            $mediaUri = [Uri]::new([Uri]$config.STAGING_URL, $videoUrl)
-            try {
-                $mediaResponse = Invoke-WebRequest -UseBasicParsing -Uri $mediaUri -Headers $mediaHeaders -MaximumRedirection 5 -TimeoutSec 30
-            } catch {
-                throw "El vídeo protegido de staging no responde en $videoUrl`: $($_.Exception.Message)"
+        Add-Type -AssemblyName System.Net.Http
+        $mediaClient = [System.Net.Http.HttpClient]::new()
+        $mediaClient.Timeout = [TimeSpan]::FromSeconds(30)
+        try {
+            foreach ($videoUrl in $videoUrls) {
+                $mediaUri = [Uri]::new([Uri]$config.STAGING_URL, $videoUrl)
+                $request = [System.Net.Http.HttpRequestMessage]::new([System.Net.Http.HttpMethod]::Get, $mediaUri)
+                $request.Headers.Authorization = [System.Net.Http.Headers.AuthenticationHeaderValue]::new('Basic', $token)
+                $request.Headers.Range = [System.Net.Http.Headers.RangeHeaderValue]::new(0, 1023)
+                try {
+                    $mediaResponse = $mediaClient.SendAsync($request).GetAwaiter().GetResult()
+                } catch {
+                    throw "El vídeo protegido de staging no responde en $videoUrl`: $($_.Exception.Message)"
+                } finally {
+                    $request.Dispose()
+                }
+                try {
+                    $mediaStatus = [int]$mediaResponse.StatusCode
+                    if ($mediaStatus -ne 206 -or $null -eq $mediaResponse.Content.Headers.ContentRange) {
+                        throw "El vídeo $videoUrl no admite descarga parcial (HTTP $mediaStatus)."
+                    }
+                } finally {
+                    $mediaResponse.Dispose()
+                }
             }
-            if ($mediaResponse.StatusCode -ne 206 -or -not $mediaResponse.Headers['Content-Range']) {
-                throw "El vídeo $videoUrl no admite descarga parcial (HTTP $($mediaResponse.StatusCode))."
-            }
+        } finally {
+            $mediaClient.Dispose()
         }
     }
 
