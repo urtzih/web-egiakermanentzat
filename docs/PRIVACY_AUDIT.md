@@ -62,6 +62,8 @@ No hay formulario general de contacto, cuentas públicas, CAPTCHA, pasarela, per
 
 Este documento describe controles técnicos y no declara cumplimiento jurídico integral.
 
+Publicación del 17/09/2026: 60 comprobaciones de privacidad superadas contra producción con Analytics activo y condicionado al consentimiento. Los vídeos propios usan `preload="none"`; el navegador no solicita MP4 al abrir el resumen. La suscripción permanece oculta (404 en ambos idiomas), sin SDK de Sender ni enlaces de navegación/sitemap. Copias de páginas protegidas por HTTP 403 y herramienta temporal retirada. Evidencia de entrega y restauración en `docs/PRODUCTION_RELEASE_20260917.md`; estas comprobaciones no sustituyen la revisión humana jurídica, lingüística o de accesibilidad pendiente.
+
 ## Estado de requisitos
 
 | Requisito | Estado |

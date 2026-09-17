@@ -41,3 +41,14 @@
 - [ ] 5.2 Definir métricas trimestrales de comprensión, difusión, contactos y aportaciones sin ampliar tracking no esencial
 - [ ] 5.3 Programar auditoría anual de accesibilidad, seguridad, privacidad, costes, exportación y mantenimiento
 - [ ] 5.4 Probar con responsables no técnicos las tareas operativas permitidas y documentar hallazgos
+
+## 6. Entrega editorial y documental autorizada del 17/09/2026
+
+Esta entrega no cierra los requisitos institucionales o de revisión humana pendientes en los apartados anteriores.
+
+- [x] 6.1 Migrar y conservar las 35 noticias manuales por idioma con previsualización estricta, deduplicación y fuentes privadas
+- [x] 6.2 Publicar ocho vídeos, portadas, subtítulos e informe original en los dos resúmenes, sin descarga automática
+- [x] 6.3 Mantener la suscripción fuera de producción, navegación y sitemaps con ambos idiomas en 404
+- [x] 6.4 Probar publicación, idempotencia y restauración aislada; guardar respaldos SFTP y registros afectados
+- [x] 6.5 Publicar mediante SFTP, verificar frontal/privacidad/paginación/medios y retirar herramienta temporal
+- [x] 6.6 Reorganizar archivos de entorno y plantillas conservando valores y secretos fuera de Git
