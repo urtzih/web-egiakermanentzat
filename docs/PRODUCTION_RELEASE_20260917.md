@@ -51,3 +51,7 @@ Se comprueban ambos idiomas, 35 noticias por idioma, ocho reproductores, PDF,
 peticiones de rango, paginación, sitemaps, cabeceras, navegación por teclado y
 404 de suscripción. La herramienta temporal y su carpeta fuente se retiran al
 cerrar la revisión.
+
+### Corrección del salto a documentación
+
+El enlace del resumen llegaba antes del destino en móvil porque `content-visibility: auto` sustituía las secciones previas por alturas estimadas. En las dos versiones del resumen se desactiva esa sustitución y se añade margen de desplazamiento al bloque documental bajo la cabecera. Verificado en local, staging y producción a 390 y 1920 px: clic desde la introducción y apertura directa con fragmento llegan al bloque, sin solicitar MP4 automáticamente. CSS publicado por SFTP con hash verificado y copia previa en `output/production-backups/20260917T160110Z/anchor-fix-20260917T204339Z/`. No se han modificado registros ni configuración de WordPress.
