@@ -211,146 +211,183 @@ final class Editorial_Migrate_Command
      */
     public function __invoke(array $args, array $assoc_args): void
     {
-        $dry_run = \WP_CLI\Utils\get_flag_value($assoc_args, 'dry-run', false);
-        $force = \WP_CLI\Utils\get_flag_value($assoc_args, 'force', false);
-        $strict = \WP_CLI\Utils\get_flag_value($assoc_args, 'strict', false);
-        if (get_option(MIGRATION_OPTION) && !$force) {
-            \WP_CLI::success('La migración editorial 6 ya está registrada. No se ha modificado nada.');
-            return;
+        try {
+            foreach (run_editorial_migration($assoc_args) as $message) {
+                \WP_CLI::log($message);
+            }
+        } catch (\Throwable $e) {
+            \WP_CLI::error($e->getMessage());
         }
-
-        $operations = [];
-        $precondition_errors = [];
-        foreach (['kasuaren-laburpena', 'es/resumen-del-caso'] as $path) {
-            $page = get_page_by_path($path);
-            if (!$page instanceof \WP_Post) {
-                \WP_CLI::warning('No existe la página ' . $path . '.');
-                $precondition_errors[] = 'Falta la página estructural ' . $path . '.';
-                continue;
-            }
-            $has_shortcode = str_contains($page->post_content, 'kermanentzat_timeline');
-            $has_legacy_timeline = str_contains($page->post_content, 'case-timeline');
-            if ($has_shortcode && !$has_legacy_timeline) {
-                \WP_CLI::log('Ya migrada: ' . $path);
-                continue;
-            }
-            $language = str_starts_with($path, 'es/') ? 'es' : 'eu';
-            $timeline_entries = $has_legacy_timeline ? initial_timeline_entries($language, $page->post_content) : [];
-            if ($has_legacy_timeline && count($timeline_entries) !== 10) {
-                \WP_CLI::warning('No se pudo interpretar de forma segura la cronología de ' . $path . '; se conserva el bloque original.');
-                $precondition_errors[] = 'La cronología heredada de ' . $path . ' no contiene diez entradas interpretables.';
-                continue;
-            }
-            foreach ($timeline_entries as $entry) {
-                if (!get_page_by_path($entry['slug'], OBJECT, TIMELINE_POST_TYPE) instanceof \WP_Post) {
-                    $operations[] = ['kind' => 'timeline_entry', 'entry' => $entry];
-                }
-            }
-            $content = $has_shortcode ? $page->post_content : convert_custom_html_to_editable_blocks($page->post_content);
-            if ($has_legacy_timeline) {
-                $content = remove_legacy_timeline_block($content);
-            }
-            if (!str_contains($content, 'kermanentzat_timeline')) {
-                $content .= "\n<!-- wp:shortcode -->[kermanentzat_timeline featured=\"true\"]<!-- /wp:shortcode -->";
-            }
-            if ($content !== $page->post_content) {
-                $operations[] = ['kind' => 'page', 'id' => $page->ID, 'path' => $path, 'content' => $content];
-            }
-        }
-
-        foreach (initial_legal_page_updates() as $path => $content) {
-            $page = get_page_by_path($path);
-            if (!$page instanceof \WP_Post) {
-                \WP_CLI::warning('No existe la página legal ' . $path . '.');
-                $precondition_errors[] = 'Falta la página legal ' . $path . '.';
-                continue;
-            }
-            if (trim($page->post_content) !== trim($content)) {
-                $operations[] = ['kind' => 'page', 'id' => $page->ID, 'path' => $path, 'content' => $content];
-            }
-        }
-
-        foreach (initial_archive_pages() as $path => $definition) {
-            $page = get_page_by_path($path);
-            if (!$page instanceof \WP_Post) {
-                $operations[] = ['kind' => 'create_page', 'path' => $path, 'definition' => $definition];
-            } elseif (!str_contains($page->post_content, $definition['marker']) || str_contains($page->post_content, '\\n\\n')) {
-                if (in_array($path, ['berriak', 'es/actualidad'], true) && !str_contains($page->post_content, $definition['marker'])) {
-                    $archive_error = validate_legacy_news_archive($page->post_content, (string) $definition['language']);
-                    if ($archive_error !== '') {
-                        $precondition_errors[] = $archive_error;
-                    }
-                }
-                $operations[] = [
-                    'kind' => 'page',
-                    'id' => $page->ID,
-                    'path' => $path,
-                    'content' => $definition['content'],
-                    'post_status' => $definition['status'] ?? null,
-                ];
-            } elseif (!empty($definition['layout_marker']) && !str_contains($page->post_content, $definition['layout_marker'])) {
-                $operations[] = [
-                    'kind' => 'page',
-                    'id' => $page->ID,
-                    'path' => $path,
-                    'content' => upgrade_updates_archive_content($page->post_content, (string) $definition['language']),
-                    'post_status' => $definition['status'] ?? null,
-                ];
-            } elseif (!empty($definition['status']) && $page->post_status !== $definition['status']) {
-                $operations[] = ['kind' => 'page_status', 'id' => $page->ID, 'path' => $path, 'post_status' => $definition['status']];
-            }
-        }
-
-        if (subscription_is_public()) {
-            foreach (['kontaktua', 'es/contacto'] as $path) {
-                $page = get_page_by_path($path);
-                if (!$page instanceof \WP_Post) {
-                    \WP_CLI::warning('No existe la página de contacto ' . $path . '.');
-                    $precondition_errors[] = 'Falta la página de contacto ' . $path . '.';
-                } elseif (!str_contains($page->post_content, 'kermanentzat_subscription')) {
-                    $operations[] = [
-                        'kind' => 'page',
-                        'id' => $page->ID,
-                        'path' => $path,
-                        'content' => rtrim($page->post_content) . "\n\n<!-- wp:shortcode -->[kermanentzat_subscription]<!-- /wp:shortcode -->",
-                    ];
-                }
-            }
-        }
-
-        foreach (initial_press_archive_entries() as $entry) {
-            $existing = find_initial_entry($entry);
-            if (!$existing instanceof \WP_Post) {
-                $operations[] = ['kind' => 'entry', 'entry' => $entry];
-            } elseif ((string) get_post_meta($existing->ID, '_kerman_external_url', true) !== $entry['url']) {
-                $operations[] = ['kind' => 'entry_source', 'id' => $existing->ID, 'entry' => $entry];
-            }
-            if (initial_entry_source_needs_sync($entry)) {
-                $operations[] = ['kind' => 'entry_record_source', 'entry' => $entry];
-            }
-        }
-
-        if ($strict && $precondition_errors !== []) {
-            \WP_CLI::error("La migración estricta no puede continuar:\n- " . implode("\n- ", array_unique($precondition_errors)));
-        }
-
-        foreach ($operations as $operation) {
-            \WP_CLI::log(($dry_run ? '[DRY-RUN] ' : '') . describe_migration_operation($operation));
-            if (!$dry_run) {
-                apply_migration_operation($operation);
-            }
-        }
-
-        if (!$dry_run) {
-            link_initial_translations();
-            update_option(MIGRATION_OPTION, [
-                'completed_at' => current_time('mysql', true),
-                'operations' => count($operations),
-            ], false);
-            flush_rewrite_rules(false);
-        }
-        \WP_CLI::success(sprintf('%d operaciones %s.', count($operations), $dry_run ? 'planificadas' : 'aplicadas'));
     }
+}
+
+/** Shared, strict migration used by WP-CLI and the authenticated release tool. */
+function run_editorial_migration(array $assoc_args): array
+{
+    $messages = [];
+    $log = static function (string $message) use (&$messages): void { $messages[] = $message; };
+    $dry_run = (bool) ($assoc_args['dry-run'] ?? false);
+    $force = (bool) ($assoc_args['force'] ?? false);
+    $strict = (bool) ($assoc_args['strict'] ?? false);
+    if (get_option(MIGRATION_OPTION) && !$force) {
+        $log('La migración editorial 6 ya está registrada. No se ha modificado nada.');
+        return $messages;
+    }
+
+    $operations = [];
+    $precondition_errors = [];
+    foreach (['kasuaren-laburpena', 'es/resumen-del-caso'] as $path) {
+        $page = get_page_by_path($path);
+        if (!$page instanceof \WP_Post) {
+            $log('No existe la página ' . $path . '.');
+            $precondition_errors[] = 'Falta la página estructural ' . $path . '.';
+            continue;
+        }
+        $has_shortcode = str_contains($page->post_content, 'kermanentzat_timeline');
+        $has_legacy_timeline = str_contains($page->post_content, 'case-timeline');
+        if ($has_shortcode && !$has_legacy_timeline) {
+            $log('Ya migrada: ' . $path);
+            continue;
+        }
+        $language = str_starts_with($path, 'es/') ? 'es' : 'eu';
+        $timeline_entries = $has_legacy_timeline ? initial_timeline_entries($language, $page->post_content) : [];
+        if ($has_legacy_timeline && count($timeline_entries) !== 10) {
+            $log('No se pudo interpretar de forma segura la cronología de ' . $path . '; se conserva el bloque original.');
+            $precondition_errors[] = 'La cronología heredada de ' . $path . ' no contiene diez entradas interpretables.';
+            continue;
+        }
+        foreach ($timeline_entries as $entry) {
+            if (!get_page_by_path($entry['slug'], OBJECT, TIMELINE_POST_TYPE) instanceof \WP_Post) {
+                $operations[] = ['kind' => 'timeline_entry', 'entry' => $entry];
+            }
+        }
+        $content = $has_shortcode ? $page->post_content : convert_custom_html_to_editable_blocks($page->post_content);
+        if ($has_legacy_timeline) {
+            $content = remove_legacy_timeline_block($content);
+        }
+        if (!str_contains($content, 'kermanentzat_timeline')) {
+            $content .= "\n<!-- wp:shortcode -->[kermanentzat_timeline featured=\"true\"]<!-- /wp:shortcode -->";
+        }
+        if ($content !== $page->post_content) {
+            $operations[] = ['kind' => 'page', 'id' => $page->ID, 'path' => $path, 'content' => $content];
+        }
+    }
+
+    foreach (initial_legal_page_updates() as $path => $content) {
+        $page = get_page_by_path($path);
+        if (!$page instanceof \WP_Post) {
+            $log('No existe la página legal ' . $path . '.');
+            $precondition_errors[] = 'Falta la página legal ' . $path . '.';
+            continue;
+        }
+        if (trim($page->post_content) !== trim($content)) {
+            $operations[] = ['kind' => 'page', 'id' => $page->ID, 'path' => $path, 'content' => $content];
+        }
+    }
+
+    foreach (initial_archive_pages() as $path => $definition) {
+        $page = get_page_by_path($path);
+        if (!$page instanceof \WP_Post) {
+            $operations[] = ['kind' => 'create_page', 'path' => $path, 'definition' => $definition];
+        } elseif (!str_contains($page->post_content, $definition['marker']) || str_contains($page->post_content, '\\n\\n')) {
+            if (in_array($path, ['berriak', 'es/actualidad'], true) && !str_contains($page->post_content, $definition['marker'])) {
+                $archive_error = validate_legacy_news_archive($page->post_content, (string) $definition['language']);
+                if ($archive_error !== '') {
+                    $precondition_errors[] = $archive_error;
+                }
+            }
+            $operations[] = [
+                'kind' => 'page',
+                'id' => $page->ID,
+                'path' => $path,
+                'content' => $definition['content'],
+                'post_status' => $definition['status'] ?? null,
+            ];
+        } elseif (!empty($definition['layout_marker']) && !str_contains($page->post_content, $definition['layout_marker'])) {
+            $operations[] = [
+                'kind' => 'page',
+                'id' => $page->ID,
+                'path' => $path,
+                'content' => upgrade_updates_archive_content($page->post_content, (string) $definition['language']),
+                'post_status' => $definition['status'] ?? null,
+            ];
+        } elseif (!empty($definition['status']) && $page->post_status !== $definition['status']) {
+            $operations[] = ['kind' => 'page_status', 'id' => $page->ID, 'path' => $path, 'post_status' => $definition['status']];
+        }
+    }
+
+    if (subscription_is_public()) {
+        foreach (['kontaktua', 'es/contacto'] as $path) {
+            $page = get_page_by_path($path);
+            if (!$page instanceof \WP_Post) {
+                $log('No existe la página de contacto ' . $path . '.');
+                $precondition_errors[] = 'Falta la página de contacto ' . $path . '.';
+            } elseif (!str_contains($page->post_content, 'kermanentzat_subscription')) {
+                $operations[] = [
+                    'kind' => 'page',
+                    'id' => $page->ID,
+                    'path' => $path,
+                    'content' => rtrim($page->post_content) . "\n\n<!-- wp:shortcode -->[kermanentzat_subscription]<!-- /wp:shortcode -->",
+                ];
+            }
+        }
+    }
+
+    $press_entries = initial_press_archive_entries();
+    foreach (['eu' => 'berriak', 'es' => 'es/actualidad'] as $language => $path) {
+        $page = get_page_by_path($path);
+        if (!$page || !str_contains($page->post_content, 'updates-feed')) {
+            continue;
+        }
+        preg_match_all('~<article\b[^>]*>.*?</article>~si', $page->post_content, $cards);
+        foreach ($cards[0] as $card) {
+            if (!preg_match('~href="([^"]+)"~', $card, $url)) { continue; }
+            foreach ($press_entries as &$candidate) {
+                if ($candidate['language'] !== $language || normalize_initial_entry_url($candidate['url']) !== normalize_initial_entry_url($url[1])) { continue; }
+                if (preg_match('~<h3[^>]*>(.*?)</h3>~si', $card, $title)) { $candidate['title'] = html_entity_decode(wp_strip_all_tags($title[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8'); }
+                if (preg_match('~<p[^>]*>(.*?)</p>~si', $card, $summary)) { $candidate['excerpt'] = html_entity_decode(wp_strip_all_tags($summary[1]), ENT_QUOTES | ENT_HTML5, 'UTF-8'); }
+                if (preg_match('~<time[^>]*datetime="([^"]+)"~', $card, $date)) { $candidate['date'] = $date[1]; }
+                if (preg_match('~<div class="updates-entry__meta">(.*?)</div>~si', $card, $meta)) {
+                    preg_match_all('~<span[^>]*>(.*?)</span>~si', $meta[1], $spans);
+                    if (isset($spans[1][1])) { $candidate['outlet'] = html_entity_decode(wp_strip_all_tags($spans[1][1]), ENT_QUOTES | ENT_HTML5, 'UTF-8'); }
+                }
+            }
+            unset($candidate);
+        }
+    }
+    foreach ($press_entries as $entry) {
+        $existing = find_initial_entry($entry);
+        if (!$existing instanceof \WP_Post) {
+            $operations[] = ['kind' => 'entry', 'entry' => $entry];
+        } elseif ((string) get_post_meta($existing->ID, '_kerman_external_url', true) !== $entry['url']) {
+            $operations[] = ['kind' => 'entry_source', 'id' => $existing->ID, 'entry' => $entry];
+        }
+        if (initial_entry_source_needs_sync($entry)) {
+            $operations[] = ['kind' => 'entry_record_source', 'entry' => $entry];
+        }
+    }
+
+    if ($strict && $precondition_errors !== []) {
+        throw new \RuntimeException("La migración estricta no puede continuar:\n- " . implode("\n- ", array_unique($precondition_errors)));
+    }
+
+    foreach ($operations as $operation) {
+        $log(($dry_run ? '[DRY-RUN] ' : '') . describe_migration_operation($operation));
+        if (!$dry_run) {
+            apply_migration_operation($operation);
+        }
+    }
+
+    if (!$dry_run) {
+        link_initial_translations();
+        update_option(MIGRATION_OPTION, [
+            'completed_at' => current_time('mysql', true),
+            'operations' => count($operations),
+        ], false);
+        flush_rewrite_rules(false);
+    }
+    $log(sprintf('%d operaciones %s.', count($operations), $dry_run ? 'planificadas' : 'aplicadas'));
+    return $messages;
 }
 
 function convert_custom_html_to_editable_blocks(string $content): string

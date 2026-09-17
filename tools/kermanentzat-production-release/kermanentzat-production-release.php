@@ -7,32 +7,9 @@
  * Author: Egia Kermanentzat
  */
 
-namespace {
-    defined('ABSPATH') || exit;
+namespace Kermanentzat\ProductionRelease;
 
-    if (!class_exists('WP_CLI')) {
-        final class WP_CLI
-        {
-            public static array $messages = [];
-            public static function add_command(...$args): void {}
-            public static function log(string $message): void { self::$messages[] = $message; }
-            public static function warning(string $message): void { self::$messages[] = 'AVISO: ' . $message; }
-            public static function success(string $message): void { self::$messages[] = $message; }
-            public static function error(string $message): never { throw new \RuntimeException($message); }
-        }
-    }
-}
-
-namespace WP_CLI\Utils {
-    if (!function_exists(__NAMESPACE__ . '\\get_flag_value')) {
-        function get_flag_value(array $args, string $key, $default = false)
-        {
-            return array_key_exists($key, $args) ? $args[$key] : $default;
-        }
-    }
-}
-
-namespace Kermanentzat\ProductionRelease {
+defined('ABSPATH') || exit;
 
 const RELEASE = '2026-09-17-case-editorial-v1';
 const BACKUP_OPTION = 'kermanentzat_production_release_20260917_v1';
@@ -59,6 +36,15 @@ function authorize(string $action): void
         wp_die('Se requiere una cuenta administradora.', 403);
     }
     check_admin_referer('kermanentzat_release_' . $action);
+    assert_environment();
+}
+
+function assert_environment(): void
+{
+    if (!allowed_host()) { throw new \RuntimeException('Dominio no autorizado.'); }
+    if (function_exists('kermanentzat_subscription_is_public') && \kermanentzat_subscription_is_public()) {
+        throw new \RuntimeException('La suscripción debe estar desactivada para esta entrega.');
+    }
 }
 
 function allowed_host(): bool
@@ -77,28 +63,16 @@ function load_editorial(): void
         throw new \RuntimeException('No está instalado el plugin editorial de esta entrega.');
     }
     require_once $file;
-    \Kermanentzat\Editorial\register_content_types();
-}
-
-function reset_cli_messages(): void
-{
-    if (property_exists('WP_CLI', 'messages')) {
-        \WP_CLI::$messages = [];
+    if (\Kermanentzat\Editorial\VERSION !== '0.2.8') {
+        throw new \RuntimeException('La versión editorial no corresponde a esta publicación.');
     }
-}
-
-function cli_messages(): array
-{
-    return property_exists('WP_CLI', 'messages') ? \WP_CLI::$messages : [];
+    \Kermanentzat\Editorial\register_content_types();
 }
 
 function migration_preview(): array
 {
     load_editorial();
-    reset_cli_messages();
-    $command = new \Kermanentzat\Editorial\Editorial_Migrate_Command();
-    $command([], ['dry-run' => true, 'strict' => true, 'force' => true]);
-    return cli_messages();
+    return \Kermanentzat\Editorial\run_editorial_migration(['dry-run' => true, 'strict' => true, 'force' => true]);
 }
 
 function target_page_paths(): array
@@ -181,6 +155,7 @@ function state(): array
         'kermanentzat_editorial_migration_5',
         'kermanentzat_editorial_migration_6',
         'kermanentzat_case_media_sync_version',
+        $GLOBALS['wpdb']->prefix . 'user_roles',
     ] as $name) {
         $options[$name] = option_snapshot($name);
     }
@@ -194,6 +169,8 @@ function state_hash(array $state): string
 
 function backup(): array
 {
+    assert_environment();
+    migration_preview();
     $existing = get_option(BACKUP_OPTION);
     if (is_array($existing)) {
         return $existing;
@@ -253,6 +230,7 @@ function remove_source_dir(string $directory): void
 
 function apply_release(): array
 {
+    assert_environment();
     $saved = get_option(BACKUP_OPTION);
     if (!is_array($saved) || ($saved['release'] ?? '') !== RELEASE) {
         throw new \RuntimeException('Debes crear y descargar primero la copia de seguridad.');
@@ -268,6 +246,8 @@ function apply_release(): array
     }
 
     $source = verify_media_source();
+    migration_preview();
+    try {
     require_once ABSPATH . 'wp-admin/includes/plugin.php';
     if (!is_plugin_active(EDITORIAL_PLUGIN)) {
         $result = activate_plugin(EDITORIAL_PLUGIN);
@@ -276,9 +256,7 @@ function apply_release(): array
         }
     }
     load_editorial();
-    reset_cli_messages();
-    $command = new \Kermanentzat\Editorial\Editorial_Migrate_Command();
-    $command([], ['strict' => true, 'force' => true]);
+    $messages = \Kermanentzat\Editorial\run_editorial_migration(['strict' => true, 'force' => true]);
 
     $sync = get_theme_file_path('inc/sync-case-media.php');
     if (!is_file($sync)) {
@@ -290,14 +268,21 @@ function apply_release(): array
     require_once $sync;
     \kermanentzat_case_media_sync_run($source);
     flush_rewrite_rules(false);
-    remove_source_dir($source);
-
     $after = state();
     $saved['after_hash'] = state_hash($after);
     $saved['applied_at'] = gmdate('c');
-    $saved['messages'] = cli_messages();
+    $saved['messages'] = $messages;
     update_option(BACKUP_OPTION, $saved, false);
-    return cli_messages();
+    remove_source_dir($source);
+    return $messages;
+    } catch (\Throwable $e) {
+        // Record the partial result so restoration remains possible after any
+        // failed page or media write. Never replace the original backup.
+        $saved['after_hash'] = state_hash(state());
+        $saved['failure'] = $e->getMessage();
+        update_option(BACKUP_OPTION, $saved, false);
+        throw $e;
+    }
 }
 
 function restore_post(array $snapshot): void
@@ -329,6 +314,7 @@ function restore_post(array $snapshot): void
 
 function restore_release(): void
 {
+    assert_environment();
     $saved = get_option(BACKUP_OPTION);
     if (!is_array($saved) || empty($saved['after_hash'])) {
         throw new \RuntimeException('No existe una publicación aplicada que restaurar.');
@@ -438,6 +424,4 @@ function screen(): void
         }
     }
     echo '</p></div>';
-}
-
 }

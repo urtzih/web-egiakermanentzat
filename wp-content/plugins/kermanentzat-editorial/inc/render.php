@@ -286,6 +286,8 @@ function render_query_pagination(\WP_Query $query, int $current): void
         'total' => (int) $query->max_num_pages,
         'type' => 'list',
         'format' => '?orria=%#%',
+        'prev_text' => current_editorial_language() === 'eu' ? '« Aurrekoa' : '« Anterior',
+        'next_text' => current_editorial_language() === 'eu' ? 'Hurrengoa »' : 'Siguiente »',
         'add_args' => array_filter(['mota' => sanitize_key((string) ($_GET['mota'] ?? ''))]),
     ]);
     if ($links) {

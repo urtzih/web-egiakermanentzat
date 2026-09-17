@@ -80,6 +80,8 @@ try {
     foreach (['kasuaren-laburpena','es/resumen-del-caso'] as $path) {
         $content = get_page_by_path($path)->post_content;
         release_ok(substr_count($content, '<video') === 8, "Eight videos in $path");
+        release_ok(str_contains($content, 'kermanentzat_timeline') && !str_contains($content, 'case-timeline'), "Dynamic chronology retained in $path");
+        release_ok(strpos($content, 'kermanentzat_timeline') < strpos($content, 'document-download'), "Documentation follows chronology in $path");
     }
     $applied_hash = get_option(Kermanentzat\ProductionRelease\BACKUP_OPTION)['after_hash'];
     Kermanentzat\ProductionRelease\apply_release();

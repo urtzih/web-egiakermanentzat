@@ -177,6 +177,7 @@ function kermanentzat_case_sync_backup_page(WP_Post $page, string $backup_dir): 
     if (!wp_mkdir_p($backup_dir)) {
         kermanentzat_case_sync_error('No se pudo crear la carpeta de backups: ' . $backup_dir);
     }
+    file_put_contents($backup_dir . '/.htaccess', "Require all denied\n");
 
     $timestamp = gmdate('Ymd\THis\Z');
     $path = $backup_dir . DIRECTORY_SEPARATOR . $timestamp . '-' . $page->post_name . '-' . $page->ID . '.json';
@@ -214,8 +215,11 @@ function kermanentzat_case_sync_update_pages(string $backup_dir): void
         'kasuaren-laburpena' => kermanentzat_case_summary_content('eu', $caseArt),
     ];
 
-    foreach ($pages as $path => $html) {
-        $page = kermanentzat_case_sync_page_by_path($path);
+      foreach ($pages as $path => $html) {
+          $page = kermanentzat_case_sync_page_by_path($path);
+          if (str_contains($page->post_content, 'kermanentzat_timeline')) {
+              $html = preg_replace('/<section\b[^>]*>(?:(?!<section\b).)*case-timeline(?:(?!<section\b).)*?<\/section>/s', '[kermanentzat_timeline featured="true"]', $html);
+          }
         $backup = kermanentzat_case_sync_backup_page($page, $backup_dir);
         $content = "<!-- wp:html -->\n{$html}\n<!-- /wp:html -->";
         $updated = wp_update_post(wp_slash([

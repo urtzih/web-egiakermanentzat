@@ -316,7 +316,20 @@
   min-height: 2.75rem;
   align-items: center;
   justify-content: center;
+  padding: 0.5rem 0.75rem;
   border: 1px solid currentColor;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.kerman-pagination .current {
+  background: var(--color-ink, #090909);
+  color: var(--color-paper, #fff);
+}
+
+.kerman-pagination a:hover {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
 
 @media (prefers-reduced-motion: reduce) {
