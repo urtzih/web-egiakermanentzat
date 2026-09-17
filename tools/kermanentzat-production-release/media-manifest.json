@@ -1,0 +1,87 @@
+[
+  {
+    "path": "01 Apustua.mp4",
+    "size": 8510124,
+    "sha256": "189961878b2bfcea3ab0a3e7e4e7b657dbddbcd1c9c763144a8d9b107235794f"
+  },
+  {
+    "path": "02 Doloa.mp4",
+    "size": 4438706,
+    "sha256": "f6844271e201956e94974e6074be73d52eaf05a3a307b7962778cac7b0eebdb1"
+  },
+  {
+    "path": "03 Kontakizuna.mp4",
+    "size": 4479783,
+    "sha256": "12cdfbcf021de499efac2abbaf7c5b56d2cfa623a46c7d433650f9c512c0f723"
+  },
+  {
+    "path": "04 ProbintziaAuzitegia.mp4",
+    "size": 27342962,
+    "sha256": "3bd4c619f42fcaa9e49020e44a5facaffd112e64d577ecc758498e8a439ad84b"
+  },
+  {
+    "path": "05 GeldiketaM.mp4",
+    "size": 2641738,
+    "sha256": "a152da6575d898e0be787bba82f27eed950517f28d7496304b0e26d9d8f2a5e2"
+  },
+  {
+    "path": "06 ItxarM.mp4",
+    "size": 1217175,
+    "sha256": "4e041092af187cc7f873d9591f97d8279c782454ca89d1b5c161a6f02a44e72c"
+  },
+  {
+    "path": "07 Prestaketa.mp4",
+    "size": 1804641,
+    "sha256": "bd9e2751cff0bebe265f288105eba527e0c572fe1f1518fc4d54694f2bcf8b97"
+  },
+  {
+    "path": "08 KolpeaMD.mp4",
+    "size": 615306,
+    "sha256": "3fbdbea531728907d14ce00d7756dde8321540bd82854106a57772f8278c179d"
+  },
+  {
+    "path": "InformeOrgCriminalSep.pdf",
+    "size": 4388632,
+    "sha256": "56eccca9f7d347506b4c12ad0178e75ea2ff9e982afde10c40e751dcfaaa39b6"
+  },
+  {
+    "path": "posters/01-apustua.jpg",
+    "size": 116783,
+    "sha256": "31b1701750b299ec580fb2b918077e93db091ead28f6d9d038766e06ceb88a88"
+  },
+  {
+    "path": "posters/02-doloa.jpg",
+    "size": 149440,
+    "sha256": "eb65d896d6475d2c3f9482ee2a6abfdff15c76e29ab878937e86872d1b5d4eb9"
+  },
+  {
+    "path": "posters/03-kontakizuna.jpg",
+    "size": 152727,
+    "sha256": "c3d80b7bdce592307f993dfb732aa00707d618f499bfdba01c26c58389402423"
+  },
+  {
+    "path": "posters/04-probintzia-auzitegia.jpg",
+    "size": 172733,
+    "sha256": "994147cd5c5707f44a94c8853f3b88fa60a22d342acf5014d6974b8df9d02e97"
+  },
+  {
+    "path": "posters/05-geldiketa.jpg",
+    "size": 93043,
+    "sha256": "c560a88873835222b2149c6b2d8eb82f1851dae4466ef39c0bcb2b6a26a1f41e"
+  },
+  {
+    "path": "posters/06-itxaronaldia.jpg",
+    "size": 81571,
+    "sha256": "3caef1ad602e8d118d6d7693ed53e460da45c13c0527f766828c22bf1807e855"
+  },
+  {
+    "path": "posters/07-prestaketa.jpg",
+    "size": 139634,
+    "sha256": "03e28fc1ab7540fb1b048e8975467ae521502c13d5dfe71abd801e6c865fa569"
+  },
+  {
+    "path": "posters/08-kolpea.jpg",
+    "size": 80432,
+    "sha256": "16c236df6c34761eb7769b3b66117c0a7d9703784ed8bdf109d832fc156becfc"
+  }
+]

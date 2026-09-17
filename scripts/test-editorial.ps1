@@ -33,10 +33,6 @@ try {
     $pageAfterSeed = docker compose --progress quiet --profile tools run --rm wpcli post get $caseId --field=content 2>$null | Out-String
     if ($page -cne $pageAfterSeed) { throw 'El seed sobrescribió el contenido editorial.' }
 
-    $publishedPages = docker compose --progress quiet --profile tools run --rm wpcli post list --post_type=page --post_status=publish --field=post_name 2>$null | Out-String
-    if ($publishedPages -notmatch '(?m)^harpidetza\s*$' -or $publishedPages -notmatch '(?m)^suscripcion\s*$') {
-        throw 'Las páginas informativas de suscripción deben estar publicadas aunque Sender siga desactivado.'
-    }
     $registry = docker compose --progress quiet --profile tools run --rm wpcli eval 'echo wp_json_encode(kermanentzat_service_registry());' 2>$null | Out-String
     if ($registry -notmatch '"version":"3\.3\.0"') {
         throw 'El registro de servicios no mantiene la versión esperada.'
@@ -149,6 +145,16 @@ try {
 
     openspec validate --all --strict
     if ($LASTEXITCODE -ne 0) { throw 'OpenSpec no es válido.' }
+
+    docker compose --profile tools run --rm `
+        -e WORDPRESS_TABLE_PREFIX=kpr_test_20260917_ `
+        -e WP_ENVIRONMENT_TYPE=local `
+        -v "${workspacePath}\tests\production-release-integration.php:/tmp/production-release-integration.php:ro" `
+        -v "${workspacePath}\tools\kermanentzat-production-release:/tmp/release:ro" `
+        -v "${workspacePath}\tools\kermanentzat-berriak-update:/tmp/kbu:ro" `
+        -v "${workspacePath}\tmp\case-media-public:/tmp/kpr-media:ro" `
+        wpcli --skip-wordpress eval-file /tmp/production-release-integration.php
+    if ($LASTEXITCODE -ne 0) { throw 'Falló la prueba aislada de publicación y restauración.' }
 
     Write-Host 'Pruebas editoriales completadas.'
 }

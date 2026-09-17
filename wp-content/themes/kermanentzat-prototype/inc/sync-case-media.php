@@ -22,9 +22,9 @@ function kermanentzat_case_sync_error(string $message): void
     throw new RuntimeException($message);
 }
 
-function kermanentzat_case_sync_source_dir(): string
+function kermanentzat_case_sync_source_dir(?string $source = null): string
 {
-    $source = getenv('KERMANENTZAT_CASE_MEDIA_SOURCE_DIR') ?: '/case-media';
+    $source = $source ?: (getenv('KERMANENTZAT_CASE_MEDIA_SOURCE_DIR') ?: '/case-media');
     $real = realpath($source);
     if ($real === false || !is_dir($real)) {
         kermanentzat_case_sync_error('No existe la carpeta fuente de medios: ' . $source);
@@ -229,24 +229,28 @@ function kermanentzat_case_sync_update_pages(string $backup_dir): void
     }
 }
 
-$source_dir = kermanentzat_case_sync_source_dir();
-$upload = kermanentzat_case_sync_upload_dir();
-$assets = kermanentzat_case_media_assets();
+function kermanentzat_case_media_sync_run(?string $source = null): void
+{
+    $source_dir = kermanentzat_case_sync_source_dir($source);
+    $upload = kermanentzat_case_sync_upload_dir();
+    $assets = kermanentzat_case_media_assets();
 
-foreach ($assets as $key => $asset) {
-    if (!isset($asset['public_file'], $asset['source_file'])) {
-        continue;
+    foreach ($assets as $key => $asset) {
+        if (!isset($asset['public_file'], $asset['source_file'])) {
+            continue;
+        }
+        if ($key === 'informe' || str_ends_with((string) $asset['public_file'], '.mp4')) {
+            kermanentzat_case_sync_import_attachment($key, $asset, $source_dir, $upload['dir']);
+        }
     }
-    if ($key === 'informe' || str_ends_with((string) $asset['public_file'], '.mp4')) {
-        kermanentzat_case_sync_import_attachment($key, $asset, $source_dir, $upload['dir']);
-    }
+
+    kermanentzat_case_sync_copy_posters($assets, $source_dir, $upload['dir']);
+    kermanentzat_case_sync_write_tracks($assets, $upload['dir']);
+    kermanentzat_case_sync_update_pages($upload['dir'] . '-backups');
+    update_option('kermanentzat_case_media_sync_version', gmdate('c'));
 }
 
-kermanentzat_case_sync_copy_posters($assets, $source_dir, $upload['dir']);
-kermanentzat_case_sync_write_tracks($assets, $upload['dir']);
-kermanentzat_case_sync_update_pages($upload['dir'] . '-backups');
-update_option('kermanentzat_case_media_sync_version', gmdate('c'));
-
-if (class_exists('WP_CLI')) {
+if (class_exists('WP_CLI') && defined('WP_CLI') && WP_CLI && !defined('KERMANENTZAT_CASE_MEDIA_DEFER')) {
+    kermanentzat_case_media_sync_run();
     WP_CLI::success('Resumen del caso actualizado con videos e informe.');
 }

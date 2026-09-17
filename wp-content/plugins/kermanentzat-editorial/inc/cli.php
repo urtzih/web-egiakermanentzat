@@ -4,7 +4,7 @@ namespace Kermanentzat\Editorial;
 
 defined('ABSPATH') || exit;
 
-const MIGRATION_OPTION = 'kermanentzat_editorial_migration_5';
+const MIGRATION_OPTION = 'kermanentzat_editorial_migration_6';
 
 function register_cli_commands(): void
 {
@@ -215,7 +215,7 @@ final class Editorial_Migrate_Command
         $force = \WP_CLI\Utils\get_flag_value($assoc_args, 'force', false);
         $strict = \WP_CLI\Utils\get_flag_value($assoc_args, 'strict', false);
         if (get_option(MIGRATION_OPTION) && !$force) {
-            \WP_CLI::success('La migración editorial 5 ya está registrada. No se ha modificado nada.');
+            \WP_CLI::success('La migración editorial 6 ya está registrada. No se ha modificado nada.');
             return;
         }
 
@@ -275,6 +275,12 @@ final class Editorial_Migrate_Command
             if (!$page instanceof \WP_Post) {
                 $operations[] = ['kind' => 'create_page', 'path' => $path, 'definition' => $definition];
             } elseif (!str_contains($page->post_content, $definition['marker']) || str_contains($page->post_content, '\\n\\n')) {
+                if (in_array($path, ['berriak', 'es/actualidad'], true) && !str_contains($page->post_content, $definition['marker'])) {
+                    $archive_error = validate_legacy_news_archive($page->post_content, (string) $definition['language']);
+                    if ($archive_error !== '') {
+                        $precondition_errors[] = $archive_error;
+                    }
+                }
                 $operations[] = [
                     'kind' => 'page',
                     'id' => $page->ID,
@@ -313,7 +319,7 @@ final class Editorial_Migrate_Command
         }
 
         foreach (initial_press_archive_entries() as $entry) {
-            $existing = get_page_by_path($entry['slug'], OBJECT, UPDATE_POST_TYPE);
+            $existing = find_initial_entry($entry);
             if (!$existing instanceof \WP_Post) {
                 $operations[] = ['kind' => 'entry', 'entry' => $entry];
             } elseif ((string) get_post_meta($existing->ID, '_kerman_external_url', true) !== $entry['url']) {
@@ -443,16 +449,21 @@ function initial_archive_pages(): array
         : '[kermanentzat_updates]';
     $eu_updates = updates_archive_page_blocks('eu', $updates_shortcodes);
     $es_updates = updates_archive_page_blocks('es', $updates_shortcodes);
-    return [
+    $pages = [
         'berriak' => ['title' => 'Berriak', 'slug' => 'berriak', 'parent' => 0, 'marker' => 'kermanentzat_updates', 'layout_marker' => 'kermanentzat-updates-hero-v2', 'language' => 'eu', 'content' => $eu_updates],
         'es/actualidad' => ['title' => 'Actualidad', 'slug' => 'actualidad', 'parent_path' => 'es', 'marker' => 'kermanentzat_updates', 'layout_marker' => 'kermanentzat-updates-hero-v2', 'language' => 'es', 'content' => $es_updates],
         'kronologia' => ['title' => 'Kronologia', 'slug' => 'kronologia', 'parent' => 0, 'marker' => 'kermanentzat_timeline', 'content' => archive_page_blocks('Kronologia', '[kermanentzat_timeline]')],
         'es/cronologia' => ['title' => 'Cronología', 'slug' => 'cronologia', 'parent_path' => 'es', 'marker' => 'kermanentzat_timeline', 'content' => archive_page_blocks('Cronología', '[kermanentzat_timeline]')],
         'hemeroteka' => ['title' => 'Hemeroteka', 'slug' => 'hemeroteka', 'parent' => 0, 'marker' => 'press-archive', 'content' => archive_page_blocks('Hemeroteka', '[kermanentzat_updates type="press-archive" filters="false"]')],
         'es/hemeroteca' => ['title' => 'Hemeroteca', 'slug' => 'hemeroteca', 'parent_path' => 'es', 'marker' => 'press-archive', 'content' => archive_page_blocks('Hemeroteca', '[kermanentzat_updates type="press-archive" filters="false"]')],
-        'harpidetza' => ['title' => 'Harpidetza', 'slug' => 'harpidetza', 'parent' => 0, 'status' => 'publish', 'marker' => 'kermanentzat-subscription-hero-v1', 'content' => subscription_page_blocks('eu')],
-        'es/suscripcion' => ['title' => 'Suscripción', 'slug' => 'suscripcion', 'parent_path' => 'es', 'status' => 'publish', 'marker' => 'kermanentzat-subscription-hero-v1', 'content' => subscription_page_blocks('es')],
     ];
+
+    if (subscription_is_public()) {
+        $pages['harpidetza'] = ['title' => 'Harpidetza', 'slug' => 'harpidetza', 'parent' => 0, 'status' => 'publish', 'marker' => 'kermanentzat-subscription-hero-v1', 'content' => subscription_page_blocks('eu')];
+        $pages['es/suscripcion'] = ['title' => 'Suscripción', 'slug' => 'suscripcion', 'parent_path' => 'es', 'status' => 'publish', 'marker' => 'kermanentzat-subscription-hero-v1', 'content' => subscription_page_blocks('es')];
+    }
+
+    return $pages;
 }
 
 function initial_legal_page_updates(): array
@@ -555,52 +566,95 @@ function archive_page_blocks(string $title, string $shortcodes, bool $include_ti
 
 function initial_press_archive_entries(): array
 {
-    return [
-        [
-            'language' => 'eu',
-            'slug' => 'orain-mitika-testigantzak-2026-08-02-eu',
-            'title' => 'Testigantza berriek agerian utzi dituzte Mitikako zaindariek Kerman Villate hil aurretik behin eta berriz egindako erasoak',
-            'excerpt' => 'ORAINek Kerman hil aurreko hilabeteetan Mitikako atezainek egindako ustezko erasoei buruzko lau testigantza jaso ditu, eta kasuak Ertzaintzaren aurrean salatu zituztela adierazi du.',
-            'url' => 'https://orain.eus/eu/aktualitatea/gizartea/2026/08/02/testigantza-berriek-agerian-utzi-dituzte-mitikako-atezainek-kerman-villate-hil-aurretik-behin-eta-berriz-egindako-erasoak/',
-            'date' => '2026-08-02',
-            'outlet' => 'ORAIN · Radio Euskadi',
-            'group' => 'orain-2026-08-02',
-            'checked_at' => '2026-08-11',
+    static $entries;
+    if (is_array($entries)) {
+        return $entries;
+    }
+
+    $path = PLUGIN_DIR . 'data/press-archive-20260916.json';
+    $raw = is_file($path) ? file_get_contents($path) : false;
+    $items = $raw !== false ? json_decode($raw, true) : null;
+    if (!is_array($items) || count($items) !== 35) {
+        throw new \RuntimeException('El archivo editorial no contiene las 35 referencias esperadas.');
+    }
+
+    $entries = [];
+    foreach ($items as $item) {
+        foreach (['eu', 'es'] as $language) {
+            $translation = $item[$language] ?? null;
+            if (!is_array($translation) || empty($translation['title']) || empty($translation['summary']) || empty($translation['url'])) {
+                throw new \RuntimeException('Una referencia editorial no contiene ambas versiones completas.');
+            }
+            $entries[] = [
+                'language' => $language,
+                'slug' => sanitize_title((string) $item['id'] . '-' . $language),
+                'title' => (string) $translation['title'],
+                'excerpt' => (string) $translation['summary'],
+                'url' => esc_url_raw((string) $translation['url']),
+                'date' => sanitize_date((string) $item['date']),
+                'outlet' => sanitize_text_field((string) $item['medium']),
+                'group' => sanitize_key((string) $item['id']),
+                'checked_at' => '2026-09-16',
+            ];
+        }
+    }
+
+    if (count($entries) !== 70) {
+        throw new \RuntimeException('No se pudieron preparar las 70 versiones editoriales esperadas.');
+    }
+    return $entries;
+}
+
+function normalize_initial_entry_url(string $url): string
+{
+    return rtrim(html_entity_decode(trim($url), ENT_QUOTES | ENT_HTML5, 'UTF-8'), '/');
+}
+
+function validate_legacy_news_archive(string $content, string $language): string
+{
+    if (preg_match_all("~<section\\b[^>]*class=[\"'][^\"']*\\bupdates-feed\\b[^\"']*[\"'][^>]*>.*?</section>~si", $content, $sections) !== 1) {
+        return 'El listado heredado de ' . $language . ' no tiene un único bloque reconocible.';
+    }
+
+    preg_match_all('~<article\\b[^>]*>.*?</article>~si', $sections[0][0], $articles);
+    $actual = [];
+    foreach ($articles[0] as $article) {
+        if (preg_match("~href=[\"']([^\"']+)[\"']~i", $article, $link)) {
+            $actual[] = normalize_initial_entry_url($link[1]);
+        }
+    }
+    $expected = [];
+    foreach (initial_press_archive_entries() as $entry) {
+        if ($entry['language'] === $language) {
+            $expected[] = normalize_initial_entry_url((string) $entry['url']);
+        }
+    }
+    sort($actual);
+    sort($expected);
+    if ($actual !== $expected) {
+        return 'Las noticias heredadas de ' . $language . ' no coinciden exactamente con las 35 referencias aprobadas.';
+    }
+    return '';
+}
+
+function find_initial_entry(array $entry): ?\WP_Post
+{
+    $post = get_page_by_path((string) $entry['slug'], OBJECT, UPDATE_POST_TYPE);
+    if ($post instanceof \WP_Post) {
+        return $post;
+    }
+
+    $posts = get_posts([
+        'post_type' => UPDATE_POST_TYPE,
+        'post_status' => 'any',
+        'numberposts' => 1,
+        'meta_query' => [
+            'relation' => 'AND',
+            ['key' => '_kerman_language', 'value' => (string) $entry['language']],
+            ['key' => '_kerman_external_url', 'value' => (string) $entry['url']],
         ],
-        [
-            'language' => 'es',
-            'slug' => 'orain-mitika-testimonios-2026-08-02-es',
-            'title' => 'Nuevos testimonios apuntan a agresiones reiteradas de porteros de Mítika antes de la muerte de Kerman Villate',
-            'excerpt' => 'ORAIN recoge cuatro testimonios sobre presuntas agresiones ocurridas en los meses anteriores a la muerte de Kerman e informa de que los casos fueron denunciados ante la Ertzaintza.',
-            'url' => 'https://orain.eus/es/actualidad/sociedad/2026/08/02/nuevos-testimonios-apuntan-agresiones-reiteradas-porteros-mitika-antes-la-muerte-kerman-villate/',
-            'date' => '2026-08-02',
-            'outlet' => 'ORAIN · Radio Euskadi',
-            'group' => 'orain-2026-08-02',
-            'checked_at' => '2026-08-11',
-        ],
-        [
-            'language' => 'eu',
-            'slug' => 'gasteizberri-alkatea-mitika-erasoak-2026-08-07-eu',
-            'title' => 'La alcaldesa, sobre las agresiones de los porteros de Mítika: «No me consta»',
-            'excerpt' => 'GasteizBerrik Maider Etxebarria Gasteizko alkatearen erantzuna jaso du: Mítikako atezainei egotzitako aurretiazko erasoen berririk ez zuela adierazi zuen.',
-            'url' => 'https://gasteizberri.com/2026/08/alcaldesa-agresiones-mitika-no-me-consta/',
-            'date' => '2026-08-07',
-            'outlet' => 'GasteizBerri',
-            'group' => 'gasteizberri-2026-08-07',
-            'checked_at' => '2026-08-11',
-        ],
-        [
-            'language' => 'es',
-            'slug' => 'gasteizberri-alcaldesa-mitika-agresiones-2026-08-07-es',
-            'title' => 'La alcaldesa, sobre las agresiones de los porteros de Mítika: «No me consta»',
-            'excerpt' => 'GasteizBerri recoge la respuesta de la alcaldesa de Vitoria-Gasteiz, Maider Etxebarria, quien afirmó que no le constaban las agresiones previas atribuidas a los porteros de Mítika.',
-            'url' => 'https://gasteizberri.com/2026/08/alcaldesa-agresiones-mitika-no-me-consta/',
-            'date' => '2026-08-07',
-            'outlet' => 'GasteizBerri',
-            'group' => 'gasteizberri-2026-08-07',
-            'checked_at' => '2026-08-11',
-        ],
-    ];
+    ]);
+    return $posts[0] ?? null;
 }
 
 function initial_entry_source_slug(array $entry): string
@@ -611,7 +665,7 @@ function initial_entry_source_slug(array $entry): string
 function initial_entry_source_needs_sync(array $entry): bool
 {
     $source = get_page_by_path(initial_entry_source_slug($entry), OBJECT, SOURCE_POST_TYPE);
-    $update = get_page_by_path((string) $entry['slug'], OBJECT, UPDATE_POST_TYPE);
+    $update = find_initial_entry($entry);
     if (!$source instanceof \WP_Post || !$update instanceof \WP_Post) {
         return true;
     }
@@ -629,11 +683,6 @@ function initial_entry_source_needs_sync(array $entry): bool
     }
 
     return !in_array($source->ID, sanitize_id_list(get_post_meta($update->ID, '_kerman_source_ids', true)), true);
-}
-
-function initial_entry_exists(string $slug): bool
-{
-    return get_page_by_path($slug, OBJECT, UPDATE_POST_TYPE) instanceof \WP_Post;
 }
 
 function describe_migration_operation(array $operation): string
@@ -740,7 +789,7 @@ function apply_migration_operation(array $operation): void
         update_post_meta($source_id, '_kerman_source_url', esc_url_raw($entry['url']));
         update_post_meta($source_id, '_kerman_source_checked_at', sanitize_date($entry['checked_at']));
 
-        $update = get_page_by_path((string) $entry['slug'], OBJECT, UPDATE_POST_TYPE);
+        $update = find_initial_entry($entry);
         if (!$update instanceof \WP_Post) {
             throw new \RuntimeException('No existe la entrada de hemeroteca que debe recibir la fuente.');
         }

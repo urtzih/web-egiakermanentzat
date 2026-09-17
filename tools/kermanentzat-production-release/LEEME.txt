@@ -1,0 +1,25 @@
+EGIA KERMANENTZAT — PUBLICACIÓN DE PRODUCCIÓN 2026-09-17
+
+Esta herramienta temporal publica la entrega editorial y documental después de
+crear una copia específica de los registros afectados. Solo admite producción,
+staging y localhost; exige una cuenta administradora y bloquea la operación si
+las 35 noticias heredadas no coinciden con el inventario aprobado.
+
+PROCEDIMIENTO
+1. Subir y activar el plugin temporal.
+2. Abrir Herramientas > Publicación Kermanentzat.
+3. Revisar que la previsualización estricta no muestre errores.
+4. Crear y descargar la copia JSON antes de publicar.
+5. Subir por SFTP los medios verificados a:
+   wp-content/uploads/kermanentzat-release-20260917/
+6. Pulsar Publicar entrega una sola vez.
+7. Verificar el sitio público. Una segunda aplicación no duplica contenido.
+8. Desactivar y retirar esta herramienta cuando termine la aceptación.
+
+RESTAURACIÓN
+El botón Restaurar recupera las páginas, opciones, metadatos y estado de plugins
+guardados y elimina las entidades creadas. Se bloquea si detecta ediciones
+posteriores. El código anterior se restaura desde la copia SFTP local.
+
+La herramienta nunca activa la suscripción. Si el tema informa que la
+suscripción está activa, la pantalla de publicación queda bloqueada.
