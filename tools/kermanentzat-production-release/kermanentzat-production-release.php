@@ -418,9 +418,10 @@ function screen(): void
     form('backup', 'Crear copia', 'button button-secondary');
     if (is_array($saved)) {
         form('download', 'Descargar copia', 'button button-secondary');
-        if (empty($saved['after_hash']) && $preview_ok) {
-            form('apply', 'Publicar entrega', 'button button-primary');
-        } elseif (!empty($saved['after_hash'])) {
+        if ($preview_ok) {
+            form('apply', empty($saved['after_hash']) ? 'Publicar entrega' : 'Comprobar entrega sin cambios', 'button button-primary');
+        }
+        if (!empty($saved['after_hash'])) {
             form('restore', 'Restaurar copia', 'button button-secondary');
         }
     }
