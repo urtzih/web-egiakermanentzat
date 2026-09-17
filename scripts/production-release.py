@@ -10,6 +10,7 @@ import json
 import stat
 import time
 from datetime import datetime, timezone
+from urllib.parse import urljoin
 
 import paramiko
 import requests
@@ -214,7 +215,7 @@ def run(args):
         row = soup.find("tr", {"data-plugin": TOOL})
         link = row.select_one(".activate a" if args.command == "activate-tool" else ".deactivate a") if row else None
         if link:
-            result = http.get(link["href"], timeout=90)
+            result = http.get(urljoin(response.url, link["href"]), timeout=90)
             result.raise_for_status()
         print("Release tool " + args.command + " completed")
     elif args.command == "db-backup":
