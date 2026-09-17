@@ -249,7 +249,11 @@ function kermanentzat_case_media_assets(): array
 function kermanentzat_case_media_public_url(string $filename): string
 {
     $uploads = wp_upload_dir();
-    return trailingslashit((string) $uploads['baseurl']) . 'kermanentzat-case-media/' . rawurlencode($filename);
+    $url = trailingslashit((string) $uploads['baseurl']) . 'kermanentzat-case-media/' . rawurlencode($filename);
+
+    // Keep media on the current origin. Staging is also reviewed through its
+    // internal address, while the public hostname is protected with Basic Auth.
+    return wp_make_link_relative($url);
 }
 
 function kermanentzat_case_media_track_filename(string $key, string $language): string

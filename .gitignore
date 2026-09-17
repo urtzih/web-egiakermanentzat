@@ -6,6 +6,7 @@ Thumbs.db
 wp-content/uploads/
 wp-content/cache/
 wp-content/upgrade/
+wp-content/themes/kermanentzat-prototype/assets/media/
 *.log
 
 # OpenSpec generates Codex-specific copies here temporarily. Project skills
