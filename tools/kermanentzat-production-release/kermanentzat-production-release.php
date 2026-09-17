@@ -404,22 +404,23 @@ function screen(): void
         echo '<div class="notice notice-error"><p>La suscripción está activa. No se permite esta publicación.</p></div></div>';
         return;
     }
+    $preview_ok = false;
     try {
         $messages = migration_preview();
+        $preview_ok = true;
         echo '<div class="notice notice-success inline"><p>Previsualización estricta superada.</p></div>';
         echo '<details><summary>Operaciones previstas</summary><pre>' . esc_html(implode("\n", $messages)) . '</pre></details>';
     } catch (\Throwable $e) {
-        echo '<div class="notice notice-error inline"><p>' . esc_html($e->getMessage()) . '</p></div></div>';
-        return;
+        echo '<div class="notice notice-error inline"><p>' . esc_html($e->getMessage()) . '</p></div>';
     }
     $saved = get_option(BACKUP_OPTION);
     echo '<p>';
     form('backup', 'Crear copia', 'button button-secondary');
     if (is_array($saved)) {
         form('download', 'Descargar copia', 'button button-secondary');
-        if (empty($saved['after_hash'])) {
+        if (empty($saved['after_hash']) && $preview_ok) {
             form('apply', 'Publicar entrega', 'button button-primary');
-        } else {
+        } elseif (!empty($saved['after_hash'])) {
             form('restore', 'Restaurar copia', 'button button-secondary');
         }
     }
