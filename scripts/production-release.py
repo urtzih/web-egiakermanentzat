@@ -65,6 +65,7 @@ def download_tree(sftp, remote, local, inventory):
             if target.stat().st_size != item.st_size:
                 raise RuntimeError("Backup size mismatch: " + path)
             with sftp.open(path, "rb") as stream:
+                stream.prefetch(item.st_size)
                 digest = hashlib.file_digest(stream, "sha256").hexdigest()
             if digest != hashlib.sha256(target.read_bytes()).hexdigest():
                 raise RuntimeError("Backup hash mismatch: " + path)
@@ -85,6 +86,7 @@ def upload_tree(sftp, local, remote):
         elif path.is_file():
             sftp.put(str(path), target)
             with sftp.open(target, "rb") as stream:
+                stream.prefetch(path.stat().st_size)
                 remote_hash = hashlib.file_digest(stream, "sha256").hexdigest()
             if remote_hash != hashlib.sha256(path.read_bytes()).hexdigest():
                 raise RuntimeError("Upload hash mismatch: " + relative.as_posix())
@@ -127,7 +129,7 @@ def action(http, name):
 
 def run(args):
     cfg = config()
-    if args.command in ("backup", "install-tool", "deploy"):
+    if args.command in ("backup", "install-tool", "deploy", "restore-code", "remove-tool"):
         transport, sftp = connect(cfg)
         try:
             if args.command == "backup":
@@ -143,6 +145,22 @@ def run(args):
                 upload_tree(sftp, ROOT / "wp-content/plugins/kermanentzat-editorial", REMOTE + "/wp-content/plugins/kermanentzat-editorial")
                 upload_tree(sftp, ROOT / "tools/kermanentzat-production-release", REMOTE + "/wp-content/plugins/kermanentzat-production-release")
                 print("Inactive editorial plugin and release tool uploaded")
+            elif args.command == "restore-code":
+                journal = json.loads((Path(args.backup) / "remote-code-restore.json").read_text())
+                for change in reversed(journal):
+                    if not change['target'].startswith('www/wp-content/') or not change['previous'].startswith('kermanentzat-release-backups/'):
+                        raise RuntimeError('Invalid restoration path')
+                    sftp.rename(change['target'], change['previous'] + '.replaced')
+                    sftp.rename(change['previous'], change['target'])
+                print('Previous production code restored')
+            elif args.command == "remove-tool":
+                tool_root = REMOTE + '/wp-content/plugins/kermanentzat-production-release'
+                for filename in sftp.listdir(tool_root):
+                    if not stat.S_ISREG(sftp.lstat(tool_root + '/' + filename).st_mode):
+                        raise RuntimeError('Unexpected release tool entry')
+                    sftp.remove(tool_root + '/' + filename)
+                sftp.rmdir(tool_root)
+                print('Temporary release tool removed')
             else:
                 if not args.backup or not (Path(args.backup) / "database-before.json").is_file():
                     raise RuntimeError("A verified file backup and downloaded database-before.json are required")
@@ -165,6 +183,7 @@ def run(args):
                         sftp.rename(previous, target)
                         raise
                     changes.append({"target": target, "previous": previous})
+                    (Path(args.backup) / "remote-code-restore.json").write_text(json.dumps(changes, indent=2), encoding="utf-8")
                 for file in (ROOT / "wp-content/mu-plugins").glob("*.php"):
                     target = REMOTE + "/wp-content/mu-plugins/" + file.name
                     temporary = target + ".release-" + stamp
@@ -175,6 +194,7 @@ def run(args):
                         pass
                     sftp.rename(temporary, target)
                     changes.append({"target": target, "previous": preserved + "/" + file.name})
+                    (Path(args.backup) / "remote-code-restore.json").write_text(json.dumps(changes, indent=2), encoding="utf-8")
                 media_target = REMOTE + "/wp-content/uploads/kermanentzat-release-20260917"
                 mkdirs(sftp, media_target)
                 with sftp.open(media_target + "/.htaccess", "w") as stream:
@@ -188,15 +208,15 @@ def run(args):
         return
 
     http = session(cfg)
-    if args.command == "activate-tool":
+    if args.command in ("activate-tool", "deactivate-tool"):
         response = http.get(BASE + "/wp-admin/plugins.php", timeout=30)
         soup = BeautifulSoup(response.text, "html.parser")
         row = soup.find("tr", {"data-plugin": TOOL})
-        link = row.select_one(".activate a") if row else None
+        link = row.select_one(".activate a" if args.command == "activate-tool" else ".deactivate a") if row else None
         if link:
             result = http.get(link["href"], timeout=90)
             result.raise_for_status()
-        print("Release tool activated; " + " ".join(n.get_text(" ", strip=True) for n in page(http).select(".notice")))
+        print("Release tool " + args.command + " completed")
     elif args.command == "db-backup":
         action(http, "backup")
         response = action(http, "download")
@@ -219,6 +239,6 @@ def run(args):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=["backup", "install-tool", "activate-tool", "db-backup", "deploy", "apply", "restore"])
+    parser.add_argument("command", choices=["backup", "install-tool", "activate-tool", "deactivate-tool", "remove-tool", "db-backup", "deploy", "apply", "restore", "restore-code"])
     parser.add_argument("--backup")
     run(parser.parse_args())
