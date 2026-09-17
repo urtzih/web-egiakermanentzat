@@ -108,6 +108,7 @@ function Test-StagingPublicFrontend {
         $routes += @('/kasuaren-laburpena/', '/es/resumen-del-caso/', '/berriak/', '/es/actualidad/', '/harpidetza/', '/es/suscripcion/')
     }
 
+    $caseResponse = $null
     foreach ($route in $routes) {
         $uri = $config.STAGING_URL.TrimEnd('/') + $route
         try {
@@ -120,6 +121,31 @@ function Test-StagingPublicFrontend {
         }
         if ($response.Headers['Set-Cookie']) {
             throw "El frontal protegido de staging envía Set-Cookie a una visita anónima en $route."
+        }
+        if ($route -eq '/kasuaren-laburpena/') {
+            $caseResponse = $response
+        }
+    }
+
+    if ($Mode -eq 'full') {
+        $videoMatches = [regex]::Matches($caseResponse.Content, '<source\b[^>]*\bsrc="([^"]+\.mp4)"')
+        $videoUrls = @($videoMatches | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
+        if ($videoUrls.Count -ne 8) {
+            throw "El resumen del caso contiene $($videoUrls.Count) vídeos; se esperaban 8."
+        }
+
+        $mediaHeaders = $headers.Clone()
+        $mediaHeaders['Range'] = 'bytes=0-1023'
+        foreach ($videoUrl in $videoUrls) {
+            $mediaUri = [Uri]::new([Uri]$config.STAGING_URL, $videoUrl)
+            try {
+                $mediaResponse = Invoke-WebRequest -UseBasicParsing -Uri $mediaUri -Headers $mediaHeaders -MaximumRedirection 5 -TimeoutSec 30
+            } catch {
+                throw "El vídeo protegido de staging no responde en $videoUrl`: $($_.Exception.Message)"
+            }
+            if ($mediaResponse.StatusCode -ne 206 -or -not $mediaResponse.Headers['Content-Range']) {
+                throw "El vídeo $videoUrl no admite descarga parcial (HTTP $($mediaResponse.StatusCode))."
+            }
         }
     }
 
