@@ -311,6 +311,16 @@ body.admin-bar .mobile-nav[open] nav { top: calc(4.5rem + 32px); }
 .content-band--dark { background: var(--color-ink); color: var(--color-canvas); }
 .content-band--campaign { background: var(--color-campaign); color: var(--color-ink); }
 
+/* Fragment navigation needs the real heights of the preceding case sections. */
+.page-key-case .content-band {
+  content-visibility: visible;
+  contain-intrinsic-size: none;
+}
+#dokumentazioa,
+#documentacion {
+  scroll-margin-top: calc(var(--header-height, 4.5rem) + 1rem);
+}
+
 .page-hero {
   position: relative;
   isolation: isolate;
