@@ -30,6 +30,17 @@ copia SFTP.
 
 ## Aceptación
 
+Estado de ejecución, 17 de septiembre de 2026:
+
+- Código guardado en `main`; paginación traducida y comprobada a 390 y 1920 px.
+- Pruebas editoriales y 16 comprobaciones aisladas de publicación/restauración superadas; 61 comprobaciones de privacidad superadas.
+- Staging migrado: exactamente 35 noticias publicadas por idioma, ocho vídeos, portadas, subtítulos y PDF original verificados. Backup probado: `20260917T160232Z-0dbf55001efb`.
+- Respaldo SFTP local ignorado por Git: `output/production-backups/20260917T160110Z/`, 477 archivos verificados por tamaño y SHA-256.
+- En producción solo se han subido el plugin editorial y la herramienta temporal, ambos sin activar. No se ha sustituido el tema ni aplicado ninguna migración.
+- Pendiente: WordPress rechaza la contraseña configurada en `WP_PRO_ADMIN_PASSWORD`. Se requiere corregir esa credencial antes de activar la herramienta y descargar el respaldo de registros. No se continúa el despliegue sin ese respaldo.
+
+Para retomar tras corregir la credencial: ejecutar `activate-tool`, `db-backup --backup output/production-backups/20260917T160110Z`, revisar la previsualización estricta, ejecutar `deploy` y `apply` con la misma ruta de respaldo, verificar producción, descargar la copia posterior y ejecutar `deactivate-tool` y `remove-tool`. Si el código o los contenidos de producción han cambiado durante la pausa, repetir primero el respaldo SFTP y la revisión.
+
 Se comprueban ambos idiomas, 35 noticias por idioma, ocho reproductores, PDF,
 peticiones de rango, paginación, sitemaps, cabeceras, navegación por teclado y
 404 de suscripción. La herramienta temporal y su carpeta fuente se retiran al
